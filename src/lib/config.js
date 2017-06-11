@@ -23,6 +23,9 @@ export default {
   validateAuthenticator,
 };
 
+/**
+ * Modules
+ */
 import { clone, flow } from 'lodash';
 import assert from 'assert';
 import read from 'read-data';
