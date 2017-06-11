@@ -1,5 +1,7 @@
 # Identity Desk
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/identity-desk.svg)](https://greenkeeper.io/)
+
 The [Node.js](http://nodejs.org) identity solution
 
 [![Build Status][travis-image]][travis-url]
