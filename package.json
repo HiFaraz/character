@@ -12,7 +12,7 @@
     "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
     "document": "jsdoc --configure .jsdoc.json",
     "lint": "npm run lint-ci -- --fix",
-    "lint-ci": "eslint --format=table src",
+    "lint-ci": "eslint --format=table .",
     "test": "mocha dist/**/*.spec.js dist/test"
   },
   "repository": {
