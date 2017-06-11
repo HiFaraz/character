@@ -8,7 +8,7 @@
 /**
  * Modules
  */
-import 'babel-polyfill';
+if (!global._babelPolyfill) { require('babel-polyfill'); } // acknowledgement: https://github.com/feathersjs/feathers-sequelize/issues/3
 import 'source-map-support/register';
 import { addPath } from 'app-module-path';
 import path from 'path';
