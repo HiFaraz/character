@@ -28,6 +28,19 @@ import assert from 'assert';
 import read from 'read-data';
 
 /**
+ * Applies default configuration values
+ * @alias module:lib/config.applyDefaults
+ * @param {Object} config
+ * @returns {Object} Configuration populated with default values where needed
+ */
+function applyDefaults(config) {
+  return Object.assign(
+    readFileSync('.identity-desk.defaults.yml'),
+    config
+  );
+}
+
+/**
  * Load a configuration file synchronously
  * @alias module:lib/config.load
  * @param {string} [path='.identity-desk.yml'] Path to the configuration file
@@ -36,6 +49,7 @@ import read from 'read-data';
 function load(path = '.identity-desk.yml') {
   return flow(
     readFileSync,
+    applyDefaults,
     validate,
     populateEnvironmentVariables
   )(path);
@@ -68,6 +82,16 @@ function populateEnvironmentVariables(config) {
 }
 
 /**
+ * Read a YAML or JSON file synchronously
+ * @alias module:lib/config.readFileSync
+ * @param {string} path Path to the YAML or JSON file
+ * @returns {Object} File contents parsed to an Object
+ */
+function readFileSync(path) {
+  return read.sync(path);
+}
+
+/**
  * Read an environment variable and throw if it is undefined
  * @param {string} name Environment variable name
  * @param {string} description Environment variable description to show in error message if it is undefined
@@ -76,16 +100,6 @@ function populateEnvironmentVariables(config) {
 function safeGetEnvString(name, description) {
   assert(process.env[name], `${description} not found in environment variable \`${name}\``);
   return process.env[name].trim();
-}
-
-/**
- * Read a YAML or JSON file synchronously
- * @alias module:lib/config.readFileSync
- * @param {string} path Path to the YAML or JSON file
- * @returns {Object} File contents parsed to an Object
- */
-function readFileSync(path) {
-  return read.sync(path);
 }
 
 /**
