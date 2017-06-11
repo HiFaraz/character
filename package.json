@@ -7,7 +7,6 @@
     "clean-dist": "rimraf dist",
     "prebuild": "npm outdated && npm run lint && npm run clean-dist",
     "build": "npm run build:src",
-    "prebuild-ci": "npm outdated && npm run lint-ci && npm run clean-dist",
     "build-ci": "npm run build:src",
     "build-watch": "npm run build -- -- --watch",
     "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
