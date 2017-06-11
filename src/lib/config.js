@@ -101,8 +101,13 @@ function readFileSync(path) {
  * @returns {*} Value of the environment variable
  */
 function safeGetEnvString(name, description) {
-  assert(process.env[name], `${description} not found in environment variable \`${name}\``);
-  return process.env[name].trim();
+  if (typeof name === 'string' && name.startsWith('$')) {
+    const variable = name.substring(1, name.length);
+    assert(process.env[variable], `${description} not found in environment variable \`${variable}\``);
+    return process.env[variable].trim();
+  } else {
+    return name;
+  }
 }
 
 /**

@@ -1,8 +1,11 @@
-database: DATABASE_URL
+database:
+  dialect: sqlite
+  logging: false
+  url: $DATABASE_URL
 authenticators:
   local:
     module: identity-desk-local
     source: npm
     version: ^0.1.0
 session:
-  secret: SESSION_SECRET
+  secret: $SESSION_SECRET
