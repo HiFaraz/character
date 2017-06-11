@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "rootDirs": [
+      "src"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

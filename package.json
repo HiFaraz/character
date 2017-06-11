@@ -1,0 +1,57 @@
+{
+  "name": "identity-desk",
+  "version": "0.0.0",
+  "description": "The Node.js identity solution",
+  "main": "dist",
+  "scripts": {
+    "clean-dist": "rimraf dist",
+    "prebuild": "npm outdated && npm run lint && npm run clean-dist",
+    "build": "npm run build:src",
+    "build-watch": "npm run build -- -- --watch",
+    "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
+    "docs": "jsdoc --configure .jsdoc.json",
+    "lint": "npm run lint-ci -- --fix",
+    "lint-ci": "eslint --format=codeframe src",
+    "test": "mocha dist/**/*.spec.js dist/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HiFaraz/identity-desk.git"
+  },
+  "keywords": [
+    "auth",
+    "identity",
+    "sso",
+    "authentication",
+    "authorization",
+    "access",
+    "control"
+  ],
+  "author": "Faraz Syed <hello@farazsyed.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HiFaraz/identity-desk/issues"
+  },
+  "homepage": "https://github.com/HiFaraz/identity-desk#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
+    "docdash": "^0.4.0",
+    "eslint": "^3.19.0",
+    "express": "^4.15.3",
+    "identity-desk-local": "^0.1.0",
+    "jsdoc": "^3.4.3",
+    "mocha": "^3.4.2",
+    "rimraf": "^2.6.1",
+    "sqlite3": "^3.1.8",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "app-module-path": "^2.2.0",
+    "babel-polyfill": "^6.23.0",
+    "lodash": "^4.17.4",
+    "read-data": "^1.1.0",
+    "sequelize": "^4.0.0",
+    "source-map-support": "^0.4.15"
+  }
+}
