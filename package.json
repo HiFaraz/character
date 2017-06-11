@@ -9,7 +9,7 @@
     "build": "npm run build:src",
     "build-watch": "npm run build -- -- --watch",
     "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
-    "docs": "jsdoc --configure .jsdoc.json",
+    "document": "jsdoc --configure .jsdoc.json",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=codeframe src",
     "test": "mocha dist/**/*.spec.js dist/test"
