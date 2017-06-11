@@ -1,0 +1,8 @@
+database: DATABASE_URL
+authenticators:
+  local:
+    module: identity-desk-local
+    source: npm
+    version: ^0.1.0
+session:
+  secret: SESSION_SECRET
