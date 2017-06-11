@@ -46,7 +46,7 @@ For a good pull request, we ask you provide the following:
 
 The lead author is [Faraz Syed](https://github.com/HiFaraz).
 
-[List of all contributors](https://github.com/expressjs/express/graphs/contributors)
+[List of all contributors](https://github.com/HiFaraz/identity-desk/graphs/contributors)
 
 ## License
 
