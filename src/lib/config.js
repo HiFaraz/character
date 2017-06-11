@@ -67,6 +67,8 @@ function load(path = '.identity-desk.yml') {
 function populateEnvironmentVariables(config) {
   const data = clone(config);
 
+  // TODO: traverse all leaf nodes instead of only database and session.secret
+
   // database
   if (typeof data.database === 'string') {
     // database url is provided

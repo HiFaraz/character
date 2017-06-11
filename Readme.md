@@ -11,6 +11,15 @@ The [Node.js](http://nodejs.org) identity solution
 $ npm install identity-desk
 ```
 
+## Usage with Express
+
+Identity Desk is compatible with Express 4.x. To use Identity Desk, you will need the following modules installed:
+
+  - `body-parser`
+  - [`connect-session-sequelize`] if you plan to store sessions in the database rather than providing a separate session store
+  - `express`
+  - `express-session`
+
 ## Tests
 
 To run the test suite, first install the dependencies, then run `npm test`:
