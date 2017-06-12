@@ -13,7 +13,7 @@ const debug = require('debug')('identity-desk:frameworks:express');
 
 /**
  * Create Express middleware
- *
+ * 
  * @param {Object} authenticators
  * @param {Object} database
  * @param {Object} settings
