@@ -12,6 +12,7 @@
     "check-security": "nsp check",
     "clean-dist": "rimraf dist",
     "document": "jsdoc --configure .jsdoc.json",
+    "prelint": "npm run check-security",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
     "test": "mocha dist/**/*.spec.js dist/test"
