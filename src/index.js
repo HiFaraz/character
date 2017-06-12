@@ -39,13 +39,18 @@ exports.express = function express(path, store) {
 function middleware(framework, path, dependencies = {}) {
   const settings = config.load(path);
 
+  const auths = (settings.isValid) ? authenticators.load(settings.authenticators) : null;
+  const db = (settings.isValid) ? database.load(settings.database) : null;
+
   exports.shutdown = function shutdown() {
-    database.close();
+    if (db) {
+      db.close();
+    }
   };
 
   return require(`frameworks/${framework}`).middleware(
-    (settings.isValid) ? authenticators.load(settings.authenticators) : null,
-    (settings.isValid) ? database.load(settings.database) : null, // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
+    auths,
+    db, // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
     settings,
     dependencies
   );
