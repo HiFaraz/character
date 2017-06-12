@@ -27,7 +27,7 @@ export default {
  * Modules
  */
 import { clone, flow } from 'lodash';
-import assert from 'assert';
+import assert from 'lib/assert';
 import read from 'read-data';
 
 /**
@@ -116,15 +116,21 @@ function safeGetEnvString(name, description) {
  * Validate required configuration parameters
  * @alias module:lib/config.validate
  * @param {Object} config
- * @returns {Object} Configuration (unmodified)
+ * @returns {Object} Validated configuration with a `isValid` boolean property
  */
 function validate(config) {
-  assert(config.database, 'missing database configuration');
-  assert(typeof config.database === 'string' || typeof config.database === 'object', 'database configuration must be either URL string or Sequelize options object');
-  assert(config.authenticators && Object.keys(config.authenticators).length > 0, 'missing authenticators');
-  Object.keys(config.authenticators).forEach(name => validateAuthenticator(name, config.authenticators[name]));
-  assert(config.session.secret, 'missing environment variable reference for session secret key');
-  return config;
+
+  const result = clone(config);
+
+  result.isValid = and(
+    assert(config.database, 'missing database configuration'),
+    assert(typeof config.database === 'string' || typeof config.database === 'object', 'database configuration must be either URL string or Sequelize options object'),
+    assert(config.authenticators && Object.keys(config.authenticators).length > 0, 'missing authenticators'),
+    ...Object.keys(config.authenticators).map(name => validateAuthenticator(name, config.authenticators[name])),
+    assert(config.session.secret, 'missing environment variable reference for session secret key')
+  );
+
+  return result;
 }
 
 /**
@@ -135,12 +141,23 @@ function validate(config) {
  * @param {string} authenticator.module Module name
  * @param {string} authenticator.source Either `npm` or `local`
  * @param {string} [authenticator.path] Path of local authenticator module
+ * @returns {boolean} Is the authenticator configuration valid?
  */
 function validateAuthenticator(name, authenticator) {
-  assert(authenticator.module, `missing module for authenticator \`${name}\``);
-  assert(authenticator.source, `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``);
-  if (authenticator.source === 'local') {
-    assert(authenticator.path, `missing path for authenticator \`${name}\``);
-    // TODO: check that we have a local copy of this file for future re-installs @ authenticator.path
-  }
+  return (typeof authenticator === 'object') && and(
+    assert(authenticator.module, `missing module for authenticator \`${name}\``),
+    assert(authenticator.source, `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``),
+    assert((authenticator.source === 'local') ? authenticator.path : true, `missing path for authenticator \`${name}\``)
+  );
+  // TODO: for source = local, check that we have a local copy of this file for future re-installs @ authenticator.path
+}
+
+/**
+ * Perform a logical AND on parameters
+ *
+ * @param {...boolean} values Input values
+ * @returns {boolean} Result of logical AND
+ */
+function and(...values) {
+  return values.includes(false) === false;
 }

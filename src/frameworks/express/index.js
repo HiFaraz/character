@@ -20,14 +20,18 @@ import express from 'express';
 export function middleware(authenticators, database, settings, dependencies) {
   const app = express();
 
+  if (settings.isValid) {
 
-  // pre-authenticator configuration
-  configure.beforeAuthenticators(app, database, dependencies.store, settings);
+    // pre-authenticator configuration
+    configure.beforeAuthenticators(app, database, dependencies.store, settings);
 
-  // attach authenticators
+    // attach authenticators
 
-  // post-authenticator configuration
-  configure.afterAuthenticators(app);
+    // post-authenticator configuration
+    configure.afterAuthenticators(app);
+  } else {
+    console.warn('Not attaching middleware. Fix your config and restart the server');
+  }
 
   return app;
 }

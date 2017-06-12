@@ -37,7 +37,6 @@ exports.express = function express(path, store) {
  * @returns {Object} Middleware for Identity Desk
  */
 function middleware(framework, path, dependencies = {}) {
-
   const settings = config.load(path);
 
   exports.shutdown = function shutdown() {
@@ -45,8 +44,8 @@ function middleware(framework, path, dependencies = {}) {
   };
 
   return require(`frameworks/${framework}`).middleware(
-    authenticators.load(settings.authenticators),
-    database.load(settings.database), // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
+    (settings.isValid) ? authenticators.load(settings.authenticators) : null,
+    (settings.isValid) ? database.load(settings.database) : null, // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
     settings,
     dependencies
   );
