@@ -9,7 +9,10 @@
 import configure from 'frameworks/express/lib/configure';
 import express from 'express';
 
+const debug = require('debug')('identity-desk:frameworks:express');
+
 /**
+ * Create Express middleware
  *
  * @param {Object} authenticators
  * @param {Object} database
@@ -19,6 +22,12 @@ import express from 'express';
  */
 export function middleware(authenticators, database, settings, dependencies) {
   const app = express();
+
+  /**
+   * Two types of middleware:
+   * - authenticator middleware (only if settings are valid)
+   * - admin GUI (configuration, user admin)
+   */
 
   if (settings.isValid) {
 
@@ -30,7 +39,7 @@ export function middleware(authenticators, database, settings, dependencies) {
     // post-authenticator configuration
     configure.afterAuthenticators(app);
   } else {
-    console.warn('Not attaching middleware. Fix your config and restart the server');
+    debug('Not attaching middleware. Fix your config and restart the server');
   }
 
   return app;

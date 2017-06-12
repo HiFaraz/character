@@ -7,7 +7,7 @@
 import assert from 'assert';
 // TODO use a logging library
 
-const log = console.log;
+const debug = require('debug')('identity-desk:lib:assert');
 
 /**
  * Assert in production, warn in other environments
@@ -20,7 +20,7 @@ export default function assertion(value, message) {
   if (process.env.NODE_ENV === 'production') {
     assert(value, message);
   } else if (!value) {
-    log(message);
+    debug(message);
   }
   return Boolean(value);
 }
