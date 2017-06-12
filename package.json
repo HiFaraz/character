@@ -4,12 +4,13 @@
   "description": "The Node.js identity solution",
   "main": "dist",
   "scripts": {
-    "clean-dist": "rimraf dist",
     "prebuild": "npm outdated && npm run lint && npm run clean-dist",
     "build": "npm run build:src",
     "build-ci": "npm run build:src",
     "build-watch": "npm run build -- -- --watch",
     "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
+    "check-security": "nsp check",
+    "clean-dist": "rimraf dist",
     "document": "jsdoc --configure .jsdoc.json",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
@@ -46,6 +47,7 @@
     "identity-desk-local": "^0.1.0",
     "jsdoc": "^3.4.3",
     "mocha": "^3.4.2",
+    "nsp": "^2.6.3",
     "rimraf": "^2.6.1",
     "sqlite3": "^3.1.8",
     "supertest": "^3.0.0"
