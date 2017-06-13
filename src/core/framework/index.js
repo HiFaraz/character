@@ -4,16 +4,16 @@
  * Module dependencies.
  */
 
+import { assert, asyncEnabled } from '../../utils';
 import Koa from 'koa';
 import Router from 'koa-router';
-import { assert, asyncEnabled } from '../../utils';
 import { clone } from 'lodash';
 import path from 'path';
 import read from 'read-data';
 
 /**
  * Safely require a module which requires Node v7.6+. Falls back to a local copy
- * @param {*} module 
+ * @param {string} module
  */
 const asyncSafeRequire = module => require((asyncEnabled() ? '' : './') + module);
 
