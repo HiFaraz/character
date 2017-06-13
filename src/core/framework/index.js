@@ -13,7 +13,9 @@ import read from 'read-data';
 
 /**
  * Safely require a module which requires Node v7.6+. Falls back to a local copy
+ *
  * @param {string} module
+ * @returns {*}
  */
 const asyncSafeRequire = module => require((asyncEnabled() ? '' : './') + module);
 
