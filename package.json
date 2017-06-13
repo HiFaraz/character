@@ -51,7 +51,6 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
-    "app-module-path": "^2.2.0",
     "babel-polyfill": "^6.23.0",
     "debug": "^2.6.8",
     "lodash": "^4.17.4",
