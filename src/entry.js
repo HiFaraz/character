@@ -14,4 +14,4 @@ import { addPath } from 'app-module-path';
 import path from 'path';
 
 // Register the codebase root folder on the module import/require path
-addPath(path.resolve(__dirname, '../../lib'));
+addPath(path.resolve(__dirname, '../lib'));

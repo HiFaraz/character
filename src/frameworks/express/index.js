@@ -1,6 +1,6 @@
 'use strict';
 
-import configure from 'frameworks/express/lib/configure';
+import configure from 'frameworks/express/configure';
 import express from 'express';
 
 const debug = require('debug')('identity-desk:frameworks:express');

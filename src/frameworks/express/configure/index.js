@@ -17,9 +17,9 @@ export default {
  * Module dependencies.
  */
 
-import parsers from 'frameworks/express/lib/parsers';
-import requests from 'frameworks/express/lib/requests';
-import sessions from 'frameworks/express/lib/sessions';
+import parsers from './parsers';
+import requests from './requests';
+import sessions from './sessions';
 
 /**
  * Configure Express before attaching authenticators

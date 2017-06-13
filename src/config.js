@@ -26,7 +26,7 @@ export default {
  */
 
 import { clone, flow } from 'lodash';
-import assert from 'lib/assert';
+import { assert } from './utils';
 import read from 'read-data';
 
 /**

@@ -7,15 +7,15 @@
 'use strict';
 
 // Must import entry-point code first
-import './lib/entry';
+import './entry';
 
 /**
  * Module dependencies.
  */
 
-import authenticators from 'lib/authenticators';
-import config from 'lib/config';
-import database from 'lib/database';
+import authenticators from './authenticators';
+import config from './config';
+import database from './database';
 
 /**
  * Express middleware for Identity Desk
@@ -48,10 +48,5 @@ function middleware(framework, path, dependencies = {}) {
     }
   };
 
-  return require(`frameworks/${framework}`).middleware(
-    auths,
-    db, // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
-    settings,
-    dependencies
-  );
+  return require(`frameworks/${framework}`).middleware(auths, db, settings, dependencies); // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
 }

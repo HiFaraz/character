@@ -1,6 +1,10 @@
-import assert from 'assert';
+import coreAssert from 'assert';
 
 const debug = require('debug')('identity-desk:lib:assert');
+
+export {
+  assert,
+};
 
 /**
  * Assert in production, warn in other environments
@@ -9,9 +13,9 @@ const debug = require('debug')('identity-desk:lib:assert');
  * @param {string} message Message on assertion failure
  * @return {boolean}
  */
-export default function assertion(value, message) {
+function assert(value, message) {
   if (process.env.NODE_ENV === 'production') {
-    assert(value, message);
+    coreAssert(value, message);
   } else if (!value) {
     debug(message);
   }
