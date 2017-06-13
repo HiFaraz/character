@@ -38,6 +38,7 @@ jspm_packages
 
 # Local files
 *.local
+.ignore
 
 # Build files
 lib
