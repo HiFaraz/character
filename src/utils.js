@@ -1,10 +1,21 @@
 import coreAssert from 'assert';
 
-const debug = require('debug')('identity-desk:lib:assert');
+const debug = require('debug')('identity-desk:utils');
 
 export {
+  and,
   assert,
 };
+
+/**
+ * Perform a logical AND on parameters
+ *
+ * @param {...boolean} values Input values
+ * @return {boolean} Result of logical AND
+ */
+function and(...values) {
+  return values.includes(false) === false;
+}
 
 /**
  * Assert in production, warn in other environments

@@ -14,47 +14,45 @@
 
 export default {
   load,
-  // registerAuthenticator,
   populateEnvironmentVariables,
-  readFileSync,
   validate,
-  validateAuthenticator,
 };
 
 /**
  * Module dependencies.
  */
 
-import { clone, flow } from 'lodash';
-import { assert } from './utils';
+import { and, assert } from '../utils';
+import { clone, flow, merge } from 'lodash';
 import read from 'read-data';
 
 /**
  * Applies default configuration values
  *
- * @param {Object} config
- * @return {Object} Configuration populated with default values where needed
+ * @param {Object[]} [defaults=[]]
+ * @return {Object}
  */
-function applyDefaults(config) {
-  return Object.assign(
-    readFileSync('.identity-desk.defaults.yml'),
-    config
-  );
+function applyDefaults(defaults = []) {
+  return data => merge(data, ...defaults);
 }
 
 /**
- * Load a configuration file synchronously
+ * Assemble a configuration
  *
- * @param {string} [path='.identity-desk.yml'] Path to the configuration file
- * @return {Object} Settings
+ * @param {string|Object} [source='.identity-desk.yml'] Path to the configuration YAML/JSON file or configuration object
+ * @param {Object} [extras]
+ * @param {Object[]} [extras.defaults] Framework and plugin defaults
+ * @param {function[]} [extras.validators] Framework and plugin validators
+ * @return {Object}
  */
-function load(path = '.identity-desk.yml') {
+function load(source = '.identity-desk.yml', extras) {
+  const _source = (typeof source === 'string') ? read.sync(source) : source;
+
   return flow(
-    readFileSync,
-    applyDefaults,
-    validate,
-    populateEnvironmentVariables
-  )(path);
+    applyDefaults(extras.defaults),
+    validate(extras.validators),
+    populateEnvironmentVariables,
+  )(_source);
 }
 
 /**
@@ -86,16 +84,6 @@ function populateEnvironmentVariables(config) {
 }
 
 /**
- * Read a YAML or JSON file synchronously
- *
- * @param {string} path Path to the YAML or JSON file
- * @return {Object}
- */
-function readFileSync(path) {
-  return read.sync(path);
-}
-
-/**
  * Read an environment variable and throw if it is undefined
  *
  * @param {string} name Environment variable name
@@ -117,49 +105,15 @@ function safeGetEnvString(name, description) {
  *
  * Adds an `isValid` property to the returned configuration
  *
- * @param {Object} config
+ * @param {Object} [validators]
  * @return {Object}
  */
-function validate(config) {
-
-  const result = clone(config);
-
-  result.isValid = and(
-    assert(config.database, 'missing database configuration'),
-    assert(typeof config.database === 'string' || typeof config.database === 'object', 'database configuration must be either URL string or Sequelize options object'),
-    assert(config.authenticators && Object.keys(config.authenticators).length > 0, 'missing authenticators'),
-    ...Object.keys(config.authenticators).map(name => validateAuthenticator(name, config.authenticators[name])),
-    assert(config.session.secret, 'missing environment variable reference for session secret key')
-  );
-
-  return result;
-}
-
-/**
- * Validate an authenticator
- *
- * @param {string} name Authenticator name
- * @param {Object} authenticator
- * @param {string} authenticator.module Module name
- * @param {string} authenticator.source Either `npm` or `local`
- * @param {string} [authenticator.path] Path of local authenticator module
- * @return {boolean}
- */
-function validateAuthenticator(name, authenticator) {
-  return (typeof authenticator === 'object') && and(
-    assert(authenticator.module, `missing module for authenticator \`${name}\``),
-    assert(authenticator.source, `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``),
-    assert((authenticator.source === 'local') ? authenticator.path : true, `missing path for authenticator \`${name}\``)
-  );
-  // TODO: for source = local, check that we have a local copy of this file for future re-installs @ authenticator.path
-}
-
-/**
- * Perform a logical AND on parameters
- *
- * @param {...boolean} values Input values
- * @return {boolean} Result of logical AND
- */
-function and(...values) {
-  return values.includes(false) === false;
+function validate(validators = []) {
+  return data => Object.assign(clone(data), {
+    isValid: and(
+      assert(data.database, 'missing database configuration'),
+      assert(typeof data.database === 'string' || typeof data.database === 'object', 'database configuration must be either URL string or Sequelize options object'),
+      ...validators.map(validator => validator(data)),
+    ),
+  });
 }

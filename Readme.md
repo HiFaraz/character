@@ -20,6 +20,25 @@ Identity Desk is compatible with Express 4.x. To use Identity Desk, you will nee
   - `express`
   - `express-session`
 
+# Pieces
+
+Core lets other "plugins" access and validate the config somehow. Each plugin also has its default config. However the actual config is stored in one file only!
+
+Core:
+- read a configuration file, database validation
+- congifuration GUI and services
+
+Express:
+- serves configuration GUI
+- has own config option for base and login paths
+
+Authentication:
+- linked users table
+- consume authenticators
+- validate authenticator config
+
+Individual authenticators
+
 ## Tests
 
 To run the test suite, first install the dependencies, then run `npm test`:

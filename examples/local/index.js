@@ -4,7 +4,9 @@
  * Modules
  */
 const express = require('express');
-const identityDesk = require('../../');
+const identityDesk = require('../../lib');
+const framework = require('../../lib/frameworks/express');
+const authentication = require('../../lib/authentication');
 const path = require('path');
 
 const app = express();
@@ -12,10 +14,17 @@ module.exports = app;
 
 // configuration
 
-const CONFIG_PATH = path.resolve(__dirname, '.identity-desk.yml'); // or you can just put .identity-desk.yml/json in your application root folder
+const CONFIG_PATH = path.resolve(__dirname, '.identity-desk.yml');
 process.env.DATABASE_URL = 'sqlite://:memory:';
 process.env.SESSION_SECRET = 'my secret';
-app.use(identityDesk.express(CONFIG_PATH));
+
+app.use(identityDesk({
+  config: CONFIG_PATH, // or you can just put .identity-desk.yml/json in your application root folder
+  framework,
+  plugins: [
+    authentication,
+  ],
+}));
 
 function restrict(req, res, next) {
   if (req.isAuthenticated()) {

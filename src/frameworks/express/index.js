@@ -1,7 +1,9 @@
 'use strict';
 
+import { assert } from '../../utils';
 import configure from './configure';
 import express from 'express';
+import read from 'read-data';
 
 const debug = require('debug')('identity-desk:frameworks:express');
 
@@ -38,3 +40,9 @@ export function middleware(authenticators, database, settings, dependencies) {
 
   return app;
 }
+
+export const defaults = read.sync('./lib/frameworks/express/defaults.yml');
+
+export const config = {
+  validate: data => assert(data.session.secret, 'missing environment variable reference for session secret key'),
+};

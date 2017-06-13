@@ -1,7 +1,3 @@
-/**
- * Common code required at all entry-points
- */
-
 'use strict';
 
 /**
