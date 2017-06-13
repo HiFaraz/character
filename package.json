@@ -2,19 +2,19 @@
   "name": "identity-desk",
   "version": "0.0.0",
   "description": "The Node.js identity solution",
-  "main": "dist",
+  "main": "lib",
   "scripts": {
-    "prebuild": "npm outdated && npm run lint && npm run clean-dist",
+    "prebuild": "npm outdated && npm run lint && npm run clean-lib",
     "build": "npm run build:src",
     "build-ci": "npm run build:src",
     "build-watch": "npm run build -- -- --watch",
-    "build:src": "babel src --out-dir dist --copy-files --source-maps inline",
+    "build:src": "babel src --out-dir lib --copy-files --source-maps inline",
     "check-security": "nsp check",
-    "clean-dist": "rimraf dist",
+    "clean-lib": "rimraf lib",
     "prelint": "npm run check-security",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
-    "test": "mocha dist/**/*.spec.js dist/test"
+    "test": "mocha lib/**/*.spec.js lib/test"
   },
   "repository": {
     "type": "git",

@@ -40,4 +40,4 @@ jspm_packages
 *.local
 
 # Build files
-dist
+lib

@@ -11,5 +11,5 @@ cache:
 before_script:
   - npm run check-security
   - npm run lint-ci
-  - npm run clean-dist
+  - npm run clean-lib
   - npm run build-ci
