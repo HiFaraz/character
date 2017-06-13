@@ -6,70 +6,77 @@
 
 'use strict';
 
-export { identityDesk };
-
 /**
  * Module dependencies.
  */
 
 // import authenticators from '../authentication/authenticators';
+import CoreFramework from './framework';
+import { clone } from 'lodash';
 import config from './config';
-// import database from './database';
+import database from './database';
 
-/**
- * Express middleware for Identity Desk
- *
- * @param {string} path Path to the configuration file
- * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided
- * @return {Object}
- */
-// function express(path, store) {
-//   return middleware('express', path, { store });
-// }
+const debug = require('debug')('identity-desk:core');
 
-/**
- * Generic middleware method
- *
- * @param {string} framework Framework name. Currently only `express` is supported
- * @param {string} path Path to the configuration file
- * @param {string} [dependencies={}] Framework specific dependencies
- * @return {Object}
- */
-// function middleware(framework, path, dependencies = {}) {
-//   const settings = config.load(path);
+export default class IdentityDesk {
+  /**
+   * Create Identity Desk middleware
+   *
+   * @param {Object} options
+   * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
+   * @param {Array|Object} options.framework Array with structure: `[framework, dependencies]`. Can also pass a framework module directly if there are no dependencies
+   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
+   */
+  constructor(options) {
+    debug('initializing');
+    this.options = clone(options);
 
-//   const auths = (settings.isValid) ? authenticators.load(settings.authenticators) : null;
-//   const db = (settings.isValid) ? database.load(settings.database) : null;
+    // transform inputs
 
-//   const shutdown = function shutdown() {
-//     if (db) {
-//       db.close();
-//     }
-//   };
+    const transform = value => (Array.isArray(value)) ? value : [value, {}];
+    this.options.framework = transform(options.framework);
+    this.options.plugins = options.plugins.map(transform);
 
-//   return require(`../frameworks/${framework}`).middleware(auths, db, settings, dependencies); // ideally the middleware generator should consume services directly, not a database that it uses to construct a service
-// }
+    debug(this.options);
 
-/**
- * Create Identity Desk middleware
- *
- * @param {Object} options
- * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
- * @param {Array|Object} options.framework Array with structure: `[framework, dependencies]`. Can also pass a framework module directly if there are no dependencies
- * @param {Object[]} [options.plugins]
- */
-function identityDesk(options) {
+    const Framework = this.options.framework[0](CoreFramework);
 
-  const _framework = (Array.isArray(options.framework)) ? options.framework : [options.framework, {}];
+    // configure
 
-  // get configuration
+    const defaults = [
+      Framework.defaults(),
+      ...this.options.plugins.map(([plugin]) => plugin.defaults),
+    ].filter(Boolean);
 
-  const defaults = [_framework[0].defaults, ...options.plugins.map(plugin => plugin.defaults)].filter(value => Boolean(value));
-  const validators = [_framework[0].config.validate, ...options.plugins.map(plugin => plugin.config.validate)].filter(value => Boolean(value));
+    const validators = [
+      Framework.config.validate,
+      ...this.options.plugins.map(([plugin]) => plugin.config.validate),
+    ].filter(Boolean);
 
-  const configuration = config.load(options.config, { defaults, validators });
+    this.configuration = config.load(this.options.config, { defaults, validators });
+    debug('loaded configuration', this.configuration);
 
-  console.log(configuration);
+    if (this.configuration.isValid) {
+      this.database = database.load(this.configuration.database);
+    }
 
-  //
+    this.framework = new Framework(this.database, this.configuration);
+  }
+
+  /**
+   * Example usage:
+   *
+   * - Express: app.use(identityDesk.app());
+   * - Koa: app.use(identityDesk.app())
+   *
+   * @return {Object}
+   */
+  app() {
+    return this.framework.app();
+  }
+
+  shutdown() {
+    debug('shutting down');
+    this.database.close();
+  }
 }

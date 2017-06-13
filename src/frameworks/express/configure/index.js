@@ -27,7 +27,7 @@ import sessions from './sessions';
  * @param {Object} app Express app
  */
 function afterAuthenticators(app) {
-  sessions.attach(app);
+  sessions.attach(app); // TODO move to /authentication
 }
 
 /**
@@ -40,6 +40,6 @@ function afterAuthenticators(app) {
  */
 function beforeAuthenticators(app, database, store, settings) {
   parsers.attach(app, settings);
-  requests.extend(app);
-  sessions.setup(app, database, store, settings);
+  requests.extend(app); // TODO move to /authentication
+  sessions.setup(app, database, store, settings); // TODO move to /authentication
 }

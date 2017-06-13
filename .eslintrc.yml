@@ -18,7 +18,10 @@ rules:
   'linebreak-style':
     - error
     - unix
-  'new-cap': error
+  'new-cap':
+    - error
+    - 
+      capIsNew: false
   'no-array-constructor': error
   'no-await-in-loop': warn
   'no-console': warn

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import app from '../../examples/local';
+import app from '../../examples/local-express';
 import request from 'supertest';
 
 function getCookie(res) {
@@ -34,7 +34,7 @@ describe('local', function() {
         .send('username=not-foo&password=bar')
         .expect('Location', '/login')
         .expect(302, function(err, res) {
-          if (err) {return done(err);}
+          if (err) { return done(err); }
           request(app)
             .get('/login')
             .set('Cookie', getCookie(res))
@@ -67,7 +67,7 @@ describe('local', function() {
         .send('username=foo&password=bar')
         .expect('Location', '/')
         .expect(302, function(err, res) {
-          if (err) {return done(err);}
+          if (err) { return done(err); }
           request(app)
             .get('/restricted')
             .set('Cookie', getCookie(res))

@@ -28,7 +28,12 @@ Core:
 - read a configuration file, database validation
 - congifuration GUI and services
 
-Express:
+Express/Koa:
+- provides routing
+- choosing a framework is mandatory
+- Koa is the base framework abstraction, other frameworks will convert the Koa export into something appropriate for their framework
+
+Configuration:
 - serves configuration GUI
 - has own config option for base and login paths
 
