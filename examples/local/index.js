@@ -7,16 +7,12 @@ const express = require('express');
 const identityDesk = require('../../');
 const path = require('path');
 
-// constants
-
-const CONFIG_PATH = path.resolve(__dirname, '.identity-desk.yml'); // or you can just put .identity-desk.yml/json in your application root folder
-
-
 const app = express();
 module.exports = app;
 
 // configuration
 
+const CONFIG_PATH = path.resolve(__dirname, '.identity-desk.yml'); // or you can just put .identity-desk.yml/json in your application root folder
 process.env.DATABASE_URL = 'sqlite://:memory:';
 process.env.SESSION_SECRET = 'my secret';
 app.use(identityDesk.express(CONFIG_PATH));
