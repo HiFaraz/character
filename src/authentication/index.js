@@ -15,7 +15,7 @@ export const config = {
  * @param {string} authenticator.module Module name
  * @param {string} authenticator.source Either `npm` or `local`
  * @param {string} [authenticator.path] Path of local authenticator module
- * @return {boolean}
+ * @return {Boolean}
  */
 function validateAuthenticator(name, authenticator) {
   return (typeof authenticator === 'object') && and(

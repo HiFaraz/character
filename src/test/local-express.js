@@ -10,7 +10,7 @@ function getCookie(res) {
   return res.headers['set-cookie'][0].split(';')[0];
 }
 
-describe('local', function() {
+describe('local-express', function() {
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
       request(app)

@@ -54,7 +54,6 @@ export default class IdentityDesk {
     ].filter(Boolean);
 
     this.configuration = config.load(this.options.config, { defaults, validators });
-    debug('loaded configuration', this.configuration);
 
     if (this.configuration.isValid) {
       this.database = database.load(this.configuration.database);

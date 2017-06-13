@@ -8,9 +8,12 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import { assert } from '../../utils';
 import bodyParser from './koa-bodyparser'; // local copy so that it can get transpiled for Node < 7.6 support
+import { clone } from 'lodash';
 import mount from './koa-mount'; // local copy so that it can get transpiled for Node < 7.6 support
 import path from 'path';
 import read from 'read-data';
+
+// TODO look into repurposing https://github.com/webnuts/babel-require and `semver` to babel-require koa async modules only if necessary
 
 const debug = require('debug')('identity-desk:core:framework');
 
@@ -24,7 +27,7 @@ module.exports = class CoreFramework {
   constructor(database, settings, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
 
-    this.settings = settings;
+    this.settings = clone(settings);
 
     this._app = new Koa();
     const router = new Router();

@@ -57,7 +57,7 @@ function attachMethods(app) {
  * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided
  * @param {Object} settings
  * @param {string} [settings.cookie='connect.sid'] Session cookie name, default set by express-session
- * @param {boolean} settings.proxy Are we behind an SSL proxy?
+ * @param {Boolean} settings.proxy Are we behind an SSL proxy?
  * @param {Object} settings.session
  * @param {string} settings.session.secret Session secret
  */
