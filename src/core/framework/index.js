@@ -6,14 +6,19 @@
 
 import Koa from 'koa';
 import Router from 'koa-router';
-import { assert } from '../../utils';
-import bodyParser from './koa-bodyparser'; // local copy so that it can get transpiled for Node < 7.6 support
+import { assert, asyncEnabled } from '../../utils';
 import { clone } from 'lodash';
-import mount from './koa-mount'; // local copy so that it can get transpiled for Node < 7.6 support
 import path from 'path';
 import read from 'read-data';
 
-// TODO look into repurposing https://github.com/webnuts/babel-require and `semver` to babel-require koa async modules only if necessary
+/**
+ * Safely require a module which requires Node v7.6+. Falls back to a local copy
+ * @param {*} module 
+ */
+const asyncSafeRequire = module => require((asyncEnabled() ? '' : './') + module);
+
+const bodyParser = asyncSafeRequire('koa-bodyparser');
+const mount = asyncSafeRequire('koa-mount');
 
 const debug = require('debug')('identity-desk:core:framework');
 
