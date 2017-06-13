@@ -1,11 +1,9 @@
 /**
  * Identity Desk
- *
- * @author Faraz Syed <hello@farazsyed.com>
- * @copyright 2017 Faraz Syed
- * @license MIT
- * @module
+ * Copyright(c) 2017 Faraz Syed
+ * MIT Licensed
  */
+
 
 'use strict';
 
@@ -13,14 +11,16 @@
 import './lib/entry';
 
 /**
- * Modules
+ * Module dependencies.
  */
+
 import authenticators from 'lib/authenticators';
 import config from 'lib/config';
 import database from 'lib/database';
 
 /**
  * Express middleware for Identity Desk
+ *
  * @param {string} path Path to the configuration file
  * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided
  * @returns {Object} Express middleware for Identity Desk
@@ -31,6 +31,7 @@ exports.express = function express(path, store) {
 
 /**
  * Generic middleware method
+ *
  * @param {string} framework Framework name. Currently only `express` is supported
  * @param {string} path Path to the configuration file
  * @param {string} [dependencies={}] Framework specific dependencies

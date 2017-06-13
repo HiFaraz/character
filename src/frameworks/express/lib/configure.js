@@ -26,7 +26,6 @@ import sessions from 'frameworks/express/lib/sessions';
  * Configure Express before attaching authenticators
  *
  * @param {Object} app Express app
- * @alias module:frameworks/express/lib/configure.afterAuthenticators
  */
 function afterAuthenticators(app) {
   sessions.attach(app);

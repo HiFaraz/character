@@ -41,6 +41,3 @@ jspm_packages
 
 # Build files
 dist
-
-# Documentation (can be rebuilt with `$ npm run documentation`)
-docs

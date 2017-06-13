@@ -15,6 +15,7 @@ export default {
 
 /**
  * Create a hash table of authenticator modules
+ *
  * @alias module:lib/authenticators.load
  * @param {Object} authenticators
  * @returns {Object} Hash table of authenticator modules

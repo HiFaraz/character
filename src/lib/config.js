@@ -32,6 +32,7 @@ import read from 'read-data';
 
 /**
  * Applies default configuration values
+ *
  * @alias module:lib/config.applyDefaults
  * @param {Object} config
  * @returns {Object} Configuration populated with default values where needed
@@ -45,6 +46,7 @@ function applyDefaults(config) {
 
 /**
  * Load a configuration file synchronously
+ *
  * @alias module:lib/config.load
  * @param {string} [path='.identity-desk.yml'] Path to the configuration file
  * @returns {Object} Settings
@@ -60,6 +62,7 @@ function load(path = '.identity-desk.yml') {
 
 /**
  * Populate configuration secrets with values from environment variables
+ *
  * @alias module:lib/config.populateEnvironmentVariables
  * @param {Object} config
  * @returns {Object} Configuration populated with values from environment variables
@@ -88,6 +91,7 @@ function populateEnvironmentVariables(config) {
 
 /**
  * Read a YAML or JSON file synchronously
+ *
  * @alias module:lib/config.readFileSync
  * @param {string} path Path to the YAML or JSON file
  * @returns {Object} File contents parsed to an Object
@@ -98,6 +102,7 @@ function readFileSync(path) {
 
 /**
  * Read an environment variable and throw if it is undefined
+ *
  * @param {string} name Environment variable name
  * @param {string} description Environment variable description to show in error message if it is undefined
  * @returns {*} Value of the environment variable
@@ -114,6 +119,7 @@ function safeGetEnvString(name, description) {
 
 /**
  * Validate required configuration parameters
+ *
  * @alias module:lib/config.validate
  * @param {Object} config
  * @returns {Object} Validated configuration with a `isValid` boolean property
@@ -135,6 +141,7 @@ function validate(config) {
 
 /**
  * Validate an authenticator
+ *
  * @alias module:lib/config.validateAuthenticator
  * @param {string} name Authenticator name
  * @param {Object} authenticator

@@ -19,6 +19,7 @@ import session from 'express-session';
 
 /**
  * Attach session middleware
+ *
  * @param {Object} app Express app
  * @alias module:frameworks/express/lib/sessions.attach
  */
@@ -29,6 +30,7 @@ function attach(app) {
 
 /**
  * Attach session methods
+ *
  * @param {Object} app Expres app
  */
 function attachMethods(app) {
@@ -55,6 +57,7 @@ function attachMethods(app) {
 
 /**
  * Prepare session middleware without attaching to the stack
+ *
  * @param {Object} app Express app
  * @param {Object} [database] Sequelize database object. Not needed if a store is provided
  * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided
@@ -79,6 +82,7 @@ function attachStore(app, database, store = defaultStore(database), { cookie: na
 
 /**
  * Create a Sequelize database session store
+ *
  * @param {Object} database Sequelize database object
  * @returns {Object} Sequelize database session store
  */
@@ -90,6 +94,7 @@ function defaultStore(database) {
 
 /**
  * Prepares session middleware and methods without attaching to the stack
+ *
  * @param {Object} app Express app
  * @param {Object} [database] Sequelize database object. Not needed if a store is provided
  * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided

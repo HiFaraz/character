@@ -1,5 +1,3 @@
 # Ignore built files
 dist/*
 
-# Ignore documentation files
-docs/*

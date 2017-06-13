@@ -14,6 +14,7 @@ import Sequelize from 'sequelize';
 
 /**
  * Create a Sequelize database object
+ *
  * @alias module:lib/database.load
  * @param {*} database Sequelize database options
  * @returns {Object} Sequelize database object
