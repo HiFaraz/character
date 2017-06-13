@@ -1,9 +1,3 @@
-/**
- * Express middleware
- *
- * @module
- */
-
 'use strict';
 
 import configure from 'frameworks/express/lib/configure';
@@ -18,7 +12,7 @@ const debug = require('debug')('identity-desk:frameworks:express');
  * @param {Object} database
  * @param {Object} settings
  * @param {Object} dependencies
- * @returns {Object} Express middleware
+ * @return {Object}
  */
 export function middleware(authenticators, database, settings, dependencies) {
   const app = express();

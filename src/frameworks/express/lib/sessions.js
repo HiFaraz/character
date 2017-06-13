@@ -1,9 +1,3 @@
-/**
- * Session middleware and methods
- *
- * @module
- */
-
 'use strict';
 
 export default {
@@ -12,8 +6,9 @@ export default {
 };
 
 /**
- * Modules
+ * Module dependencies.
  */
+
 import sequelizeStore from 'connect-session-sequelize';
 import session from 'express-session';
 
@@ -21,7 +16,6 @@ import session from 'express-session';
  * Attach session middleware
  *
  * @param {Object} app Express app
- * @alias module:frameworks/express/lib/sessions.attach
  */
 function attach(app) {
   app.use(app.locals.identityDesk.session);
@@ -84,7 +78,7 @@ function attachStore(app, database, store = defaultStore(database), { cookie: na
  * Create a Sequelize database session store
  *
  * @param {Object} database Sequelize database object
- * @returns {Object} Sequelize database session store
+ * @return {Object}
  */
 function defaultStore(database) {
   const store = new(sequelizeStore(session.Store))({ db: database });
@@ -99,7 +93,6 @@ function defaultStore(database) {
  * @param {Object} [database] Sequelize database object. Not needed if a store is provided
  * @param {Object} [store] Store for `express-sessions`. Uses the database if a store is not provided
  * @param {Object} settings
- * @alias module:frameworks/express/lib/sessions.setup
  */
 function setup(app, database, store, settings) {
   attachStore(app, database, store, settings);

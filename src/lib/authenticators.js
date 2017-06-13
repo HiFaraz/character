@@ -3,8 +3,6 @@
  *
  * On start-up:
  * - verify that authenticator modules are installed
- *
- * @module
  */
 
 'use strict';
@@ -16,9 +14,8 @@ export default {
 /**
  * Create a hash table of authenticator modules
  *
- * @alias module:lib/authenticators.load
  * @param {Object} authenticators
- * @returns {Object} Hash table of authenticator modules
+ * @return {Object}
  */
 function load(authenticators) {
   const result = {};
@@ -27,6 +24,7 @@ function load(authenticators) {
     try {
       result[name] = require(authenticators[name].module);
     } catch (error) {
+      // TODO: should be a fatal error in production, else should just be a warning that disables the authenticator and warns the developer
       throw new Error(`module \`${authenticators[name].module}\` not installed for authenticator \`${name}\``);
     }
   });

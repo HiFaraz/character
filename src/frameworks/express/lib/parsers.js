@@ -1,8 +1,3 @@
-/**
- * Attach body parsers to Express
- *
- * @module
- */
 'use strict';
 
 export default {
@@ -10,8 +5,9 @@ export default {
 };
 
 /**
- * Modules
+ * Module dependencies.
  */
+
 import bodyParser from 'body-parser';
 
 /**
@@ -20,7 +16,6 @@ import bodyParser from 'body-parser';
  * @param {Object} app Express app
  * @param {Object} settings
  * @param {string} settings.base Mount path for Identity Desk authentication middleware
- * @alias module:frameworks/express/lib/parsers.attach
  */
 function attach(app, settings) {
   app.use(settings.base, bodyParser.json());

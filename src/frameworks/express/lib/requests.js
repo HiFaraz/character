@@ -1,8 +1,3 @@
-/**
- * Extend requests
- *
- * @module
- */
 'use strict';
 
 export default {
@@ -13,7 +8,6 @@ export default {
  * Extends the request objects in an Express app
  *
  * @param {Object} app Express app
- * @alias module:frameworks/express/lib/requests.extend
  */
 function extend(app) {
   app.use((req, res, next) => {

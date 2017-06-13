@@ -1,11 +1,4 @@
-/**
- * Custom assertion library. Only uses a hard assertion in production, else logs a warning
- *
- * @module
- */
-
 import assert from 'assert';
-// TODO use a logging library
 
 const debug = require('debug')('identity-desk:lib:assert');
 
@@ -14,7 +7,7 @@ const debug = require('debug')('identity-desk:lib:assert');
  *
  * @param {*} value Value to assert
  * @param {string} message Message on assertion failure
- * @returns {boolean} Does value exist?
+ * @return {boolean}
  */
 export default function assertion(value, message) {
   if (process.env.NODE_ENV === 'production') {

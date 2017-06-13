@@ -8,8 +8,6 @@
  *
  * On configuration:
  * - register authenticators
- *
- * @module
  */
 
 'use strict';
@@ -24,8 +22,9 @@ export default {
 };
 
 /**
- * Modules
+ * Module dependencies.
  */
+
 import { clone, flow } from 'lodash';
 import assert from 'lib/assert';
 import read from 'read-data';
@@ -33,9 +32,8 @@ import read from 'read-data';
 /**
  * Applies default configuration values
  *
- * @alias module:lib/config.applyDefaults
  * @param {Object} config
- * @returns {Object} Configuration populated with default values where needed
+ * @return {Object} Configuration populated with default values where needed
  */
 function applyDefaults(config) {
   return Object.assign(
@@ -47,9 +45,8 @@ function applyDefaults(config) {
 /**
  * Load a configuration file synchronously
  *
- * @alias module:lib/config.load
  * @param {string} [path='.identity-desk.yml'] Path to the configuration file
- * @returns {Object} Settings
+ * @return {Object} Settings
  */
 function load(path = '.identity-desk.yml') {
   return flow(
@@ -63,9 +60,8 @@ function load(path = '.identity-desk.yml') {
 /**
  * Populate configuration secrets with values from environment variables
  *
- * @alias module:lib/config.populateEnvironmentVariables
  * @param {Object} config
- * @returns {Object} Configuration populated with values from environment variables
+ * @return {Object} Configuration populated with values from environment variables
  */
 function populateEnvironmentVariables(config) {
   const data = clone(config);
@@ -92,9 +88,8 @@ function populateEnvironmentVariables(config) {
 /**
  * Read a YAML or JSON file synchronously
  *
- * @alias module:lib/config.readFileSync
  * @param {string} path Path to the YAML or JSON file
- * @returns {Object} File contents parsed to an Object
+ * @return {Object}
  */
 function readFileSync(path) {
   return read.sync(path);
@@ -105,7 +100,7 @@ function readFileSync(path) {
  *
  * @param {string} name Environment variable name
  * @param {string} description Environment variable description to show in error message if it is undefined
- * @returns {*} Value of the environment variable
+ * @return {*} Value of the environment variable
  */
 function safeGetEnvString(name, description) {
   if (typeof name === 'string' && name.startsWith('$')) {
@@ -120,9 +115,10 @@ function safeGetEnvString(name, description) {
 /**
  * Validate required configuration parameters
  *
- * @alias module:lib/config.validate
+ * Adds an `isValid` property to the returned configuration
+ *
  * @param {Object} config
- * @returns {Object} Validated configuration with a `isValid` boolean property
+ * @return {Object}
  */
 function validate(config) {
 
@@ -142,13 +138,12 @@ function validate(config) {
 /**
  * Validate an authenticator
  *
- * @alias module:lib/config.validateAuthenticator
  * @param {string} name Authenticator name
  * @param {Object} authenticator
  * @param {string} authenticator.module Module name
  * @param {string} authenticator.source Either `npm` or `local`
  * @param {string} [authenticator.path] Path of local authenticator module
- * @returns {boolean} Is the authenticator configuration valid?
+ * @return {boolean}
  */
 function validateAuthenticator(name, authenticator) {
   return (typeof authenticator === 'object') && and(
@@ -163,7 +158,7 @@ function validateAuthenticator(name, authenticator) {
  * Perform a logical AND on parameters
  *
  * @param {...boolean} values Input values
- * @returns {boolean} Result of logical AND
+ * @return {boolean} Result of logical AND
  */
 function and(...values) {
   return values.includes(false) === false;
