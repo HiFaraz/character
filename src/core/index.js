@@ -37,8 +37,6 @@ export default class IdentityDesk {
     this.options.framework = transform(options.framework);
     this.options.plugins = options.plugins.map(transform);
 
-    debug(this.options);
-
     const Framework = this.options.framework[0](CoreFramework);
 
     // configure
