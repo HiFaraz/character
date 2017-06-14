@@ -4,10 +4,10 @@
  * Module dependencies.
  */
 
-import { assert, asyncEnabled } from '../../utils';
 import Koa from 'koa';
 import Router from 'koa-router';
 import Stream from 'stream';
+import { asyncEnabled } from '../../utils';
 import { clone } from 'lodash';
 import isJSON from 'koa-is-json';
 import onFinished from 'on-finished';
@@ -165,4 +165,5 @@ module.exports = class CoreFramework {
   static defaults() {
     return read.sync(path.resolve(__dirname, './defaults.yml'));
   }
+
 };
