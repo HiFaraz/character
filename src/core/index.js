@@ -11,8 +11,9 @@
  */
 
 // import authenticators from '../authentication/authenticators';
+import { clone, flow } from 'lodash';
 import CoreFramework from './framework';
-import { clone } from 'lodash';
+import CorePlugin from './plugin';
 import config from './config';
 import database from './database';
 
@@ -31,24 +32,30 @@ export default class IdentityDesk {
     debug('initializing');
     this.options = clone(options);
 
-    // transform inputs
+    // transform inputs into structure: `[module, dependencies = {}]`
 
     const transform = value => (Array.isArray(value)) ? value : [value, {}];
-    this.options.framework = transform(options.framework);
-    this.options.plugins = options.plugins.map(transform);
+    this.options.framework = flow(
+      transform,
+      ([module, dependencies]) => [module(CoreFramework), dependencies],
+    )(options.framework);
+    this.options.plugins = options.plugins.map(flow(
+      transform,
+      ([module, dependencies]) => [module(CorePlugin), dependencies],
+    ));
 
-    const Framework = this.options.framework[0](CoreFramework);
+    const Framework = this.options.framework[0];
 
     // configure
 
     const defaults = [
       Framework.defaults(),
-      ...this.options.plugins.map(([plugin]) => plugin.defaults),
+      ...this.options.plugins.map(([Plugin]) => Plugin.defaults),
     ].filter(Boolean);
 
     const validators = [
-      Framework.config.validate,
-      ...this.options.plugins.map(([plugin]) => plugin.config.validate),
+      Framework.validateConfig,
+      ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
     ].filter(Boolean);
 
     this.configuration = config.load(this.options.config, { defaults, validators });
@@ -57,7 +64,11 @@ export default class IdentityDesk {
       this.database = database.load(this.configuration.database);
     }
 
-    this.framework = new Framework(this.database, this.configuration);
+    // initialize
+
+    this.plugins = this.options.plugins.map(([Plugin, dependencies]) => new Plugin(this.configuration, dependencies).router);
+
+    this.framework = new Framework(this.database, this.configuration, this.plugins);
   }
 
   /**

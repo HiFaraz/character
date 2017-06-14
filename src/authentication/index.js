@@ -1,10 +1,31 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
 import { and, assert } from '../utils';
 
-export const config = {
-  validate: data => and(
-    assert(data.authenticators && Object.keys(data.authenticators).length > 0, 'missing authenticators'),
-    ...Object.keys(data.authenticators).map(name => validateAuthenticator(name, data.authenticators[name])),
-  ),
+module.exports = function(CorePlugin) {
+  return class Authentication extends CorePlugin {
+
+    defineRoutes() {
+      this.router.use((ctx, next) => {
+        ctx.req.isAuthenticated = () => true;
+        ctx.req.logout = () => ctx.res.redirect('/');
+      });
+    }
+
+    static validateConfig(data) {
+      return and(
+        assert(data.authenticators && Object.keys(data.authenticators).length > 0, 'missing authenticators'),
+        ...Object.keys(data.authenticators).map(name => validateAuthenticator(name, data.authenticators[name])),
+        assert(data.session.secret, 'missing environment variable reference for session secret key'),
+      );
+    }
+
+    // no defaults
+
+  };
 };
 
 /**

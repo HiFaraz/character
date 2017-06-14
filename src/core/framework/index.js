@@ -53,8 +53,6 @@ module.exports = class CoreFramework {
     router.all('/*', (ctx, next) => {
       // expose the database
       ctx.database = database;
-      ctx.req.isAuthenticated = () => true;
-      ctx.req.logout = () => ctx.res.redirect('/');
       ctx.res.sendStatus = code => {
         ctx.status = code;
 
@@ -154,10 +152,14 @@ module.exports = class CoreFramework {
     };
   }
 
-  static config() {
-    return {
-      validate: data => assert(data.session.secret, 'missing environment variable reference for session secret key'),
-    };
+  /**
+   * Override this with your validator function
+   *
+   * @param {Object} data
+   * @return {Boolean}
+   */
+  static validateConfig(data) {
+    return true;
   }
 
   static defaults() {
