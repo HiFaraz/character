@@ -34,7 +34,7 @@ module.exports = class CoreFramework {
   /**
    * @param {Object} database
    * @param {Object} settings
-   * @param {Array} [plugins=[]]
+   * @param {Object[]} [plugins=[]] Array of koa-router instances
    */
   constructor(database, settings, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
