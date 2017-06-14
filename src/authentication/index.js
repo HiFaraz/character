@@ -5,10 +5,19 @@
  */
 import { and, assert } from '../utils';
 
+const debug = require('debug')('identity-desk:authentication');
+
 module.exports = function(CorePlugin) {
   return class Authentication extends CorePlugin {
 
     defineRoutes() {
+      if (!this.settings.isValid) {
+        return debug('Not attaching middleware. Fix your config and restart the server');
+      }
+
+      // body parsing is currently enabled on all routes by `CoreFramework`
+      // in the future it might make sense to enable it here on select routes
+
       this.router.use((ctx, next) => {
         ctx.req.isAuthenticated = () => true;
         ctx.req.logout = () => ctx.res.redirect('/');

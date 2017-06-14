@@ -76,7 +76,7 @@ module.exports = class CoreFramework {
     });
 
     // put it all together
-    this._app.use(bodyParser());
+    this._app.use(bodyParser()); // TODO can we be more surgical with this rather than enabling this everywhere?
     this._app.use(router.routes());
     this._app.use(router.allowedMethods());
   }
