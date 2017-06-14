@@ -13,6 +13,7 @@ import isJSON from 'koa-is-json';
 import onFinished from 'on-finished';
 import path from 'path';
 import read from 'read-data';
+import statuses from 'statuses';
 
 /**
  * Safely require a module which requires Node v7.6+. Falls back to a local copy
@@ -43,11 +44,27 @@ module.exports = class CoreFramework {
     this._app = new Koa();
     const router = new Router();
 
-    // expose the database
-    router.use(async function(ctx, next) {
+    // force a route match
+    // koa-router will not execute
+    // `router.use` middleware unless there
+    // is a route match, otherwise would
+    // use `router.use`
+    router.all('/*', (ctx, next) => {
+      // expose the database
       ctx.database = database;
       ctx.req.isAuthenticated = () => true;
-      await next();
+      ctx.req.logout = () => ctx.res.redirect('/');
+      ctx.res.sendStatus = code => {
+        ctx.status = code;
+
+        // ignore body on certain codes
+        if (statuses.empty[code]) {
+          // strip headers
+          ctx.body = null;
+        }
+        ctx.res.end();
+      };
+      next();
     });
 
     // load plugins
@@ -86,7 +103,6 @@ module.exports = class CoreFramework {
     }
 
     return async(req, res, next) => {
-      // res.statusCode = 404;
       const ctx = app.createContext(req, res);
       const onerror = err => ctx.onerror(err);
       onFinished(res, onerror);
@@ -105,28 +121,6 @@ module.exports = class CoreFramework {
           }
           return ctx.res.end();
         }
-
-        //
-        // ...
-
-        /**
-         * TODO how to send empty status without body,
-         * yet still defer to Express?
-         *
-         * Use res.statusCode and res.end then???
-         * or create a ctx.res.sendStatus???
-         *
-         * Original code:
-         *
-            const code = ctx.status;
-
-            // ignore body
-            if (statuses.empty[code]) {
-              // strip headers
-              ctx.body = null;
-              return ctx.res.end();
-            }
-         */
 
         // responses
         if (Buffer.isBuffer(body)) {
