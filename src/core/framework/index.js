@@ -49,6 +49,7 @@ module.exports = class CoreFramework {
     // `router.use` middleware unless there
     // is a route match, otherwise would
     // use `router.use`
+    // https://github.com/alexmingoia/koa-router/issues/257
     router.all('/*', (ctx, next) => {
       // expose the database
       ctx.database = database;
