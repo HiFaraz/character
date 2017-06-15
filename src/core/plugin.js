@@ -3,6 +3,7 @@
 /**
  * Module dependencies.
  */
+
 import Router from 'koa-router';
 import { clone } from 'lodash';
 
@@ -26,10 +27,6 @@ module.exports = class CorePlugin {
    */
   defineRoutes() {
     // Example: this.router.use(...)
-  }
-
-  router() {
-    return this.router;
   }
 
   /**

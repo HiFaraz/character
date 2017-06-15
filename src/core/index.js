@@ -10,7 +10,6 @@
  * Module dependencies.
  */
 
-// import authenticators from '../authentication/authenticators';
 import { clone, flow } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
