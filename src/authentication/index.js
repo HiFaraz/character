@@ -23,6 +23,8 @@ module.exports = function(CorePlugin) {
       // add request methods such as `req.isAuthenticated`
       this.router.use(requests.extend);
 
+      // `session` is session-middleware to be attached in front of certain authenticator routes
+      // also adds `ctx.identityDesk.get/set` for safe access of Identity Desk session data
       const session = sessions.setup(this.router, this.settings, this.dependencies.database, this.dependencies.store);
 
       // attach authenticators
