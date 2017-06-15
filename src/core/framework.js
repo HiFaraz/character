@@ -39,18 +39,15 @@ module.exports = class CoreFramework {
   constructor(database, settings, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
 
+    this.rootMiddleware = []; // not part of the router, is added directly to the root app
+    this.router = new Router();
     this.settings = clone(settings);
 
-    this._app = new Koa();
-    const router = new Router();
+    // this.routes is the root app, needs to next into the root app
+    // this.router is only for ID routes, will not need to next into the root app
+    // in the end, use compose(this.router.routes(), this.router.allowedMethods(), ...this.routes)
 
-    // force a route match
-    // koa-router will not execute
-    // `router.use` middleware unless there
-    // is a route match, otherwise would
-    // use `router.use`
-    // https://github.com/alexmingoia/koa-router/issues/257
-    router.all('/*', (ctx, next) => {
+    this.router.use((ctx, next) => {
       ctx.res.sendStatus = code => {
         ctx.status = code;
 
@@ -64,24 +61,23 @@ module.exports = class CoreFramework {
       next();
     });
 
+    this.router.use(bodyParser()); // TODO can we be more surgical with this rather than enabling this everywhere?
+
     // load plugins
     plugins.forEach(plugin => {
-      // plugin routes are mounted at `/`,
-      // they are responsible for using the
-      // base path at `settings.base`
-      router.use(plugin.routes());
-      router.use(plugin.allowedMethods());
+      this.rootMiddleware.push(...plugin.rootMiddleware);
+      this.router.use(this.settings.base, plugin.router.routes());
+      this.router.use(this.settings.base, plugin.router.allowedMethods());
     });
-
-    // put it all together
-    this._app.use(bodyParser()); // TODO can we be more surgical with this rather than enabling this everywhere?
-    this._app.use(router.routes());
-    this._app.use(router.allowedMethods());
   }
 
-  app() {
-    // TODO can `mount` be replaced with `router`?
-    return mount(this._app);
+  /**
+   * Override this with your app property, which is served by the core module as identityDesk.app
+   *
+   * @return {Object}
+   */
+  get app() {
+    return compose([this.router.routes(), this.router.allowedMethods(), ...this.rootMiddleware]);
   }
 
   static defaults() {
@@ -97,7 +93,8 @@ module.exports = class CoreFramework {
    * @returns {Object}
    */
   expressify() {
-    const app = this._app;
+    const app = new Koa();
+    app.use(compose([this.router.routes(), this.router.allowedMethods(), ...this.rootMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
     const fn = compose(app.middleware);
 
     if (!app.listeners('error').length) {
@@ -147,7 +144,7 @@ module.exports = class CoreFramework {
         // modified: if we haven't ended the response yet,
         // transfer the `req` and `res` to Express
         Object.assign(req, ctx.req);
-        Object.assign(res, ctx.res);
+        Object.assign(res, ctx.res, { sendStatus: res.sendStatus }); // do not overwrite Express's `res.sendStatus` method
         next();
       } catch (error) {
         onerror(error);

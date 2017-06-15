@@ -14,6 +14,7 @@ module.exports = class CorePlugin {
    * @param {Object} dependencies
    */
   constructor(settings, dependencies) {
+    this.rootMiddleware = []; // not part of the router, is added directly to the root app
     this.router = new Router();
     this.settings = clone(settings);
     this.dependencies = dependencies;

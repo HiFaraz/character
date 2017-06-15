@@ -29,7 +29,7 @@ const identityDesk = new IdentityDesk({
   ],
 });
 
-app.use(identityDesk.app());
+app.use(identityDesk.app);
 
 function restrict(req, res, next) {
   if (req.isAuthenticated()) {

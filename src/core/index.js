@@ -69,8 +69,8 @@ export default class IdentityDesk {
       // TODO document that plugin dependencies will already contain
       // a `database` property, which will overwrite whatever is provided
       dependencies.database = this.database;
-      const plugin = new Plugin(this.configuration, dependencies);
-      return plugin.router;
+      const { rootMiddleware, router } = new Plugin(this.configuration, dependencies);
+      return { rootMiddleware, router };
     });
 
     this.framework = new Framework(this.database, this.configuration, this.plugins);
@@ -79,13 +79,13 @@ export default class IdentityDesk {
   /**
    * Example usage:
    *
-   * - Express: app.use(identityDesk.app());
-   * - Koa: app.use(identityDesk.app())
+   * - Express: app.use(identityDesk.app);
+   * - Koa: app.use(identityDesk.app.routes()), app.use(identityDesk.app.routes())
    *
    * @return {Object}
    */
-  app() {
-    return this.framework.app();
+  get app() {
+    return this.framework.app;
   }
 
   shutdown() {

@@ -15,7 +15,6 @@ const authentication = require('../../lib/authentication');
 
 const app = new Koa();
 const router = new Router();
-module.exports = app;
 
 // configuration
 
@@ -31,7 +30,7 @@ const identityDesk = new IdentityDesk({
   ],
 });
 
-app.use(identityDesk.app());
+app.use(identityDesk.app);
 
 function restrict(ctx, next) {
   if (ctx.isAuthenticated()) {
@@ -42,6 +41,7 @@ function restrict(ctx, next) {
 }
 
 router.get('/', function(ctx, next) {
+  console.log('hi there')
   ctx.redirect('/login');
 });
 
@@ -87,8 +87,5 @@ router.get('/login', function(ctx, next) {
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-/* istanbul ignore next */
-if (!module.parent) {
-  app.listen(3000);
-  console.log('Koa started on port 3000');
-}
+module.exports = app.listen(3000);
+console.log('Koa started on port 3000');

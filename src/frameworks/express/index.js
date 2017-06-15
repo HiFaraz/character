@@ -3,7 +3,7 @@
 module.exports = function(CoreFramework) {
   return class Express extends CoreFramework {
 
-    app() {
+    get app() {
       return this.expressify();
     }
 

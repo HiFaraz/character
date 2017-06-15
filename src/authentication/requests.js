@@ -20,9 +20,15 @@ function extend(ctx, next) {
   // TODO implement req.login/req.logIn?
   ctx.req.logout = () => {
     ctx.session = null;
-    ctx.res.redirect('/');
+    if (ctx.res.redirect) {
+      ctx.res.redirect('/'); // required for apps using `CoreFramework#expressify`, such as Express apps
+    } else {
+      ctx.redirect('/'); // required for Koa-like apps
+    }
   };
   ctx.req.logOut = ctx.req.logout;
   ctx.logout = ctx.req.logout;
   ctx.logOut = ctx.req.logOut;
+
+  next();
 }
