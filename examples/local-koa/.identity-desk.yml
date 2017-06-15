@@ -8,4 +8,4 @@ authenticators:
     source: npm
     version: ^0.1.0
 session:
-  secret: $SESSION_SECRET
+  keys: $SESSION_KEYS
