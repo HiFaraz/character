@@ -7,7 +7,7 @@
 import Koa from 'koa';
 import Router from 'koa-router';
 import Stream from 'stream';
-import { asyncEnabled } from '../../utils';
+import { asyncEnabled } from '../utils';
 import { clone } from 'lodash';
 import isJSON from 'koa-is-json';
 import onFinished from 'on-finished';
@@ -21,7 +21,7 @@ import statuses from 'statuses';
  * @param {string} module
  * @returns {*}
  */
-const asyncSafeRequire = module => require((asyncEnabled() ? '' : './') + module);
+const asyncSafeRequire = module => require((asyncEnabled() ? '' : './vendor/') + module);
 
 const bodyParser = asyncSafeRequire('koa-bodyparser');
 const compose = asyncSafeRequire('koa-compose');
@@ -80,7 +80,12 @@ module.exports = class CoreFramework {
   }
 
   app() {
+    // TODO can `mount` be replaced with `router`?
     return mount(this._app);
+  }
+
+  static defaults() {
+    return read.sync(path.resolve(__dirname, './defaults.yml'));
   }
 
   /**
@@ -158,10 +163,6 @@ module.exports = class CoreFramework {
    */
   static validateConfig(data) {
     return true;
-  }
-
-  static defaults() {
-    return read.sync(path.resolve(__dirname, './defaults.yml'));
   }
 
 };
