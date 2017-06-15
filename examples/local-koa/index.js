@@ -41,7 +41,6 @@ function restrict(ctx, next) {
 }
 
 router.get('/', function(ctx, next) {
-  console.log('hi there')
   ctx.redirect('/login');
 });
 

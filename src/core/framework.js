@@ -25,7 +25,6 @@ const asyncSafeRequire = module => require((asyncEnabled() ? '' : './vendor/') +
 
 const bodyParser = asyncSafeRequire('koa-bodyparser');
 const compose = asyncSafeRequire('koa-compose');
-const mount = asyncSafeRequire('koa-mount');
 
 const debug = require('debug')('identity-desk:core:framework');
 
