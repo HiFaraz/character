@@ -55,6 +55,8 @@
     "debug": "^2.6.8",
     "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
+    "koa-generic-session": "^1.11.6",
+    "koa-generic-session-sequelize": "^1.0.9",
     "koa-is-json": "^1.0.0",
     "koa-mount": "^3.0.0",
     "koa-router": "^7.2.0",

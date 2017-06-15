@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 import { and, assert } from '../utils';
+import requests from './requests';
+import sessions from './sessions';
 
 const debug = require('debug')('identity-desk:authentication');
 
@@ -18,17 +20,21 @@ module.exports = function(CorePlugin) {
       // body parsing is currently enabled on all routes by `CoreFramework`
       // in the future it might make sense to enable it here on select routes
 
-      this.router.use((ctx, next) => {
-        ctx.req.isAuthenticated = () => true;
-        ctx.req.logout = () => ctx.res.redirect('/');
-      });
+      // add request methods such as `req.isAuthenticated`
+      this.router.use(requests.extend);
+
+      const session = sessions.setup(this.router, this.settings, this.dependencies.database, this.dependencies.store);
+
+      // attach authenticators
+
+      this.router.use(session);
     }
 
     static validateConfig(data) {
       return and(
         assert(data.authenticators && Object.keys(data.authenticators).length > 0, 'missing authenticators'),
         ...Object.keys(data.authenticators).map(name => validateAuthenticator(name, data.authenticators[name])),
-        assert(data.session.secret, 'missing environment variable reference for session secret key'),
+        assert(data.session.keys, 'missing session secret keys'),
       );
     }
 

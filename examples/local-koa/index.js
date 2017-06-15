@@ -33,28 +33,28 @@ const identityDesk = new IdentityDesk({
 
 app.use(identityDesk.app());
 
-async function restrict(ctx, next) {
+function restrict(ctx, next) {
   if (ctx.isAuthenticated()) {
-    await next();
+    next();
   } else {
     ctx.redirect('/login');
   }
 }
 
-router.get('/', async function(ctx, next) {
+router.get('/', function(ctx, next) {
   ctx.redirect('/login');
 });
 
-router.get('/restricted', restrict, async function(ctx, next) {
+router.get('/restricted', restrict, function(ctx, next) {
   ctx.body = 'Wahoo! restricted area, click to <a href="/logout">logout</a>';
-  await next();
+  next();
 });
 
-router.get('/logout', async function(ctx, next) {
+router.get('/logout', function(ctx, next) {
   ctx.logout();
 });
 
-router.get('/login', async function(ctx, next) {
+router.get('/login', function(ctx, next) {
   ctx.body = `<!DOCTYPE html>
 <html>
 

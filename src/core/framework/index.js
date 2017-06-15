@@ -51,8 +51,6 @@ module.exports = class CoreFramework {
     // use `router.use`
     // https://github.com/alexmingoia/koa-router/issues/257
     router.all('/*', (ctx, next) => {
-      // expose the database
-      ctx.database = database;
       ctx.res.sendStatus = code => {
         ctx.status = code;
 

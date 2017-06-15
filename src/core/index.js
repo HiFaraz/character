@@ -33,7 +33,7 @@ export default class IdentityDesk {
     this.options = clone(options);
 
     // transform inputs into structure: `[module, dependencies = {}]`
-
+    // and expose the underlying class to gain access to defaults and validators
     const transform = value => (Array.isArray(value)) ? value : [value, {}];
     this.options.framework = flow(
       transform,
@@ -66,7 +66,11 @@ export default class IdentityDesk {
 
     // initialize
 
-    this.plugins = this.options.plugins.map(([Plugin, dependencies]) => new Plugin(this.configuration, dependencies).router);
+    this.plugins = this.options.plugins.map(([Plugin, dependencies]) => {
+      dependencies.database = this.database;
+      const plugin = new Plugin(this.configuration, dependencies);
+      return plugin.router;
+    });
 
     this.framework = new Framework(this.database, this.configuration, this.plugins);
   }
