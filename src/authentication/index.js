@@ -4,6 +4,10 @@
  * Module dependencies.
  */
 import { and, assert } from '../utils';
+import CoreGETAuthenticator from './authenticator/get';
+import CorePOSTAuthenticator from './authenticator/post';
+import { flow } from 'lodash';
+import modules from './modules';
 import requests from './requests';
 import sessions from './sessions';
 
@@ -28,7 +32,17 @@ module.exports = function(CorePlugin) {
       const session = sessions.setup(this.router, this.settings, this.dependencies.database, this.dependencies.store);
 
       // attach authenticators
+      modules.load(this.settings.authenticators).forEach(flow(
+        ([name, module]) => [name, (module) ? module({ CoreGETAuthenticator, CorePOSTAuthenticator }) : module],
+        ([name, Module]) => {
+          const base = `${this.settings.base}/${name}`;
+          const module = new Module(name, this.settings, this.dependencies);
+          this.router.use(base, module.router.routes());
+          this.router.use(base, module.router.allowedMethods());
+        },
+      ));
 
+      // session purposely mounted on `/` for downstream routes
       this.router.use(session);
     }
 
