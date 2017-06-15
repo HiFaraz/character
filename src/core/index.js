@@ -66,6 +66,8 @@ export default class IdentityDesk {
     // initialize
 
     this.plugins = this.options.plugins.map(([Plugin, dependencies]) => {
+      // TODO document that plugin dependencies will already contain
+      // a `database` property, which will overwrite whatever is provided
       dependencies.database = this.database;
       const plugin = new Plugin(this.configuration, dependencies);
       return plugin.router;
