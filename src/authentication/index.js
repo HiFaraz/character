@@ -14,7 +14,7 @@ module.exports = function(CorePlugin) {
 
     defineRoutes() {
       if (!this.settings.isValid) {
-        return debug('Not attaching middleware. Fix your config and restart the server');
+        return debug('Invalid configration. Not attaching authenticator middleware. Fix your configuration and restart the server');
       }
 
       // body parsing is currently enabled on all routes by `CoreFramework`
