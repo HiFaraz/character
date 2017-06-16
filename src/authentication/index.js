@@ -16,21 +16,21 @@ const debug = require('debug')('identity-desk:authentication');
 module.exports = function(CorePlugin) {
   return class Authentication extends CorePlugin {
 
-    defineRoutes() {
+    define() {
       if (!this.settings.isValid) {
         return debug('Invalid configration. Not attaching authenticator middleware. Fix your configuration and restart the server');
       }
 
-      // body parsing is currently enabled on all routes by `CoreFramework`
-      // in the future it might make sense to enable it here on select routes
+      // body parsing is currently enabled on all plugin router routes by `CoreFramework`
 
       // add request methods such as `req.isAuthenticated`
-      this.rootMiddleware.push(requests.extend);
-      this.router.use(requests.extend);
+      this.preRouterMiddleware.push(requests.extend);
 
-      // `session` is session-middleware to be attached in front of certain authenticator routes
+      // add session-middleware
       // also adds `ctx.identityDesk.get/set` for safe access of Identity Desk session data
-      const session = sessions.setup(this.router, this.settings, this.dependencies.database, this.dependencies.store);
+      const { session, sessionMethods } = sessions.setup(this.settings, this.dependencies.database, this.dependencies.store);
+      this.dependencies.session = session;
+      this.preRouterMiddleware.push(sessionMethods);
 
       // attach authenticators
       modules.load(this.settings.authenticators).forEach(flow(
@@ -38,14 +38,14 @@ module.exports = function(CorePlugin) {
         ([name, Module]) => {
           const base = `/${name}`;
           const module = new Module(name, this.settings, this.dependencies);
+          // TODO do authenticator modules have root middleware as well?
           this.router.use(base, module.router.routes());
           this.router.use(base, module.router.allowedMethods());
         },
       ));
 
       // session purposely mounted on `/` for downstream routes
-      this.router.use(session);
-      this.router.use((ctx, next) => next()); // TODO added this because Koa example app's middleware was not getting triggered. Keep this here for debugging for now but find a better way later
+      this.postRouterMiddleware.push(session);
     }
 
     static validateConfig(data) {

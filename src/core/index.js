@@ -69,8 +69,7 @@ export default class IdentityDesk {
       // TODO document that plugin dependencies will already contain
       // a `database` property, which will overwrite whatever is provided
       dependencies.database = this.database;
-      const { rootMiddleware, router } = new Plugin(this.configuration, dependencies);
-      return { rootMiddleware, router };
+      return new Plugin(this.configuration, dependencies);
     });
 
     this.framework = new Framework(this.database, this.configuration, this.plugins);

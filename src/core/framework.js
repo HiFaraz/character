@@ -38,13 +38,15 @@ module.exports = class CoreFramework {
   constructor(database, settings, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
 
-    this.rootMiddleware = []; // not part of the router, is added directly to the root app
-    this.router = new Router();
     this.settings = clone(settings);
+
+    this.preRouterMiddleware = []; // not part of the router, is added directly to the root app
+    this.router = new Router();
+    this.postRouterMiddleware = []; // not part of the router, is added directly to the root app
 
     // this.routes is the root app, needs to next into the root app
     // this.router is only for ID routes, will not need to next into the root app
-    // in the end, use compose(this.router.routes(), this.router.allowedMethods(), ...this.routes)
+    // in the end, use compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])
 
     this.router.use((ctx, next) => {
       ctx.res.sendStatus = code => {
@@ -60,13 +62,14 @@ module.exports = class CoreFramework {
       next();
     });
 
-    this.router.use(bodyParser()); // TODO can we be more surgical with this rather than enabling this everywhere?
+    this.router.use(bodyParser());
 
     // load plugins
     plugins.forEach(plugin => {
-      this.rootMiddleware.push(...plugin.rootMiddleware);
+      this.preRouterMiddleware.push(...plugin.preRouterMiddleware);
       this.router.use(this.settings.base, plugin.router.routes());
       this.router.use(this.settings.base, plugin.router.allowedMethods());
+      this.postRouterMiddleware.push(...plugin.postRouterMiddleware);
     });
   }
 
@@ -76,7 +79,7 @@ module.exports = class CoreFramework {
    * @return {Object}
    */
   get app() {
-    return compose([this.router.routes(), this.router.allowedMethods(), ...this.rootMiddleware]);
+    return compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware]);
   }
 
   static defaults() {
@@ -93,7 +96,7 @@ module.exports = class CoreFramework {
    */
   expressify() {
     const app = new Koa();
-    app.use(compose([this.router.routes(), this.router.allowedMethods(), ...this.rootMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
+    app.use(compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
     const fn = compose(app.middleware);
 
     if (!app.listeners('error').length) {

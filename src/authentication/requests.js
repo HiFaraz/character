@@ -18,6 +18,7 @@ function extend(ctx, next) {
   ctx.isUnauthenticated = ctx.req.isUnauthenticated;
 
   // TODO implement req.login/req.logIn?
+
   ctx.req.logout = () => {
     ctx.session = null;
     if (ctx.res.redirect) {
