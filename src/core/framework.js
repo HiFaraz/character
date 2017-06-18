@@ -4,13 +4,11 @@
  * Module dependencies.
  */
 
-import Koa from 'koa';
 import Router from 'koa-router';
-import Stream from 'stream';
 import { asyncEnabled } from '../utils';
 import { clone } from 'lodash';
-import isJSON from 'koa-is-json';
-import onFinished from 'on-finished';
+import compose from 'koa-compose';
+import expressify from '../../../expressify-koa';
 import path from 'path';
 import read from 'read-data';
 import statuses from 'statuses';
@@ -24,7 +22,6 @@ import statuses from 'statuses';
 const asyncSafeRequire = module => require((asyncEnabled() ? '' : './vendor/') + module);
 
 const bodyParser = asyncSafeRequire('koa-bodyparser');
-const compose = asyncSafeRequire('koa-compose');
 
 const debug = require('debug')('identity-desk:core:framework');
 
@@ -86,72 +83,14 @@ module.exports = class CoreFramework {
     return read.sync(path.resolve(__dirname, './defaults.yml'));
   }
 
+
   /**
    * Express/Connect-compatible middleware
    *
-   * Modifed version of Koa's `callback()` method:
-   * https://github.com/koajs/koa/blob/ee5af59f1f847922c9cf41ccedbdbe6a3c024c2e/lib/application.js#L125
-   *
-   * @returns {Object}
+   * @returns {function}
    */
   expressify() {
-    const app = new Koa();
-    app.use(compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
-    const fn = compose(app.middleware);
-
-    if (!app.listeners('error').length) {
-      app.on('error', app.onerror);
-    }
-
-    return async(req, res, next) => {
-      const ctx = app.createContext(req, res);
-      const onerror = err => ctx.onerror(err);
-      onFinished(res, onerror);
-      try {
-        await fn(ctx); // modified: do not return after fn(ctx)
-
-        if (!ctx.writable) {
-          return; // returning without `next()` ends the Express response
-        }
-
-        let body = ctx.body;
-
-        if ('HEAD' == ctx.method) { // eslint-disable-line eqeqeq
-          if (!ctx.res.headersSent && isJSON(body)) {
-            ctx.length = Buffer.byteLength(JSON.stringify(body));
-          }
-          return ctx.res.end();
-        }
-
-        // responses
-        if (Buffer.isBuffer(body)) {
-          return ctx.res.end(body);
-        }
-        if ('string' == typeof body) { // eslint-disable-line eqeqeq
-          return ctx.res.end(body);
-        }
-        if (body instanceof Stream) {
-          return body.pipe(ctx.res); // TODO: Koa relies on Node.js v7.6+ Streams, test if this works properly on supported Node.js versions
-        }
-
-        if (body) { // modified: only return if `body` is truthy
-          // body: json
-          body = JSON.stringify(body);
-          if (!ctx.res.headersSent) {
-            ctx.length = Buffer.byteLength(body);
-          }
-          return ctx.res.end(body);
-        }
-
-        // modified: if we haven't ended the response yet,
-        // transfer the `req` and `res` to Express
-        Object.assign(req, ctx.req);
-        Object.assign(res, ctx.res, { sendStatus: res.sendStatus }); // do not overwrite Express's `res.sendStatus` method
-        next();
-      } catch (error) {
-        onerror(error);
-      }
-    };
+    return expressify(compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
   }
 
   /**
