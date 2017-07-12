@@ -9,7 +9,7 @@ export default {
  */
 
 import SequelizeStore from 'koa-generic-session-sequelize';
-import convert from 'koa-convert';
+// import convert from 'koa-convert';
 import session from 'koa-generic-session';
 
 /**
@@ -23,10 +23,10 @@ import session from 'koa-generic-session';
 function setup(settings, database, store) {
   return {
     // session middleware
-    session: convert(session({
+    session: session({
       key: 'identityDesk.sid',
       store: store || new SequelizeStore(database),
-    })),
+    }),
     sessionMethods: function(ctx, next) {
       // set the secret keys for Keygrip
       ctx.app.keys = settings.session.keys;
