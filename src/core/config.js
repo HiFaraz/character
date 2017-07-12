@@ -78,7 +78,7 @@ function populateEnvironmentVariables(config) {
   }
 
   // session secret key
-  data.session.keys = safeGetEnvString(data.session.keys, 'Session secret key');
+  data.session.keys = safeGetEnvString(data.session.keys, 'Session secret key').split(','); // TODO handle this in the authentication plugin somehow
 
   return data;
 }
