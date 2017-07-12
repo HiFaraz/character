@@ -41,10 +41,9 @@ module.exports = class CoreFramework {
     this.router = new Router();
     this.postRouterMiddleware = []; // not part of the router, is added directly to the root app
 
-    // this.routes is the root app, needs to next into the root app
-    // this.router is only for ID routes, will not need to next into the root app
-    // in the end, use compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])
-
+    /**
+     * Add a custom `res.sendStatus` to the Koa context, to address a gap in `expressify-koa` functionality
+     */
     this.router.use((ctx, next) => {
       ctx.res.sendStatus = code => {
         ctx.status = code;
@@ -83,13 +82,13 @@ module.exports = class CoreFramework {
     return read.sync(path.resolve(__dirname, './defaults.yml'));
   }
 
-
   /**
    * Express/Connect-compatible middleware
    *
    * @returns {function}
    */
   expressify() {
+    // TODO: consume the app proxy setting
     return expressify(compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
   }
 
