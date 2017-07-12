@@ -28,6 +28,17 @@ module.exports = function(CorePlugin) {
         return debug('Invalid configration. Not attaching authenticator middleware. Fix your configuration and restart the server');
       }
 
+      const authenticators = this.settings.authenticators;
+
+      // make sure each authenticator has a `successRedirect` and `failureRedirect` property
+      Object.keys(authenticators).forEach(name => {
+        authenticators[name] = Object.assign({
+          authenticatorTargetParameter: this.settings.authenticatorTargetParameter,
+          failureRedirect: this.settings.login,
+          successRedirect: this.settings.successRedirect,
+        }, authenticators[name]);
+      });
+
       // body parsing is currently enabled on all plugin router routes by `CoreFramework`
 
       // add request methods such as `req.isAuthenticated`
