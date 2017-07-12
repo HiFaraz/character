@@ -16,6 +16,13 @@ const debug = require('debug')('identity-desk:authentication');
 module.exports = function(CorePlugin) {
   return class Authentication extends CorePlugin {
 
+    static defaults() {
+      return {
+        authenticatorTargetParameter: 'identity_desk_target',
+        login: '/login',
+      };
+    }
+
     define() {
       if (!this.settings.isValid) {
         return debug('Invalid configration. Not attaching authenticator middleware. Fix your configuration and restart the server');

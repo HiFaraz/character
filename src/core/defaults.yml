@@ -1,3 +1,2 @@
 base: /auth
-login: /login
 proxy: false
