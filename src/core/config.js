@@ -77,8 +77,8 @@ function populateEnvironmentVariables(config) {
     });
   }
 
-  // session secret
-  data.session.secret = safeGetEnvString(data.session.secret, 'Session secret');
+  // session secret key
+  data.session.keys = safeGetEnvString(data.session.keys, 'Session secret key');
 
   return data;
 }
