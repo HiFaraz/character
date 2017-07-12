@@ -6,8 +6,8 @@
 import '../../examples/local-express';
 import request from 'supertest';
 
-function getCookie(res) {
-  return res.headers['set-cookie'][0].split(';')[0];
+function getCookies(res) {
+  return res.headers['set-cookie'].map(cookie => cookie.split(';')[0]).join('; ');
 }
 
 describe('local-express', function() {
@@ -37,7 +37,7 @@ describe('local-express', function() {
           if (err) { return done(err); }
           request('http://localhost:3000')
             .get('/login')
-            .set('Cookie', getCookie(res))
+            .set('Cookie', getCookies(res))
             .expect(200, /Authentication failed/, done);
         });
     });
@@ -65,12 +65,12 @@ describe('local-express', function() {
         .post('/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        .expect('Location', '/')
-        .expect(302, function(err, res) {
+        .expect('Location', '/restricted')
+        .expect(303, function(err, res) {
           if (err) { return done(err); }
           request('http://localhost:3000')
             .get('/restricted')
-            .set('Cookie', getCookie(res))
+            .set('Cookie', getCookies(res))
             .expect(200, done);
         });
     });
