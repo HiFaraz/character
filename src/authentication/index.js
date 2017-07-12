@@ -69,6 +69,7 @@ module.exports = function(CorePlugin) {
         ...Object.keys(data.authenticators).map(name => validateAuthenticator(name, data.authenticators[name])),
         assert(data.session.keys, 'missing session secret keys'),
       );
+      // TODO check that successRedirect exists or that each authenticator has a successRedirect
     }
 
   };

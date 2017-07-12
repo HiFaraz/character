@@ -7,7 +7,7 @@ import '../../examples/local-express';
 import request from 'supertest';
 
 function getCookies(res) {
-  return res.headers['set-cookie'].map(cookie => cookie.split(';')[0]).join('; ');
+  return (res.headers['set-cookie'] || []).map(cookie => cookie.split(';')[0]).join('; ');
 }
 
 describe('local-express', function() {
@@ -33,13 +33,7 @@ describe('local-express', function() {
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
-        .expect(303, function(err, res) {
-          if (err) { return done(err); }
-          request('http://localhost:3000')
-            .get('/login')
-            .set('Cookie', getCookies(res))
-            .expect(200, /Authentication failed/, done);
-        });
+        .expect(303, done);
     });
   });
 
@@ -100,7 +94,7 @@ describe('local-express', function() {
         .post('/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        .expect('Location', '/')
+        .expect('Location', '/restricted')
         .expect(303, done);
     });
   });
