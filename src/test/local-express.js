@@ -28,7 +28,6 @@ describe('local-express', function() {
     });
 
     it('should display login error', function(done) {
-      this.timeout(10000);
       request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
