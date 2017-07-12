@@ -9,6 +9,7 @@ export default {
  *
  * @param {Object} ctx
  * @param {function} next
+ * @return {Promise}
  */
 function extend(ctx, next) {
   ctx.req.isAuthenticated = () => (ctx.session && ctx.session.identityDesk && ctx.session.identityDesk.user) ? true : false;

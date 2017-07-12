@@ -17,7 +17,7 @@ import statuses from 'statuses';
  * Safely require a module which requires Node v7.6+. Falls back to a local copy
  *
  * @param {string} module
- * @returns {*}
+ * @return {*}
  */
 const asyncSafeRequire = module => require((asyncEnabled() ? '' : './vendor/') + module);
 
@@ -85,7 +85,7 @@ module.exports = class CoreFramework {
   /**
    * Express/Connect-compatible middleware
    *
-   * @returns {function}
+   * @return {Function}
    */
   expressify() {
     // TODO: consume the app proxy setting
