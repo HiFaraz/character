@@ -36,8 +36,8 @@ if (asyncEnabled()) { // Koa requires Node v7.6.0 or above for native async/awai
           .post('/auth/local')
           .type('urlencoded')
           .send('username=not-foo&password=bar')
-          .expect('Location', '/login')
-          .expect(302, function(err, res) {
+          .expect('Location', '/login?reason=Unauthorized')
+          .expect(303, function(err, res) {
             if (err) { return done(err); }
             request(app)
               .get('/login')
@@ -80,14 +80,14 @@ if (asyncEnabled()) { // Koa requires Node v7.6.0 or above for native async/awai
       });
     });
 
-    describe('POST /login', function() {
+    describe('POST /auth/local', function() {
       it('should fail without proper username', function(done) {
         request(app)
           .post('/auth/local')
           .type('urlencoded')
           .send('username=not-foo&password=bar')
-          .expect('Location', '/login')
-          .expect(302, done);
+          .expect('Location', '/login?reason=Unauthorized')
+          .expect(303, done);
       });
 
       it('should fail without proper password', function(done) {
@@ -95,8 +95,8 @@ if (asyncEnabled()) { // Koa requires Node v7.6.0 or above for native async/awai
           .post('/auth/local')
           .type('urlencoded')
           .send('username=foo&password=baz')
-          .expect('Location', '/login')
-          .expect(302, done);
+          .expect('Location', '/login?reason=Unauthorized')
+          .expect(303, done);
       });
 
       it('should succeed with proper credentials', function(done) {
@@ -105,8 +105,9 @@ if (asyncEnabled()) { // Koa requires Node v7.6.0 or above for native async/awai
           .type('urlencoded')
           .send('username=foo&password=bar')
           .expect('Location', '/')
-          .expect(302, done);
+          .expect(303, done);
       });
     });
   });
+
 }

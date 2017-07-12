@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import app from '../../examples/local-express';
+import '../../examples/local-express';
 import request from 'supertest';
 
 function getCookie(res) {
@@ -13,7 +13,7 @@ function getCookie(res) {
 describe('local-express', function() {
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .get('/')
         .expect('Location', '/login')
         .expect(302, done);
@@ -22,20 +22,21 @@ describe('local-express', function() {
 
   describe('GET /login', function() {
     it('should render login form', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .get('/login')
         .expect(200, /<form/, done);
     });
 
     it('should display login error', function(done) {
-      request(app)
+      this.timeout(10000);
+      request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
-        .expect('Location', '/login')
-        .expect(302, function(err, res) {
+        .expect('Location', '/login?reason=Unauthorized')
+        .expect(303, function(err, res) {
           if (err) { return done(err); }
-          request(app)
+          request('http://localhost:3000')
             .get('/login')
             .set('Cookie', getCookie(res))
             .expect(200, /Authentication failed/, done);
@@ -45,7 +46,7 @@ describe('local-express', function() {
 
   describe('GET /logout', function() {
     it('should redirect to /', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .get('/logout')
         .expect('Location', '/')
         .expect(302, done);
@@ -54,21 +55,21 @@ describe('local-express', function() {
 
   describe('GET /restricted', function() {
     it('should redirect to /login without cookie', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .get('/restricted')
         .expect('Location', '/login')
         .expect(302, done);
     });
 
     it('should succeed with proper cookie', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/')
         .expect(302, function(err, res) {
           if (err) { return done(err); }
-          request(app)
+          request('http://localhost:3000')
             .get('/restricted')
             .set('Cookie', getCookie(res))
             .expect(200, done);
@@ -76,32 +77,32 @@ describe('local-express', function() {
     });
   });
 
-  describe('POST /login', function() {
+  describe('POST /auth/local', function() {
     it('should fail without proper username', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
-        .expect('Location', '/login')
-        .expect(302, done);
+        .expect('Location', '/login?reason=Unauthorized')
+        .expect(303, done);
     });
 
     it('should fail without proper password', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
         .send('username=foo&password=baz')
-        .expect('Location', '/login')
-        .expect(302, done);
+        .expect('Location', '/login?reason=Unauthorized')
+        .expect(303, done);
     });
 
     it('should succeed with proper credentials', function(done) {
-      request(app)
+      request('http://localhost:3000')
         .post('/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/')
-        .expect(302, done);
+        .expect(303, done);
     });
   });
 });

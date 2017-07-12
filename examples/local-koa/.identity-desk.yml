@@ -7,5 +7,6 @@ authenticators:
     module: identity-desk-local
     source: npm
     version: ^0.1.0
+    successRedirect: '/restricted'
 session:
   keys: $SESSION_KEYS

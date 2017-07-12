@@ -3,6 +3,7 @@ authenticators:
     module: identity-desk-local
     source: npm
     version: ^0.1.0
+    successRedirect: '/restricted'
 database:
   dialect: sqlite
   logging: false
