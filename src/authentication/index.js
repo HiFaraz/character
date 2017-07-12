@@ -41,13 +41,13 @@ module.exports = function(CorePlugin) {
 
       // body parsing is currently enabled on all plugin router routes by `CoreFramework`
 
-      // add request methods such as `req.isAuthenticated`
-      this.preRouterMiddleware.push(requests.extend);
-
       // add session-middleware
       const { session, sessionMethods } = sessions.setup(this.settings, this.dependencies.database, this.dependencies.store);
       this.preRouterMiddleware.push(sessionMethods); // adds `ctx.identityDesk.get/set` for safe access of Identity Desk session data
       this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes
+
+      // add request methods such as `req.isAuthenticated`
+      this.preRouterMiddleware.push(requests.extend);
 
       // attach authenticators
       this.dependencies.session = session;
