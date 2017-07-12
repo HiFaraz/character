@@ -41,8 +41,8 @@ function setup(settings, database, store) {
           }
         },
         set(values) {
-          ctx.session = ctx.session || { identityDesk: { values } };
-          ctx.session.identityDesk = ctx.session.identityDesk || { values };
+          ctx.session = ctx.session || { identityDesk: values };
+          ctx.session.identityDesk = ctx.session.identityDesk || values;
           Object.assign(ctx.session.identityDesk, values);
         },
       };
