@@ -47,7 +47,7 @@ function setup(settings, database, store) {
         },
       };
 
-      next();
+      return next();
     },
   };
 }

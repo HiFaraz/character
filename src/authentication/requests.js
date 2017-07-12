@@ -31,5 +31,5 @@ function extend(ctx, next) {
   ctx.logout = ctx.req.logout;
   ctx.logOut = ctx.req.logOut;
 
-  next();
+  return next();
 }

@@ -56,7 +56,7 @@ module.exports = class CoreFramework {
         }
         ctx.res.end();
       };
-      next();
+      return next();
     });
 
     this.router.use(bodyParser());
