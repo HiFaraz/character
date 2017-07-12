@@ -49,7 +49,7 @@ export default class IdentityDesk {
 
     const defaults = [
       Framework.defaults(),
-      ...this.options.plugins.map(([Plugin]) => Plugin.defaults),
+      ...this.options.plugins.map(([Plugin]) => Plugin.defaults()),
     ].filter(Boolean);
 
     const validators = [
