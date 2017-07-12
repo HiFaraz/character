@@ -8,7 +8,7 @@ import Router from 'koa-router';
 import { asyncEnabled } from '../utils';
 import { clone } from 'lodash';
 import compose from 'koa-compose';
-import expressify from '../../../expressify-koa';
+import expressify from 'expressify-koa';
 import path from 'path';
 import read from 'read-data';
 import statuses from 'statuses';
