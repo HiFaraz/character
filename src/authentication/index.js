@@ -34,13 +34,13 @@ module.exports = function(CorePlugin) {
       this.preRouterMiddleware.push(requests.extend);
 
       // add session-middleware
-      // also adds `ctx.identityDesk.get/set` for safe access of Identity Desk session data
       const { session, sessionMethods } = sessions.setup(this.settings, this.dependencies.database, this.dependencies.store);
-      this.dependencies.session = session;
-      this.preRouterMiddleware.push(sessionMethods);
+      this.preRouterMiddleware.push(sessionMethods); // adds `ctx.identityDesk.get/set` for safe access of Identity Desk session data
+      this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes
 
       // attach authenticators
       modules.load(this.settings.authenticators).forEach(flow(
+      this.dependencies.session = session;
         ([name, module]) => [name, (module) ? module({ CoreGETAuthenticator, CorePOSTAuthenticator }) : module],
         ([name, Module]) => {
           const base = `/${name}`;
@@ -50,9 +50,6 @@ module.exports = function(CorePlugin) {
           this.router.use(base, module.router.allowedMethods());
         },
       ));
-
-      // session purposely mounted on `/` for downstream routes
-      this.postRouterMiddleware.push(session);
     }
 
     static validateConfig(data) {
@@ -62,8 +59,6 @@ module.exports = function(CorePlugin) {
         assert(data.session.keys, 'missing session secret keys'),
       );
     }
-
-    // no defaults
 
   };
 };
