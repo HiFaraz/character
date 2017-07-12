@@ -54,7 +54,7 @@
     "expressify-koa": "^1.0.0",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
-    "koa-generic-session": "^1.11.6",
+    "koa-generic-session": "^2.0.0",
     "koa-generic-session-sequelize": "^1.0.9",
     "koa-mount": "^3.0.0",
     "koa-router": "^7.2.0",
