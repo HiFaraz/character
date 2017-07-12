@@ -50,12 +50,12 @@ module.exports = function(CorePlugin) {
       this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes
 
       // attach authenticators
-      modules.load(this.settings.authenticators).forEach(flow(
       this.dependencies.session = session;
+      modules.load(authenticators).forEach(flow(
         ([name, module]) => [name, (module) ? module({ CoreGETAuthenticator, CorePOSTAuthenticator }) : module],
         ([name, Module]) => {
           const base = `/${name}`;
-          const module = new Module(name, this.settings, this.dependencies);
+          const module = new Module(name, authenticators[name], this.dependencies);
           // TODO do authenticator modules have root middleware as well?
           this.router.use(base, module.router.routes());
           this.router.use(base, module.router.allowedMethods());
