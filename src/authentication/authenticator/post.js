@@ -118,9 +118,9 @@ module.exports = class CorePOSTAuthenticator {
   hubToAuthenticator() {
     /**
      * Example code:
-     * 
+     *
      * const debug = this.debug;
-     * 
+     *
      * return (ctx, next) => {
      *   debug('enter hub request handler');
      * }
