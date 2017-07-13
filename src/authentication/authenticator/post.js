@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import { ACCEPTED, OK, SEE_OTHER, UNAUTHORIZED } from 'http-codes';
+import { ACCEPTED, OK, SEE_OTHER } from 'http-codes';
 import Router from 'koa-router';
 import { clone } from 'lodash';
 import { STATUS_CODES as httpCodeMessage } from 'http';
@@ -28,11 +28,21 @@ module.exports = class CorePOSTAuthenticator {
 
     this.debug('initializing');
 
-    // this.router.post('/authenticator', this.hubToAuthenticator());
-    this.router.post('/', (ctx, next) => {
+    this.router.post('/', async(ctx, next) => {
       this.debug('new request', ctx.path, ctx.request.body);
-      return next();
-    }, this.clientToHub(), this.dependencies.session, this.appToClient());
+      const middleware = ({
+        authenticator: () => (ctx, next) => {
+          this.debug('enter hub request handler');
+          return this.hubToAuthenticator()(ctx, next);
+        },
+        hub: this.clientToHub.bind(this),
+      })[ctx.request.body[settings.authenticatorTargetParameter]];
+      if (middleware) {
+        return middleware()(ctx, next);
+      } else {
+        return next();
+      }
+    }, this.dependencies.session, this.appToClient());
   }
 
   appToClient() {
@@ -40,9 +50,7 @@ module.exports = class CorePOSTAuthenticator {
     const settings = this.settings;
 
     return async function(ctx, next) {
-
       debug('enter app request handler');
-      debug('handling app request');
 
       try {
         const middlewareTarget = {
@@ -63,11 +71,11 @@ module.exports = class CorePOSTAuthenticator {
           ctx.status = SEE_OTHER; // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
           ctx.redirect(`${settings.failureRedirect}?${query}`);
         }
-        //   ctx.body = ['hello'];
       } catch (error) {
         debug('error when making a POST request to hub middleware', error);
         ctx.throw(error);
       }
+
     };
   }
 
@@ -76,26 +84,30 @@ module.exports = class CorePOSTAuthenticator {
     const settings = this.settings;
 
     return async function(ctx, next) {
-
       debug('enter client request handler');
 
-      // if the request body has a target parameter, it will be for either `clientToHub()` or `hubToAuthenticator()`
-      if (ctx.request.body[settings.authenticatorTargetParameter] !== 'hub') {
-        debug('exit client request handler');
-        return next();
+      try {
+        const middlewareTarget = {
+          [settings.authenticatorTargetParameter]: 'authenticator',
+        };
+
+        const { body: user, statusCode } = await post(formatURL(ctx), Object.assign({}, ctx.request.body, middlewareTarget));
+        debug('authenticator middleware responded', formatURL(ctx), statusCode, user);
+
+        // TODO consider storing the login attempt in the DB
+
+        // TODO this is where we need to consider on-boarding and checking links with the master identity
+        const name = ctx.path.split('/').pop(); // the authenticator name
+
+        ctx.status = statusCode;
+        ctx.body = (statusCode === OK) ? {
+          id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
+          [name]: user, // TODO attach linked users from all other authenticators before sending
+        } : {};
+      } catch (error) {
+        debug('error when making a POST request to authenticator middleware', error);
+        ctx.throw(error);
       }
-
-      debug('handling client request');
-
-      const { username, password } = ctx.request.body;
-
-      // Dummy authentication code
-      if (username === 'foo' && password === 'bar') {
-        ctx.body = 'foo';
-      } else {
-        ctx.res.sendStatus(UNAUTHORIZED);
-      }
-
     };
   }
 
@@ -104,7 +116,15 @@ module.exports = class CorePOSTAuthenticator {
    * Do not put your authenticator route in the constructor
    */
   hubToAuthenticator() {
-    // Example: return (ctx, next) => {}
+    /**
+     * Example code:
+     * 
+     * const debug = this.debug;
+     * 
+     * return (ctx, next) => {
+     *   debug('enter hub request handler');
+     * }
+     */
   }
 
 };

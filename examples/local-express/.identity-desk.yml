@@ -1,6 +1,6 @@
 authenticators:
   local:
-    module: identity-desk-local
+    module: identity-desk-mock-local
     source: npm
     version: ^0.1.0
     successRedirect: '/restricted'
