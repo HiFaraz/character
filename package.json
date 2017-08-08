@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
-    "debug": "^2.6.8",
+    "debug": "^3.0.0",
     "expressify-koa": "^1.0.0",
     "koa-bodyparser": "^4.2.0",
     "koa-generic-session": "^2.0.0",
