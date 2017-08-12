@@ -31,6 +31,9 @@ export default class IdentityDesk {
     debug('initializing');
     this.options = clone(options);
 
+    this.options.framework =
+      this.options.framework || require('../frameworks/express');
+
     // transform inputs into structure: `[module, dependencies = {}]`
     // and expose the underlying class to gain access to defaults and validators
     const transform = value => (Array.isArray(value)) ? value : [value, {}];
