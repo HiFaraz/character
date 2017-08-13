@@ -52,12 +52,11 @@ Use Identity Desk in either **embedded** or **hub** mode, depending on your arch
   - Authentication
     - Local: username / password
     - Support for third-party authenticators (similar to Passport strategies)
-  - Auditing
   - Configuration panel
   - Registration
   - User administration panel
 
-### Beyond verison 1.0.0
+### Beyond version 1.0.0
 
   - Authentication
     - Passwordless / magic links
@@ -66,6 +65,7 @@ Use Identity Desk in either **embedded** or **hub** mode, depending on your arch
     - Social logins
     - Two-factor / multi-factor
     - ... and other authenticators (similar to Passport strategies)
+  - Auditing
   - Role-based access control (RBAC)
   - Account linking (e.g. link a Facebook and LinkedIn login to the same account/identity)
   - Password resets and invalidation
