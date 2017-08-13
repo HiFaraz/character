@@ -1,18 +1,16 @@
 'use strict';
 
+export { and, assert, asyncEnabled, mapValuesDeep };
+
 /**
  * Module dependencies.
  */
+
+import { isObject, mapValues } from 'lodash';
 import coreAssert from 'assert';
 import semver from 'semver';
 
 const debug = require('debug')('identity-desk:utils');
-
-export {
-  and,
-  assert,
-  asyncEnabled,
-};
 
 /**
  * Perform a logical AND on parameters
@@ -47,4 +45,19 @@ function assert(value, message) {
  */
 function asyncEnabled() {
   return semver.gte(process.version, 'v7.6.0');
+}
+
+/**
+ * Deep transform all leaf nodes in an Object recursively
+ * 
+ * @param {*} source Object or leaf node to be transformed
+ * @param {Function} transformer
+ * @return {*} Transformed Object or leaf node
+ */
+function mapValuesDeep(source, transformer) {
+  if (isObject(source)) {
+    return mapValues(source, source => mapValuesDeep(source, transformer));
+  } else {
+    return transformer(source);
+  }
 }

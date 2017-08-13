@@ -1,0 +1,15 @@
+database:
+  dialect: sqlite
+  logging: false
+  url: $DATABASE_URL
+plugins:
+  authentication:
+    authenticators:
+      local:
+        module: identity-desk-mock-local
+        source: npm
+        version: ^0.1.0
+        successRedirect: /restricted
+    session:
+      maxAge: $SESSION_MAXAGE
+      keys: $SESSION_KEYS

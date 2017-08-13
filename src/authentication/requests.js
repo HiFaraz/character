@@ -7,30 +7,23 @@ export default {
 /**
  * Extends the request objects
  *
- * @param {Object} ctx
+ * @param {IncomingMessage} req
+ * @param {ServerResponse} res
  * @param {function} next
  * @return {Promise}
  */
-function extend(ctx, next) {
-  ctx.req.isAuthenticated = () => (ctx.identityDesk.get('user')) ? true : false;
-  ctx.isAuthenticated = ctx.req.isAuthenticated;
+function extend(req, res, next) {
+  req.isAuthenticated = () => (req.identityDesk.get('user') ? true : false);
 
-  ctx.req.isUnauthenticated = () => !ctx.req.isAuthenticated();
-  ctx.isUnauthenticated = ctx.req.isUnauthenticated;
+  req.isUnauthenticated = () => !req.isAuthenticated();
 
   // TODO implement req.login/req.logIn?
 
-  ctx.req.logout = () => {
-    ctx.session = null;
-    if (ctx.res.redirect) {
-      ctx.res.redirect('/'); // required for apps using `CoreFramework#expressify`, such as Express apps
-    } else {
-      ctx.redirect('/'); // required for Koa-like apps
-    }
+  req.logout = () => {
+    req.session.destroy();
+    res.redirect('/');
   };
-  ctx.req.logOut = ctx.req.logout;
-  ctx.logout = ctx.req.logout;
-  ctx.logOut = ctx.req.logOut;
+  req.logOut = req.logout;
 
   return next();
 }

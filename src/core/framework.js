@@ -4,67 +4,36 @@
  * Module dependencies.
  */
 
-import Router from 'koa-router';
-import { asyncEnabled } from '../utils';
+import { Router } from 'express';
+import bodyParser from 'body-parser';
 import { clone } from 'lodash';
-import compose from 'koa-compose';
-import expressify from 'expressify-koa';
 import path from 'path';
 import read from 'read-data';
-import statuses from 'statuses';
-
-/**
- * Safely require a module which requires Node v7.6+. Falls back to a local copy
- *
- * @param {string} module
- * @return {*}
- */
-const asyncSafeRequire = module => require((asyncEnabled() ? '' : './vendor/') + module);
-
-const bodyParser = asyncSafeRequire('koa-bodyparser');
 
 const debug = require('debug')('identity-desk:core:framework');
 
 module.exports = class CoreFramework {
-
   /**
+   * @param {Object} config
    * @param {Object} database
-   * @param {Object} settings
-   * @param {Object[]} [plugins=[]] Array of koa-router instances
+   * @param {Object[]} [plugins=[]] Array of express or express.Router instances
    */
-  constructor(database, settings, plugins = []) {
+  constructor(config, database, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
 
-    this.settings = clone(settings);
+    this.config = clone(config);
 
-    this.preRouterMiddleware = []; // not part of the router, is added directly to the root app
-    this.router = new Router();
-    this.postRouterMiddleware = []; // not part of the router, is added directly to the root app
+    this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
+    this.router = Router(); // is mounted to the base path
+    this.postRouterMiddleware = []; // not part of the router, is mounted directly to the root app
 
-    /**
-     * Add a custom `res.sendStatus` to the Koa context, to address a gap in `expressify-koa` functionality
-     */
-    this.router.use((ctx, next) => {
-      ctx.res.sendStatus = code => {
-        ctx.status = code;
-
-        // ignore body on certain codes
-        if (statuses.empty[code]) {
-          // strip headers
-          ctx.body = null;
-        }
-        ctx.res.end();
-      };
-      return next();
-    });
-
-    this.router.use(bodyParser());
+    this.router.use(bodyParser.json());
+    this.router.use(bodyParser.urlencoded({ extended: true }));
 
     // load plugins
     plugins.forEach(plugin => {
       this.preRouterMiddleware.push(...plugin.preRouterMiddleware);
-      this.router.use(this.settings.base, plugin.router.routes());
-      this.router.use(this.settings.base, plugin.router.allowedMethods());
+      this.router.use(this.config.base, plugin.router);
       this.postRouterMiddleware.push(...plugin.postRouterMiddleware);
     });
   }
@@ -75,21 +44,19 @@ module.exports = class CoreFramework {
    * @return {Object}
    */
   get app() {
-    return compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware]);
+    const router = Router();
+
+    router.use(
+      ...this.preRouterMiddleware,
+      this.router,
+      ...this.postRouterMiddleware
+    );
+
+    return router;
   }
 
   static defaults() {
     return read.sync(path.resolve(__dirname, './defaults.yml'));
-  }
-
-  /**
-   * Express/Connect-compatible middleware
-   *
-   * @return {Function}
-   */
-  expressify() {
-    // TODO: consume the app proxy setting
-    return expressify(compose([...this.preRouterMiddleware, this.router.routes(), this.router.allowedMethods(), ...this.postRouterMiddleware])); // do not rely on `this.app` since higher-level frameworks will overwrite it
   }
 
   /**
@@ -101,5 +68,4 @@ module.exports = class CoreFramework {
   static validateConfig(data) {
     return true;
   }
-
 };

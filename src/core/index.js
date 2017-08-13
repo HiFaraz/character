@@ -31,28 +31,33 @@ export default class IdentityDesk {
     debug('initializing');
     this.options = clone(options);
 
+    // default to Express framework support
     this.options.framework =
       this.options.framework || require('../frameworks/express');
 
     // transform inputs into structure: `[module, dependencies = {}]`
     // and expose the underlying class to gain access to defaults and validators
-    const transform = value => (Array.isArray(value)) ? value : [value, {}];
-    this.options.framework = flow(
-      transform,
-      ([module, dependencies]) => [module(CoreFramework), dependencies],
-    )(options.framework);
-    this.options.plugins = options.plugins.map(flow(
-      transform,
-      ([module, dependencies]) => [module(CorePlugin), dependencies],
-    ));
+    const transform = value => (Array.isArray(value) ? value : [value, {}]);
+    this.options.framework = flow(transform, ([module, dependencies]) => [
+      module(CoreFramework),
+      dependencies,
+    ])(this.options.framework);
+    this.options.plugins = options.plugins.map(
+      flow(transform, ([module, dependencies]) => [
+        module(CorePlugin),
+        dependencies,
+      ])
+    );
 
-    const Framework = this.options.framework[0];
+    const [Framework] = this.options.framework;
 
     // configure
 
     const defaults = [
       Framework.defaults(),
-      ...this.options.plugins.map(([Plugin]) => Plugin.defaults()),
+      ...this.options.plugins.map(([Plugin]) => ({
+        plugins: { [Plugin.name()]: Plugin.defaults() },
+      })),
     ].filter(Boolean);
 
     const validators = [
@@ -60,29 +65,37 @@ export default class IdentityDesk {
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
     ].filter(Boolean);
 
-    this.configuration = config.load(this.options.config, { defaults, validators });
+    this.config = config.load(this.options.config, {
+      defaults,
+      validators,
+    });
 
-    if (this.configuration.isValid) {
-      this.database = database.load(this.configuration.database);
+    if (this.config.isValid) {
+      this.database = database.load(this.config.database);
     }
+
+    debug(require('util').inspect(this.config, false, null));
 
     // initialize
 
     this.plugins = this.options.plugins.map(([Plugin, dependencies]) => {
-      // TODO document that plugin dependencies will already contain
-      // a `database` property, which will overwrite whatever is provided
+      // TODO document that plugin dependencies will already contain a `database` property, which will overwrite whatever is provided
       dependencies.database = this.database;
-      return new Plugin(this.configuration, dependencies);
+      return new Plugin(
+        Object.assign(this.config.plugins[Plugin.name()], {
+          isValid: this.config.isValid,
+        }),
+        dependencies
+      );
     });
 
-    this.framework = new Framework(this.database, this.configuration, this.plugins);
+    this.framework = new Framework(this.config, this.database, this.plugins);
   }
 
   /**
    * Example usage:
    *
    * - Express: app.use(identityDesk.app);
-   * - Koa: app.use(identityDesk.app.routes()), app.use(identityDesk.app.routes())
    *
    * @return {Object}
    */

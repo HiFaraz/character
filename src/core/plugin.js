@@ -4,21 +4,20 @@
  * Module dependencies.
  */
 
-import Router from 'koa-router';
+import { Router } from 'express';
 import { clone } from 'lodash';
 
 module.exports = class CorePlugin {
-
   /**
-   * @param {Object} settings
+   * @param {Object} config
    * @param {Object} dependencies
    */
-  constructor(settings, dependencies) {
-    this.preRouterMiddleware = []; // not part of the router, is added directly to the root app
-    this.postRouterMiddleware = []; // not part of the router, is added directly to the root app
-    this.router = new Router();
-    this.settings = clone(settings);
+  constructor(config, dependencies) {
+    this.config = clone(config);
     this.dependencies = dependencies;
+    this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
+    this.router = Router(); // is mounted to the base path
+    this.postRouterMiddleware = []; // not part of the router, is mounted directly to the root app
 
     this.define();
   }
@@ -41,6 +40,15 @@ module.exports = class CorePlugin {
   }
 
   /**
+   * Override this to return your plugin name
+   *
+   * @return {string}
+   */
+  static name() {
+    return '';
+  }
+
+  /**
    * Override this with your validator function
    *
    * @param {Object} data
@@ -49,5 +57,4 @@ module.exports = class CorePlugin {
   static validateConfig(data) {
     return true;
   }
-
 };

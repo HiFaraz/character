@@ -3,18 +3,17 @@
 /**
  * Module dependencies.
  */
-import Router from 'koa-router';
+import { Router } from 'express';
 import { clone } from 'lodash';
 
 module.exports = class CoreGETAuthenticator {
-
   /**
    * @param {string} name
    * @param {Object} settings
    * @param {Object} dependencies
    */
   constructor(name, settings, dependencies) {
-    this.router = new Router();
+    this.router = Router();
     this.settings = clone(settings);
     this.dependencies = dependencies;
 
@@ -28,5 +27,4 @@ module.exports = class CoreGETAuthenticator {
   define() {
     // Example: this.router.use(...)
   }
-
 };

@@ -8,23 +8,20 @@ import { UNAUTHORIZED } from 'http-codes';
 
 module.exports = function({ CorePOSTAuthenticator }) {
   return class MockLocalAuthenticator extends CorePOSTAuthenticator {
-
     hubToAuthenticator() {
-
       const debug = this.debug;
 
-      return (ctx, next) => {
-        const { username, password } = ctx.request.body;
+      return (req, res, next) => {
+        const { username, password } = req.body;
         debug(`authenticating username ${username} and password ${password}`);
 
         // Mock authentication code
         if (username === 'foo' && password === 'bar') {
-          ctx.body = username;
+          res.send(username); // TODO wrap in JSON for security?
         } else {
-          ctx.res.sendStatus(UNAUTHORIZED);
+          res.sendStatus(UNAUTHORIZED);
         }
       };
     }
-
   };
 };

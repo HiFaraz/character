@@ -5,7 +5,7 @@
  */
 
 import { ACCEPTED, OK, SEE_OTHER } from 'http-codes';
-import Router from 'koa-router';
+import { Router } from 'express';
 import { clone } from 'lodash';
 import { STATUS_CODES as httpCodeMessage } from 'http';
 import queryString from 'querystring';
@@ -13,100 +13,123 @@ import request from 'request-promise';
 import url from 'url';
 
 module.exports = class CorePOSTAuthenticator {
-
   /**
    * @param {string} name
-   * @param {Object} settings
+   * @param {Object} config
    * @param {Object} dependencies
    */
-  constructor(name, settings, dependencies) {
-    this.debug = require('debug')(`identity-desk:authentication:authenticator:${name}`);
+  constructor(name, config, dependencies) {
+    this.debug = require('debug')(
+      `identity-desk:authentication:authenticator:${name}`
+    );
     this.dependencies = dependencies;
     this.name = name;
-    this.router = new Router();
-    this.settings = clone(settings);
+    this.router = Router();
+    this.config = clone(config);
 
     this.debug('initializing');
 
-    this.router.post('/', async(ctx, next) => {
-      this.debug('new request', ctx.path, ctx.request.body);
-      const middleware = ({
-        authenticator: () => (ctx, next) => {
-          this.debug('enter hub request handler');
-          return this.hubToAuthenticator()(ctx, next);
-        },
-        hub: this.clientToHub.bind(this),
-      })[ctx.request.body[settings.authenticatorTargetParameter]];
-      if (middleware) {
-        return middleware()(ctx, next);
-      } else {
-        return next();
-      }
-    }, this.dependencies.session, this.appToClient());
+    this.router.post(
+      '/',
+      async (req, res, next) => {
+        this.debug('new request', req.path, req.body);
+        const middleware = {
+          authenticator: () => (req, res, next) => {
+            this.debug('enter hub request handler');
+            return this.hubToAuthenticator()(req, res, next);
+          },
+          hub: this.clientToHub.bind(this),
+        }[req.body[config.authenticatorTargetParameter]];
+        if (middleware) {
+          return middleware()(req, res, next);
+        } else {
+          return next();
+        }
+      },
+      this.dependencies.session,
+      this.appToClient()
+    );
   }
 
   appToClient() {
     const debug = this.debug;
-    const settings = this.settings;
+    const config = this.config;
 
-    return async function(ctx, next) {
+    return async function(req, res, next) {
       debug('enter app request handler');
 
       try {
         const middlewareTarget = {
-          [settings.authenticatorTargetParameter]: 'hub',
+          [config.authenticatorTargetParameter]: 'hub',
         };
 
-        const { body: user, statusCode } = await post(formatURL(ctx), Object.assign({}, ctx.request.body, middlewareTarget));
-        debug('hub middleware responded', formatURL(ctx), statusCode, user);
+        const { body: user, statusCode } = await post(
+          formatURL(req),
+          Object.assign({}, req.body, middlewareTarget)
+        );
+        debug('hub middleware responded', formatURL(req), statusCode, user);
 
-        if ([ACCEPTED, OK].includes(statusCode)) { // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
+        if ([ACCEPTED, OK].includes(statusCode)) {
+          // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
           if (statusCode === OK) {
-            ctx.identityDesk.set({ user });
+            req.identityDesk.set({ user });
           }
-          ctx.status = SEE_OTHER; // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
-          ctx.redirect(settings.successRedirect);
+          res.redirect(SEE_OTHER, config.successRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
         } else {
-          const query = queryString.stringify({ reason: httpCodeMessage[statusCode] });
-          ctx.status = SEE_OTHER; // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
-          ctx.redirect(`${settings.failureRedirect}?${query}`);
+          const query = queryString.stringify({
+            reason: httpCodeMessage[statusCode],
+          });
+          res.redirect(SEE_OTHER, `${config.failureRedirect}?${query}`); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
         }
       } catch (error) {
         debug('error when making a POST request to hub middleware', error);
-        ctx.throw(error);
+        next(error);
       }
-
     };
   }
 
   clientToHub() {
     const debug = this.debug;
-    const settings = this.settings;
+    const config = this.config;
 
-    return async function(ctx, next) {
+    return async function(req, res, next) {
       debug('enter client request handler');
 
       try {
         const middlewareTarget = {
-          [settings.authenticatorTargetParameter]: 'authenticator',
+          [config.authenticatorTargetParameter]: 'authenticator',
         };
 
-        const { body: user, statusCode } = await post(formatURL(ctx), Object.assign({}, ctx.request.body, middlewareTarget));
-        debug('authenticator middleware responded', formatURL(ctx), statusCode, user);
+        const { body: user, statusCode } = await post(
+          formatURL(req),
+          Object.assign({}, req.body, middlewareTarget)
+        );
+        debug(
+          'authenticator middleware responded',
+          formatURL(req),
+          statusCode,
+          user
+        );
 
         // TODO consider storing the login attempt in the DB
 
         // TODO this is where we need to consider on-boarding and checking links with the master identity
-        const name = ctx.path.split('/').pop(); // the authenticator name
+        const name = req.path.split('/').pop(); // the authenticator name
 
-        ctx.status = statusCode;
-        ctx.body = (statusCode === OK) ? {
-          id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-          [name]: user, // TODO attach linked users from all other authenticators before sending
-        } : {};
+        res.status(statusCode).json(
+          statusCode === OK
+            ? {
+              id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
+              [name]: user, // TODO attach linked users from all other authenticators before sending
+            }
+            : {}
+        );
       } catch (error) {
-        debug('error when making a POST request to authenticator middleware', error);
-        ctx.throw(error);
+        debug(
+          'error when making a POST request to authenticator middleware',
+          error
+        );
+        next(error);
       }
     };
   }
@@ -119,18 +142,16 @@ module.exports = class CorePOSTAuthenticator {
     /**
      * Example code:
      *
-     * const debug = this.debug;
-     *
-     * return (ctx, next) => {
-     *   debug('enter hub request handler');
+     * return (req, res, next) => {
+     *   
      * }
      */
   }
-
 };
 
 function post(uri, body) {
-  return request({ // unless statusCode is 200, body = {}
+  return request({
+    // unless statusCode is 200, body = {}
     body,
     json: true, // encodes/stringifies the request body as JSON
     method: 'POST',
@@ -140,8 +161,7 @@ function post(uri, body) {
   });
 }
 
-function formatURL(ctx, query) {
-
+function formatURL(req, query) {
   // Notes
 
   // debug('ctx.protocol', ctx.protocol);
@@ -164,9 +184,9 @@ function formatURL(ctx, query) {
   // discards original query parameters
   // to keep them, make sure to provide them in `query`
   return url.format({
-    host: ctx.host,
-    pathname: ctx.path,
-    protocol: ctx.protocol,
+    host: req.headers.host,
+    pathname: req.originalUrl.split('?')[0],
+    protocol: req.protocol,
     query,
   });
 }

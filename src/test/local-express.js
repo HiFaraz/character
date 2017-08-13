@@ -7,7 +7,9 @@ import '../../examples/local-express';
 import request from 'supertest';
 
 function getCookies(res) {
-  return (res.headers['set-cookie'] || []).map(cookie => cookie.split(';')[0]).join('; ');
+  return (res.headers['set-cookie'] || [])
+    .map(cookie => cookie.split(';')[0])
+    .join('; ');
 }
 
 describe('local-express', function() {
@@ -22,9 +24,7 @@ describe('local-express', function() {
 
   describe('GET /login', function() {
     it('should render login form', function(done) {
-      request('http://localhost:3000')
-        .get('/login')
-        .expect(200, /<form/, done);
+      request('http://localhost:3000').get('/login').expect(200, /<form/, done);
     });
 
     it('should display login error', function(done) {
@@ -61,7 +61,9 @@ describe('local-express', function() {
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')
         .expect(303, function(err, res) {
-          if (err) { return done(err); }
+          if (err) {
+            return done(err);
+          }
           request('http://localhost:3000')
             .get('/restricted')
             .set('Cookie', getCookies(res))
