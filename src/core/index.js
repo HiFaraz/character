@@ -6,6 +6,8 @@
 
 'use strict';
 
+export default main;
+
 /**
  * Module dependencies.
  */
@@ -18,7 +20,7 @@ import database from './database';
 
 const debug = require('debug')('identity-desk:core');
 
-export default class IdentityDesk {
+class IdentityDesk {
   /**
    * Create Identity Desk middleware
    *
@@ -107,4 +109,17 @@ export default class IdentityDesk {
     debug('shutting down');
     this.database.close();
   }
+}
+
+/**
+   * Create Identity Desk middleware
+   *
+   * @param {Object} options
+   * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
+   * @param {Array|Object} options.framework Array with structure: `[framework, dependencies]`. Can also pass a framework module directly if there are no dependencies
+   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
+   * @return {Object}
+   */
+function main(options) {
+  return new IdentityDesk(options);
 }
