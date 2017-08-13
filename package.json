@@ -1,7 +1,7 @@
 {
   "name": "identity-desk",
   "version": "0.0.0",
-  "description": "The Node.js identity solution",
+  "description": "Authentication, SSO, user management, and overall identity solution for Node.js",
   "main": "lib",
   "scripts": {
     "prebuild": "npm outdated && npm run lint && npm run clean-build",

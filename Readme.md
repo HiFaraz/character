@@ -1,9 +1,78 @@
 # Identity Desk
 
-The [Node.js](http://nodejs.org) identity solution
+Authentication, SSO, user management, and overall identity solution for Node.js
 
 [![Build Status][travis-image]][travis-url]
 [![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/identity-desk.svg)](https://greenkeeper.io/)
+
+Identity Desk is a flexible identity solution for Node.js. It saves you the effort of building a **complete user system** from various libraries such as Passport. And it is modular, so you can use only what you need.
+
+```javascript
+// Load Identity Desk core and plugins
+const authentication = require('identity-desk/authentication')
+const identityDesk = require('identity-desk')({
+  plugins: [authentication]
+})
+
+// Attach as Express middleware
+app.use(identityDesk.app)
+
+// Protect any route with `req.isAuthenticated`
+app.get('/restricted', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send('Hello world')
+  } else {
+    res.redirect('/login')
+  }
+})
+```
+
+## Modes
+
+Use Identity Desk in either **embedded** or **hub** mode, depending on your architecture:
+
+| Embedded mode                                                               | Hub mode                                                                                                                             |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Use Identity Desk as a middleware within a single Express-based application | Use Identity Desk as a standalone single sign-on (SSO) server for use with multiple web applications (even non-Node.js applications) |
+
+## Why Identity Desk?
+
+ - get security updates
+ - on-premise & open source
+ - maintain control of your user data
+ - use security best-practices instantly
+ - sensible defaults, customize almost anything
+ - save the time and effort of rolling your own identity solution
+
+
+## Features / Roadmap
+
+### Target for version 1.0.0 release
+
+  - Authentication
+    - Local: username / password
+    - Support for third-party authenticators (similar to Passport strategies)
+  - Auditing
+  - Configuration panel
+  - Registration
+  - User administration panel
+
+### Beyond verison 1.0.0
+
+  - Authentication
+    - Passwordless / magic links
+    - LDAP
+    - OAuth
+    - Social logins
+    - Two-factor / multi-factor
+    - ... and other authenticators (similar to Passport strategies)
+  - Role-based access control (RBAC)
+  - Account linking (e.g. link a Facebook and LinkedIn login to the same account/identity)
+  - Password resets and invalidation
+  - Single sign-on
+  - User on-boarding experience
+  - Account locking / anomaly detection
+  - Password hash upgrading
 
 ## Installation
 
@@ -11,38 +80,14 @@ The [Node.js](http://nodejs.org) identity solution
 $ npm install identity-desk
 ```
 
-## Usage with Express
+### Dependencies
 
-Identity Desk is compatible with Express 4.x. To use Identity Desk, you will need the following modules installed:
+To use Identity Desk, you will need the following modules installed:
 
   - `body-parser`
   - [`connect-session-sequelize`] if you plan to store sessions in the database rather than providing a separate session store
-  - `express`
+  - `express`: `^4.0.0`
   - `express-session`
-
-# Pieces
-
-Core lets other "plugins" access and validate the config somehow. Each plugin also has its default config. However the actual config is stored in one file only!
-
-Core:
-- read a configuration file, database validation
-- congifuration GUI and services
-
-Express/Koa:
-- provides routing
-- choosing a framework is mandatory
-- Koa is the base framework abstraction, other frameworks will convert the Koa export into something appropriate for their framework
-
-Configuration:
-- serves configuration GUI
-- has own config option for base and login paths
-
-Authentication:
-- linked users table
-- consume authenticators
-- validate authenticator config
-
-Individual authenticators
 
 ## Tests
 
@@ -76,11 +121,30 @@ For a good pull request, we ask you provide the following:
 5. To help ensure that your code is similar in style to the existing code,
    run the command `npm run lint` and fix any displayed issues.
 
+## Bug reports
+
+Create a [GitHub issue](https://github.com/HiFaraz/identity-desk/issues/new) to report a bug. Please provide sufficient details to reproduce the bug, such as version numbers, error logs, and example code if possible.
+
+If you have discovered a security related bug, please do NOT use the GitHub issue tracker. Send an email to [security@identitydesk.io](mailto:security@identitydesk.io).
+
 ## People
 
 The lead author is [Faraz Syed](https://github.com/HiFaraz).
 
 [List of all contributors](https://github.com/HiFaraz/identity-desk/graphs/contributors)
+
+## Support
+
+Create a GitHub issue to ask a question. Make sure to add `[question]` to the beginning of your issue's title.
+
+Commercial support is also available.
+
+  - Consulting (install, config, maintain, upgrade, migrate)
+  - Sponsored feature development
+  - Training
+  - Hosted Identity Desk / SaaS
+
+Commercial support contact: [support@identitydesk.io](mailto:support@identitydesk.io)
 
 ## License
 
