@@ -54,3 +54,7 @@ app.get('/login', function(req, res) {
 
 app.listen(3000);
 console.log('Express started on port 3000');
+
+if (module.parent) {
+  module.exports = identityDesk;
+}

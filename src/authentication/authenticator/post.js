@@ -52,8 +52,7 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   appToClient() {
-    const debug = this.debug;
-    const config = this.config;
+    const { config, debug } = this;
 
     return async function(req, res, next) {
       debug('enter app request handler');
@@ -89,8 +88,7 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   clientToHub() {
-    const debug = this.debug;
-    const config = this.config;
+    const { config, debug, dependencies, name } = this;
 
     return async function(req, res, next) {
       debug('enter client request handler');
@@ -100,7 +98,7 @@ module.exports = class CorePOSTAuthenticator {
           [config.authenticatorTargetParameter]: 'authenticator',
         };
 
-        const { body: user, statusCode } = await post(
+        const { body: account, statusCode } = await post(
           formatURL(req),
           Object.assign({}, req.body, middlewareTarget),
         );
@@ -108,19 +106,38 @@ module.exports = class CorePOSTAuthenticator {
           'authenticator middleware responded',
           formatURL(req),
           statusCode,
-          user,
+          account,
         );
 
         // TODO consider storing the login attempt in the DB
 
         // TODO this is where we need to consider on-boarding and checking links with the master identity
-        const name = req.path.split('/').pop(); // the authenticator name
+
+        const {
+          Authentication$Account,
+          Core$Identity,
+        } = dependencies.database.models;
+
+        const identity = await Core$Identity.findOne({
+          attributes: ['id'],
+          include: [
+            {
+              attributes: [],
+              model: Authentication$Account,
+              where: {
+                authenticatorAccountId: account.id,
+                authenticatorName: name,
+              },
+            },
+          ],
+          raw: true,
+        });
 
         res.status(statusCode).json(
           statusCode === OK
             ? {
-                id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-                [name]: user, // TODO attach linked users from all other authenticators before sending
+                id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
+                [name]: account, // TODO attach linked users from all other authenticators before sending
               }
             : {},
         );

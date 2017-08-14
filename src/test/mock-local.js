@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import '../../examples/mock-local';
+import identityDesk from '../../examples/mock-local';
 import request from 'supertest';
 
 /**
@@ -19,6 +19,30 @@ function getCookies(res) {
 }
 
 describe('mock-local', function() {
+  before(async () => {
+    await identityDesk.database.init();
+
+    const {
+      Authentication$Account,
+      Core$Identity,
+    } = identityDesk.database.models;
+
+    // set up test identity and authentication account
+    await Core$Identity.create(
+      {
+        authentication$Accounts: [
+          {
+            authenticatorAccountId: 1,
+            authenticatorName: 'mock-local',
+          },
+        ],
+      },
+      {
+        include: [Authentication$Account],
+      },
+    );
+  });
+
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
       request('http://localhost:3000')

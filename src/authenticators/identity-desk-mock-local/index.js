@@ -17,7 +17,7 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
         // Mock authentication code
         if (username === 'foo' && password === 'bar') {
-          res.send(username); // TODO wrap in JSON for security?
+          res.send({ id: 1 });
         } else {
           res.sendStatus(UNAUTHORIZED);
         }
