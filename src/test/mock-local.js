@@ -18,7 +18,7 @@ function getCookies(res) {
     .join('; ');
 }
 
-describe('local-express', function() {
+describe('mock-local', function() {
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
       request('http://localhost:3000')
