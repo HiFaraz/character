@@ -11,5 +11,6 @@ plugins:
         version: ^0.1.0
         successRedirect: /restricted
     session:
-      maxAge: $SESSION_MAXAGE
+      cookie:
+        maxAge: $SESSION_COOKIE_MAXAGE
       keys: $SESSION_KEYS

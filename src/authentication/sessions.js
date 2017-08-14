@@ -9,6 +9,7 @@ export default {
  */
 
 import SequelizeSessionStore from 'connect-session-sequelize';
+import { clone } from 'lodash';
 import session from 'express-session';
 
 /**
@@ -20,6 +21,8 @@ import session from 'express-session';
  * @return {Object}
  */
 function setup(config, db, store) {
+  const _config = clone(config);
+
   let _store = store;
 
   if (!_store) {
@@ -27,14 +30,16 @@ function setup(config, db, store) {
     _store.sync();
   }
 
+  _config.session.cookie.maxAge = Number(_config.session.cookie.maxAge);
+
   return {
     // session middleware
     session: session({
-      maxAge: config.session.maxAge,
+      cookie: _config.session.cookie,
       name: 'identityDesk.sid',
       resave: false,
       saveUninitialized: false,
-      secret: config.session.keys.split(','), // TODO document that the string is split by commas
+      secret: _config.session.keys.split(','), // TODO document that the string is split by commas
       store: _store,
     }),
     sessionMethods: function(req, res, next) {

@@ -18,7 +18,7 @@ module.exports = app;
 
 const CONFIG_PATH = path.resolve(__dirname, 'identity-desk.yml');
 process.env.DATABASE_URL = 'sqlite://:memory:';
-process.env.SESSION_MAXAGE = 7 * 24 * 60 * 60 * 1000;
+process.env.SESSION_COOKIE_MAXAGE = 7 * 24 * 60 * 60 * 1000;
 process.env.SESSION_KEYS = ['secret key 1', 'secret key 2'];
 
 const identityDesk = IdentityDesk({

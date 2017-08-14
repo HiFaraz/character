@@ -98,7 +98,10 @@ module.exports = function(CorePlugin) {
         ...Object.keys(config.authenticators).map(name =>
           validateAuthenticator(name, config.authenticators[name]),
         ),
-        assert(config.session.maxAge, 'missing session maximum age'),
+        assert(
+          config.session.cookie.maxAge,
+          'missing session cookie maximum age',
+        ),
         assert(config.session.keys, 'missing session secret keys'),
       );
       // TODO check that config.successRedirect exists or that each authenticator has a successRedirect
