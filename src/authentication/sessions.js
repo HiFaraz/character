@@ -15,15 +15,15 @@ import session from 'express-session';
  * Prepares session middleware and methods without attaching to the stack
  *
  * @param {Object} config
- * @param {Object} database
+ * @param {Object} db Sequelize database connection
  * @param {Object} [store] Store for `koa-generic-sessions`. Uses the database if a store is not provided
  * @return {Object}
  */
-function setup(config, database, store) {
+function setup(config, db, store) {
   let _store = store;
 
   if (!_store) {
-    _store = new (SequelizeSessionStore(session.Store))({ db: database });
+    _store = new (SequelizeSessionStore(session.Store))({ db });
     _store.sync();
   }
 

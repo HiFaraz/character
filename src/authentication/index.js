@@ -49,7 +49,7 @@ module.exports = function(CorePlugin) {
       // add session-middleware
       const { session, sessionMethods } = sessions.setup(
         this.config,
-        this.dependencies.database,
+        this.dependencies.database.connection,
         this.dependencies.sessionStore,
       );
       this.preRouterMiddleware.push(sessionMethods); // adds `req.identityDesk.get/set` for safe access of Identity Desk session data

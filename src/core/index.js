@@ -105,6 +105,15 @@ class IdentityDesk {
     return this.framework.app;
   }
 
+  /**
+   * Initialize the database. Use when starting with a clean database
+   * 
+   * @return {Promise}
+   */
+  async initDB() {
+    return this.database.init();
+  }
+
   shutdown() {
     debug('shutting down');
     this.database.close();
