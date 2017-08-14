@@ -149,6 +149,13 @@ module.exports = class CorePOSTAuthenticator {
   }
 };
 
+/**
+ * Send a POST request
+ * 
+ * @param {string} uri 
+ * @param {Object} body 
+ * @return {Object}
+ */
 function post(uri, body) {
   return request({
     // unless statusCode is 200, body = {}
@@ -161,26 +168,14 @@ function post(uri, body) {
   });
 }
 
+/**
+ * Format a URL
+ * 
+ * @param {IncomingMessage} req 
+ * @param {Object} query 
+ * @return {string}
+ */
 function formatURL(req, query) {
-  // Notes
-
-  // debug('ctx.protocol', ctx.protocol);
-  // debug('ctx.host', ctx.host);
-  // debug('ctx.hostname', ctx.hostname);
-  // debug('ctx.path', ctx.path);
-  // debug('ctx.originalUrl', ctx.originalUrl);
-  // debug('ctx.search', ctx.search);
-
-  // // req.protocol http +10ms
-  // // req.host 127.0.0.1:3000 +0ms
-  // // req.hostname 127.0.0.1 +1ms // do not use
-  // // req.path /auth/local +0ms
-  // // req.originalUrl /auth/local?hahaha +1ms // use, immutable and reliable
-  // // req.search ?hahaha +1ms
-  // // req.query { // use this with originalUrl.split('?')[0]
-  // //   hahaha: ''
-  // // }
-
   // discards original query parameters
   // to keep them, make sure to provide them in `query`
   return url.format({
