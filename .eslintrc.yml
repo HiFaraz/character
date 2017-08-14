@@ -4,66 +4,55 @@ env:
 parserOptions:
   ecmaVersion: 2017
   sourceType: module
-extends: 'eslint:recommended'
+extends:
+  - 'eslint:recommended'
+  - prettier
+plugins:
+  - prettier
 rules:
-  'comma-dangle':
+  complexity: warn
+  curly: error
+  eqeqeq: error
+  new-cap:
     - error
-    - always-multiline
-  'complexity': warn
-  'curly': error
-  'eqeqeq': error
-  'indent':
+    - capIsNew: false
+  no-array-constructor: error
+  no-await-in-loop: warn
+  no-console: warn
+  no-extend-native: error
+  no-eval: error
+  no-implicit-coercion: error
+  no-invalid-this: error
+  no-lonely-if: error
+  no-multi-assign: error
+  no-multi-str: error
+  no-param-reassign: error
+  no-path-concat: error
+  no-sequences: error
+  no-throw-literal: error
+  no-unused-vars:
     - error
-    - 2
-  'linebreak-style':
-    - error
-    - unix
-  'new-cap':
-    - error
-    - 
-      capIsNew: false
-  'no-array-constructor': error
-  'no-await-in-loop': warn
-  'no-console': warn
-  'no-extend-native': error
-  'no-eval': error
-  'no-implicit-coercion': error
-  'no-invalid-this': error
-  'no-lonely-if': error
-  'no-multi-assign': error
-  'no-multi-str': error
-  'no-param-reassign': error
-  'no-path-concat': error
-  'no-sequences': error
-  'no-tabs': error
-  'no-throw-literal': error
-  'no-trailing-spaces': error
-  'no-unused-vars':
-    - error
-    -
-      vars: all
+    - vars: all
       args: none
       ignoreRestSiblings: false
-  'no-var': error
-  'no-warning-comments': warn
-  'prefer-const': error
-  'prefer-spread': error
-  'prefer-template': error
-  'quotes':
-    - warn
-    - single
-  'require-jsdoc': warn
-  'semi':
+  no-var: error
+  no-warning-comments: warn
+  prefer-const: error
+  prefer-spread: error
+  prefer-template: error
+  prettier/prettier:
     - error
-    - always
-  'sort-imports': error
-  'sort-keys': error
-  'spaced-comment': error
-  'symbol-description': error
-  'valid-jsdoc':
+    - singleQuote: true
+      trailingComma: all
+      jsxBracketSameLine: true
+  require-jsdoc: warn
+  sort-imports: error
+  sort-keys: error
+  spaced-comment: error
+  symbol-description: error
+  valid-jsdoc:
     - error
-    - 
-      prefer:
+    - prefer:
         return: return
       preferType:
         object: Object
