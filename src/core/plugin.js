@@ -49,8 +49,8 @@ module.exports = class CorePlugin {
     return {
       modelName: {
         associate: models => {},
+        attributes: {},
         define: Model => {},
-        fields: {},
         options: {},
       },
     };

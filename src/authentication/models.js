@@ -6,8 +6,8 @@ export default {
       Authentication$Account.belongsTo(Core$Identity);
       Core$Identity.hasMany(Authentication$Account);
     },
-    fields: DataTypes => ({
-      authenticatorId: DataTypes.INTEGER,
+    attributes: DataTypes => ({
+      authenticatorAccountId: DataTypes.INTEGER,
       authenticatorName: DataTypes.STRING,
     }),
   },

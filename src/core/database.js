@@ -64,8 +64,8 @@ class Database {
     });
   }
 
-  _define(name, { attributes = {}, options = {} }) {
-    const Model = this.connection.define(name, attributes, options);
+  _define(name, { attributes = () => {}, options = {} }) {
+    const Model = this.connection.define(name, attributes(Sequelize), options);
     this.models[capitalize(name)] = Model;
     debug(`defined model ${capitalize(name)}`);
   }
