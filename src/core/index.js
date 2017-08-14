@@ -15,8 +15,10 @@ export default main;
 import { clone, flow } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
+import capitalize from 'capitalize';
 import config from './config';
 import database from './database';
+import models from './models';
 
 const debug = require('debug')('identity-desk:core');
 
@@ -62,6 +64,21 @@ class IdentityDesk {
       })),
     ].filter(Boolean);
 
+    // load Core and Plugin models
+    this.models = {};
+    Object.keys(models).forEach(
+      name => (this.models[`core$${capitalize(name)}`] = models[name]),
+    );
+    this.options.plugins.map(([Plugin]) => {
+      Plugin.name();
+      Object.keys(Plugin.models()).forEach(
+        name =>
+          (this.models[
+            `${Plugin.name()}$${capitalize(name)}`
+          ] = Plugin.models()[name]),
+      );
+    });
+
     const validators = [
       Framework.validateConfig,
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
@@ -73,7 +90,7 @@ class IdentityDesk {
     });
 
     if (this.config.isValid) {
-      this.database = database.load(this.config.database);
+      this.database = database.load(this.config.database, this.models);
     }
 
     debug(require('util').inspect(this.config, false, null));

@@ -10,8 +10,8 @@ export default {
 
 import Sequelize from 'sequelize';
 import capitalize from 'capitalize';
-import fs from 'fs';
-import path from 'path';
+
+const debug = require('debug')('identity-desk:database');
 
 let database; // will be populated by load()
 
@@ -19,11 +19,12 @@ let database; // will be populated by load()
  * Create a database object and load models
  * 
  * @param {Object|string} options 
+ * @param {Object} models 
  * @return {Object}
  */
-function load(options) {
+function load(options, models) {
   if (!database) {
-    database = new Database(options);
+    database = new Database(options, models);
     // await database.init(); // TODO find a good place for the init call
   }
   return database;
@@ -34,45 +35,39 @@ class Database {
    * Create a database object and load models
    *
    * @param {Object|string} options Sequelize database options
+   * @param {Object} models
    */
-  constructor(options) {
+  constructor(options, models) {
+    this._models = models; // hang on to the definitions
     this.connection = new Sequelize(options);
-    this.directory = options.directory || './models';
-    this.suffix = options.suffix || '.model.js';
+    this.models = {};
 
-    this._definitions().forEach(filename => this._import(filename));
-    this._afterImport();
+    Object.keys(this._models).forEach(name =>
+      this._define(name, this._models[name]),
+    );
+    this._afterDefine();
   }
 
-  _afterImport() {
-    Object.keys(this.connection.models).forEach(name => {
-      const Model = this.connection.model(name);
+  _afterDefine() {
+    Object.keys(this._models).forEach(name => {
+      const Model = this._models[name];
+      if (Model.define) {
+        // Model.define is where class and instance methods may be defined
+        Model.define(this.connection.models(name));
+        debug(`ran custom definitions for model ${capitalize(name)}`);
+      }
       if (Model.associate) {
-        Model.associate(this);
+        // Model.associate is where associations may be defined
+        Model.associate(this.models);
+        debug(`created associations defined by model ${capitalize(name)}`);
       }
     });
   }
 
-  /**
-   * List model definition files
-   * 
-   * @return {string[]}
-   */
-  _definitions() {
-    return fs
-      .readdirSync(path.resolve(__dirname, this.directory)) // TODO promisify
-      .filter(
-        item =>
-          item.endsWith(this.suffix) &&
-          fs.statSync(path.resolve(__dirname, this.directory, item)).isFile(),
-      );
-  }
-
-  _import(filename) {
-    const Model = this.connection.import(
-      path.resolve(__dirname, this.directory, filename),
-    );
-    this[capitalize(Model.name)] = Model;
+  _define(name, { attributes = {}, options = {} }) {
+    const Model = this.connection.define(name, attributes, options);
+    this.models[capitalize(name)] = Model;
+    debug(`defined model ${capitalize(name)}`);
   }
 
   async init() {

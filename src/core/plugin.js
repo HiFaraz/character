@@ -40,6 +40,23 @@ module.exports = class CorePlugin {
   }
 
   /**
+   * Override this to return your plugin models
+   * 
+   * @return {Object}
+   */
+  static models() {
+    // Each model must implement some or all of the interface below
+    return {
+      modelName: {
+        associate: models => {},
+        define: Model => {},
+        fields: {},
+        options: {},
+      },
+    };
+  }
+
+  /**
    * Override this to return your plugin name
    *
    * @return {string}

@@ -7,6 +7,7 @@ import { and, assert } from '../utils';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import { flow } from 'lodash';
+import models from './models';
 import modules from './modules';
 import requests from './requests';
 import sessions from './sessions';
@@ -80,6 +81,10 @@ module.exports = function(CorePlugin) {
           },
         ),
       );
+    }
+
+    static models() {
+      return models;
     }
 
     static name() {
