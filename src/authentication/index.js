@@ -25,7 +25,7 @@ module.exports = function(CorePlugin) {
     define() {
       if (!this.config.isValid) {
         return debug(
-          'Invalid configration. Not attaching authentication plugin. Fix your configuration and restart the server'
+          'Invalid configration. Not attaching authentication plugin. Fix your configuration and restart the server',
         );
       }
 
@@ -40,7 +40,7 @@ module.exports = function(CorePlugin) {
             failureRedirect: this.config.login,
             successRedirect: this.config.successRedirect,
           },
-          authenticators[name]
+          authenticators[name],
         );
       });
 
@@ -50,7 +50,7 @@ module.exports = function(CorePlugin) {
       const { session, sessionMethods } = sessions.setup(
         this.config,
         this.dependencies.database,
-        this.dependencies.sessionStore
+        this.dependencies.sessionStore,
       );
       this.preRouterMiddleware.push(sessionMethods); // adds `req.identityDesk.get/set` for safe access of Identity Desk session data
       this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes, else internal requests to self will generate extra sessions
@@ -73,12 +73,12 @@ module.exports = function(CorePlugin) {
             const module = new Module(
               name,
               authenticators[name],
-              this.dependencies
+              this.dependencies,
             );
             // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
             this.router.use(base, module.router);
-          }
-        )
+          },
+        ),
       );
     }
 
@@ -93,13 +93,13 @@ module.exports = function(CorePlugin) {
         assert(
           config.authenticators &&
             Object.keys(config.authenticators).length > 0,
-          'missing authenticators'
+          'missing authenticators',
         ),
         ...Object.keys(config.authenticators).map(name =>
-          validateAuthenticator(name, config.authenticators[name])
+          validateAuthenticator(name, config.authenticators[name]),
         ),
         assert(config.session.maxAge, 'missing session maximum age'),
-        assert(config.session.keys, 'missing session secret keys')
+        assert(config.session.keys, 'missing session secret keys'),
       );
       // TODO check that config.successRedirect exists or that each authenticator has a successRedirect
     }
@@ -122,16 +122,16 @@ function validateAuthenticator(name, authenticator) {
     and(
       assert(
         authenticator.module,
-        `missing module for authenticator \`${name}\``
+        `missing module for authenticator \`${name}\``,
       ),
       assert(
         authenticator.source,
-        `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``
+        `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``,
       ),
       assert(
         authenticator.source === 'local' ? authenticator.path : true,
-        `missing path for authenticator \`${name}\``
-      )
+        `missing path for authenticator \`${name}\``,
+      ),
     )
   );
   // TODO: for source = local, check that we have a local copy of this file for future re-installs @ authenticator.path

@@ -48,7 +48,7 @@ class IdentityDesk {
       flow(transform, ([module, dependencies]) => [
         module(CorePlugin),
         dependencies,
-      ])
+      ]),
     );
 
     const [Framework] = this.options.framework;
@@ -87,7 +87,7 @@ class IdentityDesk {
         Object.assign(this.config.plugins[Plugin.name()], {
           isValid: this.config.isValid,
         }),
-        dependencies
+        dependencies,
       );
     });
 

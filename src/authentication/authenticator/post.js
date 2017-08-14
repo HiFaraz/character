@@ -20,7 +20,7 @@ module.exports = class CorePOSTAuthenticator {
    */
   constructor(name, config, dependencies) {
     this.debug = require('debug')(
-      `identity-desk:authentication:authenticator:${name}`
+      `identity-desk:authentication:authenticator:${name}`,
     );
     this.dependencies = dependencies;
     this.name = name;
@@ -47,7 +47,7 @@ module.exports = class CorePOSTAuthenticator {
         }
       },
       this.dependencies.session,
-      this.appToClient()
+      this.appToClient(),
     );
   }
 
@@ -65,7 +65,7 @@ module.exports = class CorePOSTAuthenticator {
 
         const { body: user, statusCode } = await post(
           formatURL(req),
-          Object.assign({}, req.body, middlewareTarget)
+          Object.assign({}, req.body, middlewareTarget),
         );
         debug('hub middleware responded', formatURL(req), statusCode, user);
 
@@ -102,13 +102,13 @@ module.exports = class CorePOSTAuthenticator {
 
         const { body: user, statusCode } = await post(
           formatURL(req),
-          Object.assign({}, req.body, middlewareTarget)
+          Object.assign({}, req.body, middlewareTarget),
         );
         debug(
           'authenticator middleware responded',
           formatURL(req),
           statusCode,
-          user
+          user,
         );
 
         // TODO consider storing the login attempt in the DB
@@ -119,15 +119,15 @@ module.exports = class CorePOSTAuthenticator {
         res.status(statusCode).json(
           statusCode === OK
             ? {
-              id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-              [name]: user, // TODO attach linked users from all other authenticators before sending
-            }
-            : {}
+                id: 123, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
+                [name]: user, // TODO attach linked users from all other authenticators before sending
+              }
+            : {},
         );
       } catch (error) {
         debug(
           'error when making a POST request to authenticator middleware',
-          error
+          error,
         );
         next(error);
       }

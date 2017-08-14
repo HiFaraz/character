@@ -51,7 +51,7 @@ function load(source = 'identity-desk.yml', extras) {
   return flow(
     applyDefaults(extras.defaults),
     validate(extras.validators),
-    populateEnvironmentVariables
+    populateEnvironmentVariables,
   )(_source);
 }
 
@@ -77,7 +77,7 @@ function safeGetEnvString(name) {
     const variable = name.substring(1, name.length);
     assert(
       process.env[variable],
-      `Missing environment variable \`${variable}\``
+      `Missing environment variable \`${variable}\``,
     );
     return process.env[variable].trim();
   } else {
@@ -101,9 +101,9 @@ function validate(validators = []) {
         assert(
           typeof data.database === 'string' ||
             typeof data.database === 'object',
-          'database configuration must be either URL string or Sequelize options object'
+          'database configuration must be either URL string or Sequelize options object',
         ),
-        ...validators.map(validator => validator(data))
+        ...validators.map(validator => validator(data)),
       ),
     });
 }

@@ -49,7 +49,7 @@ module.exports = class CoreFramework {
     router.use(
       ...this.preRouterMiddleware,
       this.router,
-      ...this.postRouterMiddleware
+      ...this.postRouterMiddleware,
     );
 
     return router;
