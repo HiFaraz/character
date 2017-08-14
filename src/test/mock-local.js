@@ -3,9 +3,15 @@
  */
 'use strict';
 
-import '../../examples/local-express';
+import '../../examples/mock-local';
 import request from 'supertest';
 
+/**
+ * Create a Cookie header value from a request's `Set-Cookie` header
+ * 
+ * @param {IncomingMessage} res 
+ * @return {string}
+ */
 function getCookies(res) {
   return (res.headers['set-cookie'] || [])
     .map(cookie => cookie.split(';')[0])
@@ -29,7 +35,7 @@ describe('local-express', function() {
 
     it('should display login error', function(done) {
       request('http://localhost:3000')
-        .post('/auth/local')
+        .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -56,7 +62,7 @@ describe('local-express', function() {
 
     it('should succeed with proper cookie', function(done) {
       request('http://localhost:3000')
-        .post('/auth/local')
+        .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')
@@ -72,10 +78,10 @@ describe('local-express', function() {
     });
   });
 
-  describe('POST /auth/local', function() {
+  describe('POST /auth/mock-local', function() {
     it('should fail without proper username', function(done) {
       request('http://localhost:3000')
-        .post('/auth/local')
+        .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -84,7 +90,7 @@ describe('local-express', function() {
 
     it('should fail without proper password', function(done) {
       request('http://localhost:3000')
-        .post('/auth/local')
+        .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=baz')
         .expect('Location', '/login?reason=Unauthorized')
@@ -93,7 +99,7 @@ describe('local-express', function() {
 
     it('should succeed with proper credentials', function(done) {
       request('http://localhost:3000')
-        .post('/auth/local')
+        .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')

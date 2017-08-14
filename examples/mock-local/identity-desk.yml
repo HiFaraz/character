@@ -5,7 +5,7 @@ database:
 plugins:
   authentication:
     authenticators:
-      local:
+      mock-local:
         module: identity-desk-mock-local
         source: npm
         version: ^0.1.0
