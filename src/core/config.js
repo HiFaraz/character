@@ -33,7 +33,7 @@ import read from 'read-data';
  * @return {Object}
  */
 function applyDefaults(defaults = []) {
-  return data => merge(data, ...defaults);
+  return data => merge({}, ...defaults, data); // TODO: test that defaults should not overwrite provided config
 }
 
 /**
