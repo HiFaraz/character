@@ -125,7 +125,7 @@ module.exports = class CorePOSTAuthenticator {
               attributes: [],
               model: Authentication$Account,
               where: {
-                authenticatorAccountId: account.id,
+                authenticatorAccountId: account.id, // authenticator must return an id
                 authenticatorName: name,
               },
             },
@@ -133,11 +133,13 @@ module.exports = class CorePOSTAuthenticator {
           raw: true,
         });
 
+        // return the minimum to record successful authentication, rest can be queried by applications later
         res.status(statusCode).json(
           statusCode === OK
             ? {
+                account,
+                authenticator: name,
                 id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-                [name]: account, // TODO attach linked users from all other authenticators before sending
               }
             : {},
         );
