@@ -14,7 +14,7 @@ export default {
 /**
  * Module dependencies.
  */
-import { merge, reduce } from 'lodash';
+import { assign, reduce } from 'lodash';
 
 const debug = require('debug')('identity-desk:authentication:modules');
 
@@ -30,10 +30,10 @@ function load(authenticators) {
     (result, authenticator, name) => {
       const module = authenticator.module; // the module name
       try {
-        // return merge(result, {
+        // return assign({}, result, {
         //   [name]: require(module),
         // }); // TODO re-enable when modules are actually installed on `package.json`
-        return merge(result, {
+        return assign({}, result, {
           [name]: require(`../authenticators/${module}/index.js`),
         }); // TODO disable. Temporary code until modules are actually installed on `package.json`
       } catch (error) {

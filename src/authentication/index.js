@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 import { and, check } from '../utils';
-import { flow, forEach, mapKeys, mapValues, merge, reduce } from 'lodash';
+import { assign, flow, forEach, mapKeys, mapValues, reduce } from 'lodash';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import arrify from 'arrify';
@@ -87,16 +87,17 @@ module.exports = function(CorePlugin) {
     }
 
     static models(config) {
-      return reduce(
+      const result = reduce(
         modules.load(config.authenticators),
         (models, module, authenticatorName) =>
-          merge(
+          assign(
+            {},
             models,
             flow(
               module => module({ CoreGETAuthenticator, CorePOSTAuthenticator }), // hydrate the module,
               arrify, // modules may be a single authenticator or an array of authenticators
               modules => modules.map(Module => Module.models()),
-              models => merge(...models),
+              models => assign({}, ...models),
               models =>
                 mapKeys(
                   models,
@@ -106,6 +107,7 @@ module.exports = function(CorePlugin) {
           ),
         models,
       );
+      return result;
     }
 
     static name() {
