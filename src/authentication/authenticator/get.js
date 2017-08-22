@@ -23,14 +23,18 @@ module.exports = class CoreGETAuthenticator {
     this.router = Router();
     this.settings = clone(settings);
     this.dependencies = dependencies;
-
-    this.define();
   }
 
   /**
-   * Override this with a function to define router configuration
+   * Override this with a function to define an authenticator route
    */
-  define() {
-    // Example: this.router.use(...)
+  hubToAuthenticator() {
+    /**
+     * Example code:
+     *
+     * return (req, res, next) => {
+     *   
+     * }
+     */
   }
 };
