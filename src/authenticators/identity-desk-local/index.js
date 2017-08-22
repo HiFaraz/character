@@ -5,6 +5,7 @@
  */
 
 import { UNAUTHORIZED } from 'http-codes';
+import capitalize from 'capitalize';
 import models from './models';
 
 module.exports = function({ CorePOSTAuthenticator }) {
@@ -12,15 +13,19 @@ module.exports = function({ CorePOSTAuthenticator }) {
     hubToAuthenticator() {
       const debug = this.debug;
       const dependencies = this.dependencies;
+      const name = this.name;
 
       return async (req, res, next) => {
         try {
           const { username, password } = req.body;
           debug(`authenticating username ${username} and password ${password}`);
 
-          const { Authentication$Local$User } = dependencies.database.models;
+          const User =
+            dependencies.database.models[
+              `Authentication$${capitalize(name)}$User`
+            ]; // TODO this is bad, models should come from the CorePOSTAuthenticator in an elegant format
 
-          const user = await Authentication$Local$User.findOne({
+          const user = await User.findOne({
             attributes: ['id', 'password'],
             raw: true,
             where: { username },
