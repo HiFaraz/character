@@ -47,7 +47,7 @@ Use Identity Desk in either **embedded** or **hub** mode, depending on your arch
 
 ## Features / Roadmap
 
-### Target for version 1.0.0 release
+### Target for initial release
 
   - Authentication
     - Local: username / password
@@ -56,7 +56,7 @@ Use Identity Desk in either **embedded** or **hub** mode, depending on your arch
   - Registration
   - User administration panel
 
-### Beyond version 1.0.0
+### Beyond initial
 
   - Authentication
     - Passwordless / magic links
@@ -152,3 +152,9 @@ Commercial support contact: [support@identitydesk.io](mailto:support@identitydes
 
 [travis-image]: https://travis-ci.org/HiFaraz/identity-desk.svg?branch=master
 [travis-url]: https://travis-ci.org/HiFaraz/identity-desk
+
+# Readme TODO
+
+  - Explain Authenticators
+  - Explain how to write a plugin, including models
+  - List core models in reference
