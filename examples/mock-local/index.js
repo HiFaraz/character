@@ -52,9 +52,9 @@ app.get('/login', function(req, res) {
   res.sendFile(path.resolve(__dirname, 'login.html'));
 });
 
-app.listen(3000);
-console.log('Express started on port 3000');
+const server = app.listen();
+console.log(`Express started on port ${server.address().port}`);
 
 if (module.parent) {
-  module.exports = identityDesk;
+  module.exports = { identityDesk, port: server.address().port };
 }

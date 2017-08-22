@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import identityDesk from '../../examples/mock-local';
+import { identityDesk, port } from '../../examples/mock-local';
 import request from 'supertest';
 
 /**
@@ -17,6 +17,8 @@ function getCookies(res) {
     .map(cookie => cookie.split(';')[0])
     .join('; ');
 }
+
+const TEST_URL = `http://localhost:${port}`;
 
 describe('mock-local', function() {
   before(async () => {
@@ -45,20 +47,17 @@ describe('mock-local', function() {
 
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
-      request('http://localhost:3000')
-        .get('/')
-        .expect('Location', '/login')
-        .expect(302, done);
+      request(TEST_URL).get('/').expect('Location', '/login').expect(302, done);
     });
   });
 
   describe('GET /login', function() {
     it('should render login form', function(done) {
-      request('http://localhost:3000').get('/login').expect(200, /<form/, done);
+      request(TEST_URL).get('/login').expect(200, /<form/, done);
     });
 
     it('should display login error', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
@@ -69,7 +68,7 @@ describe('mock-local', function() {
 
   describe('GET /logout', function() {
     it('should redirect to /', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .get('/logout')
         .expect('Location', '/')
         .expect(302, done);
@@ -78,14 +77,14 @@ describe('mock-local', function() {
 
   describe('GET /restricted', function() {
     it('should redirect to /login without cookie', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .get('/restricted')
         .expect('Location', '/login')
         .expect(302, done);
     });
 
     it('should succeed with proper cookie', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
@@ -94,7 +93,7 @@ describe('mock-local', function() {
           if (err) {
             return done(err);
           }
-          request('http://localhost:3000')
+          request(TEST_URL)
             .get('/restricted')
             .set('Cookie', getCookies(res))
             .expect(200, done);
@@ -104,7 +103,7 @@ describe('mock-local', function() {
 
   describe('POST /auth/mock-local', function() {
     it('should fail without proper username', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
@@ -113,7 +112,7 @@ describe('mock-local', function() {
     });
 
     it('should fail without proper password', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=baz')
@@ -122,7 +121,7 @@ describe('mock-local', function() {
     });
 
     it('should succeed with proper credentials', function(done) {
-      request('http://localhost:3000')
+      request(TEST_URL)
         .post('/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
