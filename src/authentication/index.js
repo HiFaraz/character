@@ -69,15 +69,20 @@ module.exports = function(CorePlugin) {
               ? module({ CoreGETAuthenticator, CorePOSTAuthenticator })
               : module,
           ],
-          ([name, Module]) => {
+          ([name, hydrated]) => {
             const base = `/${name}`;
-            const module = new Module(
-              name,
-              authenticators[name],
-              this.dependencies,
-            );
-            // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
-            this.router.use(base, module.router);
+            const modules = Array.isArray(hydrated) ? hydrated : [hydrated];
+
+            modules.forEach(Module => {
+              // TODO test ability to return multiple modules from an authenticator
+              const module = new Module(
+                name,
+                authenticators[name],
+                this.dependencies,
+              );
+              // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
+              this.router.use(base, module.router);
+            });
           },
         ),
       );
