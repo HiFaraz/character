@@ -64,9 +64,7 @@ module.exports = function(CorePlugin) {
         flow(
           ([name, module]) => [
             name,
-            module
-              ? module({ CoreGETAuthenticator, CorePOSTAuthenticator })
-              : module,
+            module({ CoreGETAuthenticator, CorePOSTAuthenticator }),
           ],
           ([name, modules]) => {
             const base = `/${name}`;
