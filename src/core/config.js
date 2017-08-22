@@ -22,7 +22,7 @@ export default {
  * Module dependencies.
  */
 
-import { and, assert, mapValuesDeep } from '../utils';
+import { and, check, mapValuesDeep } from '../utils';
 import { clone, flow, merge } from 'lodash';
 import read from 'read-data';
 
@@ -75,7 +75,8 @@ function populateEnvironmentVariables(config) {
 function safeGetEnvString(name) {
   if (typeof name === 'string' && name.startsWith('$')) {
     const variable = name.substring(1, name.length);
-    assert(
+    // using soft assert so that Identity Desk can continue in limited mode with an invalid config
+    check(
       process.env[variable],
       `Missing environment variable \`${variable}\``,
     );
@@ -97,8 +98,8 @@ function validate(validators = []) {
   return data =>
     Object.assign(clone(data), {
       isValid: and(
-        assert(data.database, 'missing database configuration'),
-        assert(
+        check(data.database, 'missing database configuration'),
+        check(
           typeof data.database === 'string' ||
             typeof data.database === 'object',
           'database configuration must be either URL string or Sequelize options object',

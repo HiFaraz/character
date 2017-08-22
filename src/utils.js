@@ -1,14 +1,13 @@
 'use strict';
 
-export { and, assert, asyncEnabled, mapValuesDeep };
+export { and, check, mapValuesDeep };
 
 /**
  * Module dependencies.
  */
 
 import { isObject, mapValues } from 'lodash';
-import coreAssert from 'assert';
-import semver from 'semver';
+import assert from 'assert';
 
 const debug = require('debug')('identity-desk:utils');
 
@@ -19,32 +18,23 @@ const debug = require('debug')('identity-desk:utils');
  * @return {Boolean} Result of logical AND
  */
 function and(...values) {
-  return values.includes(false) === false;
+  return values.length === values.filter(Boolean).length;
 }
 
 /**
- * Assert in production, warn in other environments
+ * Assert in production, warn in other environments, return a boolean
  *
  * @param {*} value Value to assert
  * @param {string} message Message on assertion failure
  * @return {Boolean}
  */
-function assert(value, message) {
+function check(value, message) {
   if (process.env.NODE_ENV === 'production') {
-    coreAssert(value, message);
+    assert(value, message);
   } else if (!value) {
     debug(message);
   }
   return Boolean(value);
-}
-
-/**
- * Check if `async await` is enabled in the current Node runtime
- *
- * @return {Boolean}
- */
-function asyncEnabled() {
-  return semver.gte(process.version, 'v7.6.0');
 }
 
 /**

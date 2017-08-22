@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { and, assert } from '../utils';
+import { and, check } from '../utils';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import arrify from 'arrify';
@@ -100,8 +100,8 @@ module.exports = function(CorePlugin) {
     static validateConfig(data) {
       const config = data.plugins.authentication;
       return and(
-        assert(config, 'missing authentication settings'),
-        assert(
+        check(config, 'missing authentication settings'),
+        check(
           config.authenticators &&
             Object.keys(config.authenticators).length > 0,
           'missing authenticators',
@@ -109,11 +109,11 @@ module.exports = function(CorePlugin) {
         ...Object.keys(config.authenticators).map(name =>
           validateAuthenticator(name, config.authenticators[name]),
         ),
-        assert(
+        check(
           config.session.cookie.maxAge,
           'missing session cookie maximum age',
         ),
-        assert(config.session.keys, 'missing session secret keys'),
+        check(config.session.keys, 'missing session secret keys'),
       );
       // TODO check that config.successRedirect exists or that each authenticator has a successRedirect
     }
@@ -134,15 +134,15 @@ function validateAuthenticator(name, authenticator) {
   return (
     typeof authenticator === 'object' &&
     and(
-      assert(
+      check(
         authenticator.module,
         `missing module for authenticator \`${name}\``,
       ),
-      assert(
+      check(
         authenticator.source,
         `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``,
       ),
-      assert(
+      check(
         authenticator.source === 'local' ? authenticator.path : true,
         `missing path for authenticator \`${name}\``,
       ),
