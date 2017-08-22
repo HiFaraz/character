@@ -10,14 +10,14 @@ import models from './models';
 module.exports = function({ CorePOSTAuthenticator }) {
   return class LocalAuthenticator extends CorePOSTAuthenticator {
     hubToAuthenticator() {
-      const { debug, models } = this;
-
       return async (req, res, next) => {
         try {
           const { username, password } = req.body;
-          debug(`authenticating username ${username} and password ${password}`);
+          this.debug(
+            `authenticating username ${username} and password ${password}`,
+          );
 
-          const { User } = models;
+          const { User } = this.models;
 
           const user = await User.findOne({
             attributes: ['id', 'password'],
@@ -40,7 +40,7 @@ module.exports = function({ CorePOSTAuthenticator }) {
             res.sendStatus(UNAUTHORIZED);
           }
         } catch (error) {
-          debug('error within local authenticator', error.message);
+          this.debug('error within local authenticator', error);
           throw error;
         }
       };

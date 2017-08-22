@@ -69,36 +69,39 @@ module.exports = class CorePOSTAuthenticator {
    * @return {Function}
    */
   appToClient() {
-    const { config, debug } = this;
-
-    return async function(req, res, next) {
-      debug('enter app request handler');
+    return async (req, res, next) => {
+      this.debug('enter app request handler');
 
       try {
         const middlewareTarget = {
-          [config.authenticatorTargetParameter]: 'hub',
+          [this.config.authenticatorTargetParameter]: 'hub',
         };
 
         const { body: user, statusCode } = await post(
           formatURL(req),
           Object.assign({}, req.body, middlewareTarget),
         );
-        debug('hub middleware responded', formatURL(req), statusCode, user);
+        this.debug(
+          'hub middleware responded',
+          formatURL(req),
+          statusCode,
+          user,
+        );
 
         if ([ACCEPTED, OK].includes(statusCode)) {
           // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
           if (statusCode === OK) {
             req.identityDesk.set({ user });
           }
-          res.redirect(SEE_OTHER, config.successRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
+          res.redirect(SEE_OTHER, this.config.successRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
         } else {
           const query = queryString.stringify({
             reason: httpCodeMessage[statusCode],
           });
-          res.redirect(SEE_OTHER, `${config.failureRedirect}?${query}`); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
+          res.redirect(SEE_OTHER, `${this.config.failureRedirect}?${query}`); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
         }
       } catch (error) {
-        debug('error when making a POST request to hub middleware', error);
+        this.debug('error when making a POST request to hub middleware', error);
         next(error);
       }
     };
@@ -123,21 +126,19 @@ module.exports = class CorePOSTAuthenticator {
    * @return {Function}
    */
   clientToHub() {
-    const { config, debug, dependencies, name } = this;
-
-    return async function(req, res, next) {
-      debug('enter client request handler');
+    return async (req, res, next) => {
+      this.debug('enter client request handler');
 
       try {
         const middlewareTarget = {
-          [config.authenticatorTargetParameter]: 'authenticator',
+          [this.config.authenticatorTargetParameter]: 'authenticator',
         };
 
         const { body: account, statusCode } = await post(
           formatURL(req),
           Object.assign({}, req.body, middlewareTarget),
         );
-        debug(
+        this.debug(
           'authenticator middleware responded',
           formatURL(req),
           statusCode,
@@ -151,7 +152,7 @@ module.exports = class CorePOSTAuthenticator {
         const {
           Authentication$Account,
           Core$Identity,
-        } = dependencies.database.models;
+        } = this.dependencies.database.models;
 
         const identity = await Core$Identity.findOne({
           attributes: ['id'],
@@ -161,7 +162,7 @@ module.exports = class CorePOSTAuthenticator {
               model: Authentication$Account,
               where: {
                 authenticatorAccountId: account.id, // authenticator must return an id
-                authenticatorName: name,
+                authenticatorName: this.name,
               },
             },
           ],
@@ -172,13 +173,13 @@ module.exports = class CorePOSTAuthenticator {
         res.status(statusCode).json(
           statusCode === OK
             ? {
-                authenticator: { account, name },
+                authenticator: { account, name: this.name },
                 id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
               }
             : {},
         );
       } catch (error) {
-        debug(
+        this.debug(
           'error when making a POST request to authenticator middleware',
           error,
         );
