@@ -14,7 +14,7 @@ export default {
 /**
  * Module dependencies.
  */
-import { mapValues } from 'lodash';
+import { merge, reduce } from 'lodash';
 
 const debug = require('debug')('identity-desk:authentication:modules');
 
@@ -25,19 +25,27 @@ const debug = require('debug')('identity-desk:authentication:modules');
  * @return {Object}
  */
 function load(authenticators) {
-  return mapValues(authenticators, (authenticator, name) => {
-    const module = authenticator.module; // the module name
-    try {
-      // return require(module); // TODO re-enable when modules are actually installed on `package.json`
-      return require(`../authenticators/${module}/index.js`); // TODO disable. Temporary code until modules are actually installed on `package.json`
-    } catch (error) {
-      const message = `module \`${module}\` not installed for authenticator \`${name}\``;
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error(message);
-      } else {
-        debug(message);
-        return null;
+  return reduce(
+    authenticators,
+    (result, authenticator, name) => {
+      const module = authenticator.module; // the module name
+      try {
+        // return merge(result, {
+        //   [name]: require(module),
+        // }); // TODO re-enable when modules are actually installed on `package.json`
+        return merge(result, {
+          [name]: require(`../authenticators/${module}/index.js`),
+        }); // TODO disable. Temporary code until modules are actually installed on `package.json`
+      } catch (error) {
+        const message = `module \`${module}\` not installed for authenticator \`${name}\``;
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error(message);
+        } else {
+          debug(message);
+          return result;
+        }
       }
-    }
-  });
+    },
+    {},
+  );
 }
