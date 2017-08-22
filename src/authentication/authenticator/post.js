@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 import { ACCEPTED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER } from 'http-codes';
-import CoreGenericAuthenticator from './core';
+import CoreGenericAuthenticator from './generic';
 import { STATUS_CODES as httpCodeMessage } from 'http';
 import queryString from 'querystring';
 import request from 'request-promise';
