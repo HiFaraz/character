@@ -9,7 +9,7 @@ import { clone } from 'lodash';
 
 module.exports = class CorePlugin {
   /**
-   * @param {Object} config
+   * @param {Object} config Plugin configuration
    * @param {Object} dependencies
    */
   constructor(config, dependencies) {
@@ -42,9 +42,10 @@ module.exports = class CorePlugin {
   /**
    * Override this to return your plugin models
    * 
+   * @param {Object} config Plugin configuration
    * @return {Object}
    */
-  static models() {
+  static models(config) {
     // Each model must implement some or all of the interface below
     return {
       modelName: {

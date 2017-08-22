@@ -12,7 +12,7 @@ export default main;
  * Module dependencies.
  */
 
-import { clone, flow } from 'lodash';
+import { clone, flow, map } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
 import capitalize from 'capitalize';
@@ -64,21 +64,6 @@ class IdentityDesk {
       })),
     ].filter(Boolean);
 
-    // load Core and Plugin models
-    this.models = {};
-    Object.keys(models).forEach(
-      name => (this.models[`core$${capitalize(name)}`] = models[name]),
-    );
-    this.options.plugins.map(([Plugin]) => {
-      Plugin.name();
-      Object.keys(Plugin.models()).forEach(
-        name =>
-          (this.models[
-            `${Plugin.name()}$${capitalize(name)}`
-          ] = Plugin.models()[name]),
-      );
-    });
-
     const validators = [
       Framework.validateConfig,
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
@@ -90,6 +75,21 @@ class IdentityDesk {
     });
 
     if (this.config.isValid) {
+      // load Core and Plugin models
+      this.models = {};
+      Object.keys(models).forEach(
+        name => (this.models[`core$${capitalize(name)}`] = models[name]),
+      );
+      // plugins are passed their config to let them dynamically generate models
+      this.options.plugins.forEach(([Plugin]) =>
+        map(
+          Plugin.models(this.config.plugins[Plugin.name()]),
+          (model, name) => {
+            this.models[`${Plugin.name()}$${capitalize(name)}`] = model;
+          },
+        ),
+      );
+
       this.database = database.load(this.config.database, this.models);
     }
 
