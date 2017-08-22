@@ -3,7 +3,6 @@
 /**
  * Module dependencies.
  */
-
 import { UNAUTHORIZED } from 'http-codes';
 import models from './models';
 
