@@ -6,6 +6,7 @@
 import { and, assert } from '../utils';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
+import arrify from 'arrify';
 import { flow } from 'lodash';
 import models from './models';
 import modules from './modules';
@@ -69,11 +70,11 @@ module.exports = function(CorePlugin) {
               ? module({ CoreGETAuthenticator, CorePOSTAuthenticator })
               : module,
           ],
-          ([name, hydrated]) => {
+          ([name, modules]) => {
             const base = `/${name}`;
-            const modules = Array.isArray(hydrated) ? hydrated : [hydrated];
 
-            modules.forEach(Module => {
+            // modules may be a single authenticator or an array of authenticators
+            arrify(modules).forEach(Module => {
               // TODO test ability to return multiple modules from an authenticator
               const module = new Module(
                 name,

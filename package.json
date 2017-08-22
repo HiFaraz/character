@@ -54,6 +54,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
+    "arrify": "^1.0.1",
     "babel-polyfill": "^6.23.0",
     "capitalize": "^1.0.0",
     "debug": "^3.0.0",
