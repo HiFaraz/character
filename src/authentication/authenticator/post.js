@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import { ACCEPTED, OK, SEE_OTHER } from 'http-codes';
+import { ACCEPTED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER } from 'http-codes';
 import { Router } from 'express';
 import { clone } from 'lodash';
 import { STATUS_CODES as httpCodeMessage } from 'http';
@@ -36,9 +36,16 @@ module.exports = class CorePOSTAuthenticator {
       async (req, res, next) => {
         this.debug('new request', req.path, req.body);
         const middleware = {
-          authenticator: () => (req, res, next) => {
+          authenticator: () => async (req, res, next) => {
             this.debug('enter hub request handler');
-            return this.hubToAuthenticator()(req, res, next);
+            try {
+              return await this.hubToAuthenticator()(req, res, next);
+            } catch (error) {
+              const message = `error when running authenticator middleware for authenticator \`${this
+                .name}\``;
+              this.debug(message, error.message);
+              res.status(INTERNAL_SERVER_ERROR).send(message);
+            }
           },
           hub: this.clientToHub.bind(this),
         }[req.body[config.authenticatorTargetParameter]];
