@@ -20,7 +20,7 @@ module.exports = function(CorePlugin) {
     define() {
       if (!this.config.isValid) {
         return debug(
-          'Invalid configration. Not attaching authentication plugin. Fix your configuration and restart the server',
+          'Invalid configuration. Not attaching authentication plugin. Fix the configuration and restart the server',
         );
       }
 
