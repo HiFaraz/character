@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 import { and, check } from '../utils';
-import { flow, mapValues } from 'lodash';
+import { flow, forEach, mapValues } from 'lodash';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import arrify from 'arrify';
@@ -60,29 +60,26 @@ module.exports = function(CorePlugin) {
 
       // attach authenticators
       this.dependencies.session = session;
-      modules.load(authenticators).forEach(
+      forEach(modules.load(authenticators), (module, name) => {
         flow(
-          ([name, module]) => [
-            name,
-            module({ CoreGETAuthenticator, CorePOSTAuthenticator }),
-          ],
-          ([name, modules]) => {
-            const base = `/${name}`;
-
-            // modules may be a single authenticator or an array of authenticators
-            arrify(modules).forEach(Module => {
-              // TODO test ability to return multiple modules from an authenticator
-              const module = new Module(
-                name,
-                authenticators[name],
-                this.dependencies,
-              );
-              // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
-              this.router.use(base, module.router);
-            });
+          module => module({ CoreGETAuthenticator, CorePOSTAuthenticator }), // hydrate the module,
+          arrify, // modules may be a single authenticator or an array of authenticators
+          modules => {
+            flow(modules =>
+              modules.forEach(Module => {
+                // TODO test ability to return multiple modules from an authenticator
+                const module = new Module(
+                  name,
+                  authenticators[name],
+                  this.dependencies,
+                );
+                // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
+                this.router.use(`/${name}`, module.router);
+              }),
+            )(modules);
           },
-        ),
-      );
+        )(module);
+      });
     }
 
     static defaults() {
