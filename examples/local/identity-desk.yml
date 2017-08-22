@@ -1,0 +1,16 @@
+database:
+  dialect: sqlite
+  logging: false
+  url: $DATABASE_URL
+plugins:
+  authentication:
+    authenticators:
+      local:
+        module: identity-desk-local
+        source: npm
+        version: ^0.1.0
+        successRedirect: /restricted
+    session:
+      cookie:
+        maxAge: $SESSION_COOKIE_MAXAGE
+      keys: $SESSION_KEYS
