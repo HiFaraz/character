@@ -12,7 +12,7 @@ export default main;
  * Module dependencies.
  */
 
-import { clone, flow, map } from 'lodash';
+import { clone, flow, map, mapKeys } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
 import capitalize from 'capitalize';
@@ -78,16 +78,24 @@ class IdentityDesk {
       // load Core and Plugin models
       this.models = {};
       Object.keys(models).forEach(
-        name => (this.models[`core$${capitalize(name)}`] = models[name]),
+        name => (this.models[`core$${name}`] = models[name]),
       );
       // plugins are passed their config to let them dynamically generate models
       this.options.plugins.forEach(([Plugin]) =>
         map(
           Plugin.models(this.config.plugins[Plugin.name()]),
           (model, name) => {
-            this.models[`${Plugin.name()}$${capitalize(name)}`] = model;
+            this.models[`${Plugin.name()}$${name}`] = model;
           },
         ),
+      );
+
+      // Convert the model names into camel$Case, which is camelCase but with `$` to denote namespaces
+      this.models = mapKeys(this.models, (model, key) =>
+        flow(
+          key => key.split('$'),
+          pieces => [pieces[0], ...pieces.slice(1).map(capitalize)].join('$'),
+        )(key),
       );
 
       this.database = database.load(this.config.database, this.models);
