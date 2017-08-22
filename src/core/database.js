@@ -14,8 +14,6 @@ import { forEach } from 'lodash';
 
 const debug = require('debug')('identity-desk:database');
 
-let database; // will be populated by load()
-
 /**
  * Create a database object and load models
  * 
@@ -24,11 +22,7 @@ let database; // will be populated by load()
  * @return {Object}
  */
 function load(options, models) {
-  if (!database) {
-    database = new Database(options, models);
-    // await database.init(); // TODO find a good place for the init call
-  }
-  return database;
+  return new Database(options, models);
 }
 
 class Database {
