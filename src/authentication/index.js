@@ -4,10 +4,10 @@
  * Module dependencies.
  */
 import { and, check } from '../utils';
+import { flow, mapValues } from 'lodash';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import arrify from 'arrify';
-import { flow } from 'lodash';
 import models from './models';
 import modules from './modules';
 import requests from './requests';
@@ -31,20 +31,25 @@ module.exports = function(CorePlugin) {
         );
       }
 
-      const authenticators = this.config.authenticators;
-
-      // make sure each authenticator has a `successRedirect` and `failureRedirect` property
-      Object.keys(authenticators).forEach(name => {
-        authenticators[name] = Object.assign(
-          {
-            authenticatorTargetParameter: this.config
-              .authenticatorTargetParameter,
-            failureRedirect: this.config.login,
-            successRedirect: this.config.successRedirect,
-          },
-          authenticators[name],
-        );
-      });
+      /**
+       * Make sure each authenticator has the following properties:
+       *  - `authenticatorTargetParameter`
+       *  - `failureRedirect`
+       *  - `successRedirect`
+       */
+      const authenticators = mapValues(
+        this.config.authenticators,
+        authenticator =>
+          Object.assign(
+            {
+              authenticatorTargetParameter: this.config
+                .authenticatorTargetParameter,
+              failureRedirect: this.config.login,
+              successRedirect: this.config.successRedirect,
+            },
+            authenticator,
+          ),
+      );
 
       // body parsing is currently enabled on all plugin router routes by `CoreFramework`
 
