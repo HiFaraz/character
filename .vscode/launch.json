@@ -10,6 +10,9 @@
     "program": "${workspaceRoot}\\node_modules\\mocha\\bin\\_mocha",
     "stopOnEntry": false,
     "args": ["lib/**/*.spec.js", "lib/test"],
+    "env": {
+      "DEBUG":"identity-desk*"
+    },
     "runtimeExecutable": null,
     "sourceMaps": true,
     "outFiles": ["${workspaceRoot}\\lib\\**\\*.js"],
