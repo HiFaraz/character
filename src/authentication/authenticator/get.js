@@ -13,6 +13,8 @@ import { clone } from 'lodash';
 
 module.exports = class CoreGETAuthenticator {
   /**
+   * Do not override the constructor
+   * 
    * @param {string} name
    * @param {Object} settings
    * @param {Object} dependencies
@@ -26,8 +28,7 @@ module.exports = class CoreGETAuthenticator {
   }
 
   /**
-   * Override this with your router configuration
-   * Do not put your router configuration in the constructor
+   * Override this with a function to define router configuration
    */
   define() {
     // Example: this.router.use(...)

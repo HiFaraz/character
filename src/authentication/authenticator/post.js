@@ -14,6 +14,8 @@ import url from 'url';
 
 module.exports = class CorePOSTAuthenticator {
   /**
+   * Do not override the constructor
+   * 
    * @param {string} name
    * @param {Object} config
    * @param {Object} dependencies
@@ -154,8 +156,7 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   /**
-   * Override this with your authenticator route
-   * Do not put your authenticator route in the constructor
+   * Override this with a function to define an authenticator route
    */
   hubToAuthenticator() {
     /**

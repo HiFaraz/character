@@ -14,6 +14,8 @@ const debug = require('debug')('identity-desk:core:framework');
 
 module.exports = class CoreFramework {
   /**
+   * Do not override the constructor
+   * 
    * @param {Object} config
    * @param {Object} database
    * @param {Object[]} [plugins=[]] Array of express or express.Router instances
@@ -39,7 +41,7 @@ module.exports = class CoreFramework {
   }
 
   /**
-   * Override this with your app property, which is served by the core module as identityDesk.app
+   * Override this with an app property if needed, which is served by the core module as identityDesk.app
    *
    * @return {Object}
    */
@@ -60,7 +62,7 @@ module.exports = class CoreFramework {
   }
 
   /**
-   * Override this with your validator function
+   * Override this with a validator function that returns either `true` or `false`
    *
    * @param {Object} data
    * @return {Boolean}

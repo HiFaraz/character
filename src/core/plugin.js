@@ -9,6 +9,8 @@ import { clone } from 'lodash';
 
 module.exports = class CorePlugin {
   /**
+   * Do not override the constructor
+   * 
    * @param {Object} config Plugin configuration
    * @param {Object} dependencies
    */
@@ -23,15 +25,14 @@ module.exports = class CorePlugin {
   }
 
   /**
-   * Override this with your router configuration
-   * Do not put your router configuration in the constructor
+   * Override this with a function to define router configuration
    */
   define() {
     // Example: this.router.use(...)
   }
 
   /**
-   * Override this to return your plugin defaults
+   * Override this to return plugin defaults
    *
    * @return {Object}
    */
@@ -40,7 +41,7 @@ module.exports = class CorePlugin {
   }
 
   /**
-   * Override this to return your plugin models
+   * Override this to return plugin models
    * 
    * @param {Object} config Plugin configuration
    * @return {Object}
@@ -58,7 +59,7 @@ module.exports = class CorePlugin {
   }
 
   /**
-   * Override this to return your plugin name
+   * Override this to return plugin name
    *
    * @return {string}
    */
@@ -67,7 +68,7 @@ module.exports = class CorePlugin {
   }
 
   /**
-   * Override this with your validator function
+   * Override this with validator function
    *
    * @param {Object} data
    * @return {Boolean}
