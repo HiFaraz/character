@@ -166,6 +166,29 @@ module.exports = class CorePOSTAuthenticator {
      * }
      */
   }
+
+  /**
+   * Override this to return authenticator models
+   * 
+   * @return {Object}
+   */
+  static models() {
+    /**
+     * Each model must implement some or all of the standard interface below
+     * 
+     * Example code:
+     * 
+     * return {
+     *   modelName: {
+     *     associate: models => {},
+     *     attributes: {},
+     *     define: Model => {},
+     *     options: {},
+     *   },
+     * }
+     */
+    return {};
+  }
 };
 
 /**
