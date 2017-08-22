@@ -3,71 +3,19 @@
 /**
  * Module dependencies.
  */
-
 import { ACCEPTED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER } from 'http-codes';
-import { clone, forEach } from 'lodash';
-import { Router } from 'express';
-import capitalize from 'capitalize';
+import CoreGenericAuthenticator from './core';
 import { STATUS_CODES as httpCodeMessage } from 'http';
 import queryString from 'querystring';
 import request from 'request-promise';
 import url from 'url';
 
-module.exports = class CorePOSTAuthenticator {
+module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   /**
-   * Do not override the constructor
-   * 
-   * @param {string} name
-   * @param {Object} config
-   * @param {Object} dependencies
-   */
-  constructor(name, config, dependencies) {
-    this.debug = require('debug')(
-      `identity-desk:authentication:authenticator:${name}`,
-    );
-    this.dependencies = dependencies;
-    this.name = name;
-    this.router = Router();
-    this.config = clone(config);
-
-    this.debug('initializing');
-
-    this.router.post(
-      '/',
-      async (req, res, next) => {
-        this.debug('new request', req.path, req.body);
-        const middleware = {
-          authenticator: () => async (req, res, next) => {
-            this.debug('enter hub request handler');
-            try {
-              return await this.hubToAuthenticator()(req, res, next);
-            } catch (error) {
-              const message = `error when running authenticator middleware for authenticator \`${this
-                .name}\``;
-              this.debug(message, error.message);
-              res.status(INTERNAL_SERVER_ERROR).send(message);
-            }
-          },
-          hub: this.clientToHub.bind(this),
-        }[req.body[config.authenticatorTargetParameter]];
-        if (middleware) {
-          return middleware()(req, res, next);
-        } else {
-          return next();
-        }
-      },
-      this.dependencies.session,
-      this.appToClient(),
-    );
-
-    this.attachModels();
-  }
-
-  /**
-   * Returns a middleware that handles requests from the application to the client
-   * 
-   * @return {Function}
-   */
+     * Returns a middleware that handles requests from the application to the client
+     * 
+     * @return {Function}
+     */
   appToClient() {
     return async (req, res, next) => {
       this.debug('enter app request handler');
@@ -108,23 +56,10 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   /**
-   * Attach authenticator models to the context for easy access
-   */
-  attachModels() {
-    const prefix = `Authentication$${capitalize(this.name)}$`;
-    this.models = {};
-    forEach(this.dependencies.database.models, (model, name) => {
-      if (name.startsWith(prefix)) {
-        this.models[name.slice(prefix.length)] = model;
-      }
-    });
-  }
-
-  /**
-   * Returns a middleware that handles requests from the client to the hub
-   * 
-   * @return {Function}
-   */
+     * Returns a middleware that handles requests from the client to the hub
+     * 
+     * @return {Function}
+     */
   clientToHub() {
     return async (req, res, next) => {
       this.debug('enter client request handler');
@@ -189,41 +124,51 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   /**
-   * Returns a middleware that handles requests from the hub to the authenticator
-   * 
-   * Override this with a function to define an authenticator route
-   */
-  hubToAuthenticator() {
-    /**
-     * Example code:
-     *
-     * return (req, res, next) => {
-     *   
-     * }
+     * Define generic routes
      */
+  define() {
+    this.router.post(
+      '/',
+      async (req, res, next) => {
+        this.debug('new request', req.path, req.body);
+        const middleware = {
+          authenticator: () => async (req, res, next) => {
+            this.debug('enter hub request handler');
+            try {
+              return await this.hubToAuthenticator()(req, res, next);
+            } catch (error) {
+              const message = `error when running authenticator middleware for authenticator \`${this
+                .name}\``;
+              this.debug(message, error.message);
+              res.status(INTERNAL_SERVER_ERROR).send(message);
+            }
+          },
+          hub: this.clientToHub.bind(this),
+        }[req.body[this.config.authenticatorTargetParameter]];
+        if (middleware) {
+          return middleware()(req, res, next);
+        } else {
+          return next();
+        }
+      },
+      this.dependencies.session,
+      this.appToClient(),
+    );
   }
 
   /**
-   * Override this to return authenticator models
-   * 
-   * @return {Object}
-   */
-  static models() {
-    /**
-     * Each model must implement some or all of the standard interface below
+     * Returns a middleware that handles requests from the hub to the authenticator
      * 
-     * Example code:
-     * 
-     * return {
-     *   modelName: {
-     *     associate: models => {},
-     *     attributes: {},
-     *     define: Model => {},
-     *     options: {},
-     *   },
-     * }
+     * Override this with a function to define an authenticator route
      */
-    return {};
+  hubToAuthenticator() {
+    /**
+       * Example code:
+       *
+       * return (req, res, next) => {
+       *   
+       * }
+       */
   }
 };
 
