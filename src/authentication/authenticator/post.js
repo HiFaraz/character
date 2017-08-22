@@ -139,8 +139,7 @@ module.exports = class CorePOSTAuthenticator {
         res.status(statusCode).json(
           statusCode === OK
             ? {
-                account,
-                authenticator: name,
+                authenticator: { account, name },
                 id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
               }
             : {},
