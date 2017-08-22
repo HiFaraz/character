@@ -47,15 +47,21 @@ module.exports = class CorePlugin {
    * @return {Object}
    */
   static models(config) {
-    // Each model must implement some or all of the interface below
-    return {
-      modelName: {
-        associate: models => {},
-        attributes: {},
-        define: Model => {},
-        options: {},
-      },
-    };
+    /**
+     * Each model must implement some or all of the standard interface below
+     * 
+     * Example code:
+     * 
+     * return {
+     *   modelName: {
+     *     associate: models => {},
+     *     attributes: {},
+     *     define: Model => {},
+     *     options: {},
+     *   },
+     * }
+     */
+    return {};
   }
 
   /**
