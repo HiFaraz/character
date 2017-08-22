@@ -17,13 +17,6 @@ const debug = require('debug')('identity-desk:authentication');
 
 module.exports = function(CorePlugin) {
   return class Authentication extends CorePlugin {
-    static defaults() {
-      return {
-        authenticatorTargetParameter: 'identity_desk_target',
-        login: '/login',
-      };
-    }
-
     define() {
       if (!this.config.isValid) {
         return debug(
@@ -94,7 +87,15 @@ module.exports = function(CorePlugin) {
       );
     }
 
-    static models() {
+    static defaults() {
+      return {
+        authenticatorTargetParameter: 'identity_desk_target',
+        login: '/login',
+      };
+    }
+
+    static models(config) {
+      // const authenticators = config.authenticators;
       return models;
     }
 

@@ -23,20 +23,20 @@ module.exports = class CorePlugin {
   }
 
   /**
+   * Override this with your router configuration
+   * Do not put your router configuration in the constructor
+   */
+  define() {
+    // Example: this.router.use(...)
+  }
+
+  /**
    * Override this to return your plugin defaults
    *
    * @return {Object}
    */
   static defaults() {
     return {};
-  }
-
-  /**
-   * Override this with your router configuration
-   * Do not put your router configuration in the constructor
-   */
-  define() {
-    // Example: this.router.use(...)
   }
 
   /**
