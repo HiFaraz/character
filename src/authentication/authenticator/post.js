@@ -5,8 +5,9 @@
  */
 
 import { ACCEPTED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER } from 'http-codes';
+import { clone, forEach } from 'lodash';
 import { Router } from 'express';
-import { clone } from 'lodash';
+import capitalize from 'capitalize';
 import { STATUS_CODES as httpCodeMessage } from 'http';
 import queryString from 'querystring';
 import request from 'request-promise';
@@ -58,8 +59,15 @@ module.exports = class CorePOSTAuthenticator {
       this.dependencies.session,
       this.appToClient(),
     );
+
+    this.attachModels();
   }
 
+  /**
+   * Returns a middleware that handles requests from the application to the client
+   * 
+   * @return {Function}
+   */
   appToClient() {
     const { config, debug } = this;
 
@@ -96,6 +104,24 @@ module.exports = class CorePOSTAuthenticator {
     };
   }
 
+  /**
+   * Attach authenticator models to the context for easy access
+   */
+  attachModels() {
+    const prefix = `Authentication$${capitalize(this.name)}$`;
+    this.models = {};
+    forEach(this.dependencies.database.models, (model, name) => {
+      if (name.startsWith(prefix)) {
+        this.models[name.slice(prefix.length)] = model;
+      }
+    });
+  }
+
+  /**
+   * Returns a middleware that handles requests from the client to the hub
+   * 
+   * @return {Function}
+   */
   clientToHub() {
     const { config, debug, dependencies, name } = this;
 
@@ -162,6 +188,8 @@ module.exports = class CorePOSTAuthenticator {
   }
 
   /**
+   * Returns a middleware that handles requests from the hub to the authenticator
+   * 
    * Override this with a function to define an authenticator route
    */
   hubToAuthenticator() {

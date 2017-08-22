@@ -5,25 +5,19 @@
  */
 
 import { UNAUTHORIZED } from 'http-codes';
-import capitalize from 'capitalize';
 import models from './models';
 
 module.exports = function({ CorePOSTAuthenticator }) {
   return class LocalAuthenticator extends CorePOSTAuthenticator {
     hubToAuthenticator() {
-      const debug = this.debug;
-      const dependencies = this.dependencies;
-      const name = this.name;
+      const { debug, models } = this;
 
       return async (req, res, next) => {
         try {
           const { username, password } = req.body;
           debug(`authenticating username ${username} and password ${password}`);
 
-          const User =
-            dependencies.database.models[
-              `Authentication$${capitalize(name)}$User`
-            ]; // TODO this is bad, models should come from the CorePOSTAuthenticator in an elegant format
+          const { User } = models;
 
           const user = await User.findOne({
             attributes: ['id', 'password'],
@@ -32,13 +26,11 @@ module.exports = function({ CorePOSTAuthenticator }) {
           });
 
           if (user) {
-            const { id, password: actualPassword } = user;
-
             // Mock authentication code
             // TODO replace with bcrypt
-            if (password === actualPassword) {
+            if (password === user.password) {
               // success
-              res.send({ id });
+              res.send({ id: user.id });
             } else {
               // bad password
               res.sendStatus(UNAUTHORIZED);
