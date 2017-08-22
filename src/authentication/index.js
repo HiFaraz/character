@@ -64,20 +64,17 @@ module.exports = function(CorePlugin) {
         flow(
           module => module({ CoreGETAuthenticator, CorePOSTAuthenticator }), // hydrate the module,
           arrify, // modules may be a single authenticator or an array of authenticators
-          modules => {
-            flow(modules =>
-              modules.forEach(Module => {
-                // TODO test ability to return multiple modules from an authenticator
-                const module = new Module(
-                  name,
-                  authenticators[name],
-                  this.dependencies,
-                );
-                // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
-                this.router.use(`/${name}`, module.router);
-              }),
-            )(modules);
-          },
+          modules =>
+            modules.forEach(Module => {
+              // TODO test ability to return multiple modules from an authenticator
+              const module = new Module(
+                name,
+                authenticators[name],
+                this.dependencies,
+              );
+              // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
+              this.router.use(`/${name}`, module.router);
+            }),
         )(module);
       });
     }
