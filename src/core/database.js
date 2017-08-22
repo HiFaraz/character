@@ -10,6 +10,7 @@ export default {
 
 import Sequelize from 'sequelize';
 import capitalize from 'capitalize';
+import { forEach } from 'lodash';
 
 const debug = require('debug')('identity-desk:database');
 
@@ -42,9 +43,7 @@ class Database {
     this.connection = new Sequelize(options);
     this.models = {};
 
-    Object.keys(this._models).forEach(name =>
-      this._define(name, this._models[name]),
-    );
+    forEach(this._models, (model, name) => this._define(name, model));
     this._afterDefine();
   }
 
