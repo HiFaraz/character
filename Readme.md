@@ -47,14 +47,14 @@ Use Identity Desk in either **embedded** or **hub** mode, depending on your arch
 
 ## Features / Roadmap
 
-### Target for initial release
+### Target for [initial release](https://github.com/HiFaraz/identity-desk/milestone/1)
 
-  - Authentication
-    - Local: username / password
-    - Support for third-party authenticators (similar to Passport strategies)
-  - Configuration panel
-  - Registration
-  - User administration panel
+  - [ ] Authentication
+    - [x] Local: username / password
+    - [ ] Support for third-party authenticators (similar to Passport strategies)
+  - [ ] Configuration panel
+  - [ ] Registration
+  - [ ] User administration panel
 
 ### Beyond initial
 
