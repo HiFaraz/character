@@ -46,7 +46,7 @@ class Database {
       const Model = this._models[name];
       if (Model.define) {
         // Model.define is where class and instance methods may be defined
-        Model.define(this.connection.models(name));
+        Model.define(this.connection.models[name]);
         debug(`ran custom definitions for model ${capitalize(name)}`);
       }
       if (Model.associate) {
