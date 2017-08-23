@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { UNAUTHORIZED } from 'http-codes';
+import { OK, UNAUTHORIZED } from 'http-codes';
 import models from './models';
 
 module.exports = function({ CorePOSTAuthenticator }) {
@@ -18,24 +18,13 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
           const { User } = this.models;
 
-          const user = await User.findOne({
-            attributes: ['id', 'password'],
-            raw: true,
-            where: { username },
-          });
+          const result = await User.authenticate(username, password);
 
-          if (user) {
-            // Mock authentication code
-            // TODO replace with bcrypt
-            if (password === user.password) {
-              // success
-              res.send({ id: user.id });
-            } else {
-              // bad password
-              res.sendStatus(UNAUTHORIZED);
-            }
+          if (result.status === OK) {
+            res.send({ id: result.id });
           } else {
-            // user not found
+            // `result.status` may be `NOT_FOUND` and `UNAUTHORIZED`
+            // purposely send a status of `UNAUTHORIZED`, even if user does not exist
             res.sendStatus(UNAUTHORIZED);
           }
         } catch (error) {

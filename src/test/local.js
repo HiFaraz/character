@@ -35,6 +35,7 @@ describe('local', function() {
       password: 'bar',
       username: 'foo',
     }); // TODO replace with an initial POST call to `/register`
+
     await Core$Identity.create(
       {
         authentication$Accounts: [
