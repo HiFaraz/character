@@ -12,164 +12,178 @@ import url from 'url';
 
 module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   /**
-     * Returns a middleware that handles requests from the application to the client
-     * 
-     * @return {Function}
-     */
-  appToClient() {
-    return async (req, res, next) => {
+   * Handle requests from the application to the client
+   * 
+   * @param {IncomingMessage} req 
+   * @param {ServerResponse} res 
+   * @param {Function} next 
+   * @return {Promise<Object>}
+   */
+  async appToClient(req, res, next) {
+    try {
       this.debug('enter app request handler');
+      const middlewareTarget = {
+        [this.config.authenticatorTargetParameter]: 'hub',
+      };
 
-      try {
-        const middlewareTarget = {
-          [this.config.authenticatorTargetParameter]: 'hub',
-        };
+      const { body: user, statusCode } = await post(
+        formatURL(req),
+        Object.assign({}, req.body, middlewareTarget),
+      );
+      this.debug('hub middleware responded', formatURL(req), statusCode, user);
 
-        const { body: user, statusCode } = await post(
-          formatURL(req),
-          Object.assign({}, req.body, middlewareTarget),
-        );
-        this.debug(
-          'hub middleware responded',
-          formatURL(req),
-          statusCode,
-          user,
-        );
-
-        if ([ACCEPTED, OK].includes(statusCode)) {
-          // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
-          if (statusCode === OK) {
-            req.identityDesk.set({ user });
-          }
-          res.redirect(SEE_OTHER, this.config.successRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
-        } else {
-          const query = queryString.stringify({
-            reason: httpCodeMessage[statusCode],
-          });
-          res.redirect(SEE_OTHER, `${this.config.failureRedirect}?${query}`); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
+      if ([ACCEPTED, OK].includes(statusCode)) {
+        // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
+        if (statusCode === OK) {
+          req.identityDesk.set({ user });
         }
-      } catch (error) {
-        this.debug('error when making a POST request to hub middleware', error);
-        next(error);
+        return res.redirect(SEE_OTHER, this.config.successRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
+      } else {
+        const query = queryString.stringify({
+          reason: httpCodeMessage[statusCode],
+        });
+        return res.redirect(
+          SEE_OTHER,
+          `${this.config.failureRedirect}?${query}`,
+        ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
       }
-    };
+    } catch (error) {
+      this.debug('error when making a POST request to hub middleware', error);
+      next(error);
+    }
   }
 
   /**
-     * Returns a middleware that handles requests from the client to the hub
-     * 
-     * @return {Function}
+   * Handles requests from the hub to the authenticator
+   * 
+   * Override this with a function to define an authenticator route
+   * 
+   * @param {IncomingMessage} req 
+   * @param {ServerResponse} res 
+   * @param {Function} next 
+   * @return {Promise<Object>}
+   */
+  authenticate(req, res, next) {
+    /**
+     * Example code:
+     *
+     * res.status(200).send({id: ...});
      */
-  clientToHub() {
-    return async (req, res, next) => {
+    return true;
+  }
+
+  /**
+   * Handle requests from the client to the hub
+   * 
+   * @param {IncomingMessage} req 
+   * @param {ServerResponse} res 
+   * @param {Function} next 
+   * @return {Promise<Object>}
+   */
+  async clientToHub(req, res, next) {
+    try {
       this.debug('enter client request handler');
+      const middlewareTarget = {
+        [this.config.authenticatorTargetParameter]: 'authenticator',
+      };
 
-      try {
-        const middlewareTarget = {
-          [this.config.authenticatorTargetParameter]: 'authenticator',
-        };
+      const { body: account, statusCode } = await post(
+        formatURL(req),
+        Object.assign({}, req.body, middlewareTarget),
+      );
+      this.debug(
+        'authenticator middleware responded',
+        formatURL(req),
+        statusCode,
+        account,
+      );
 
-        const { body: account, statusCode } = await post(
-          formatURL(req),
-          Object.assign({}, req.body, middlewareTarget),
-        );
-        this.debug(
-          'authenticator middleware responded',
-          formatURL(req),
-          statusCode,
-          account,
-        );
+      // TODO consider storing the login attempt in the DB, maybe emit an event on identityDesk for the Audit plugin to listen to
 
-        // TODO consider storing the login attempt in the DB, maybe emit an event on identityDesk for the Audit plugin to listen to
+      // TODO this is where we need to consider on-boarding
 
-        // TODO this is where we need to consider on-boarding
+      // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
+      const {
+        Authentication$Account,
+        Core$Identity,
+      } = this.dependencies.database.models;
 
-        // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
-        const {
-          Authentication$Account,
-          Core$Identity,
-        } = this.dependencies.database.models;
-
-        const identity = await Core$Identity.findOne({
-          attributes: ['id'],
-          include: [
-            {
-              attributes: [],
-              model: Authentication$Account,
-              where: {
-                authenticatorAccountId: account.id, // authenticator must return an id
-                authenticatorName: this.name,
-              },
+      const identity = await Core$Identity.findOne({
+        attributes: ['id'],
+        include: [
+          {
+            attributes: [],
+            model: Authentication$Account,
+            where: {
+              authenticatorAccountId: account.id, // authenticator must return an id
+              authenticatorName: this.name,
             },
-          ],
-          raw: true,
-        });
+          },
+        ],
+        raw: true,
+      });
 
-        // return the minimum to record successful authentication, rest can be queried by applications later
-        res.status(statusCode).json(
-          statusCode === OK
-            ? {
-                authenticator: { account, name: this.name },
-                id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-              }
-            : {},
-        );
-      } catch (error) {
-        this.debug(
-          'error when making a POST request to authenticator middleware',
-          error,
-        );
-        next(error);
-      }
-    };
+      // return the minimum to record successful authentication, rest can be queried by applications later
+      return res.status(statusCode).json(
+        statusCode === OK
+          ? {
+              authenticator: { account, name: this.name },
+              id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
+            }
+          : {},
+      );
+    } catch (error) {
+      this.debug(
+        'error when making a POST request to authenticator middleware',
+        error,
+      );
+      next(error);
+    }
   }
 
   /**
    * Define generic routes
    */
   define() {
+    // binding functions has been known to be slow in older JavaScript runtimes
+    // this may be an optimization target
     this.router.post(
       '/',
-      async (req, res, next) => {
+      (req, res, next) => {
         this.debug('new request', req.path, req.body);
         const middleware = {
-          authenticator: () => async (req, res, next) => {
-            this.debug('enter hub request handler');
-            try {
-              return await this.hubToAuthenticator()(req, res, next);
-            } catch (error) {
-              const message = `error when running authenticator middleware for authenticator \`${this
-                .name}\``;
-              this.debug(message, error.message);
-              res.status(INTERNAL_SERVER_ERROR).send(message);
-            }
-          },
-          hub: this.clientToHub.bind(this),
+          authenticator: this.hubToAuthenticator,
+          hub: this.clientToHub,
         }[req.body[this.config.authenticatorTargetParameter]];
         if (middleware) {
-          return middleware()(req, res, next);
+          return middleware.call(this, req, res, next);
         } else {
           return next();
         }
       },
       this.dependencies.session,
-      this.appToClient(),
+      this.appToClient.bind(this),
     );
   }
 
   /**
-   * Returns a middleware that handles requests from the hub to the authenticator
+   * Pass requests from the hub to the authenticator
    * 
-   * Override this with a function to define an authenticator route
+   * @param {IncomingMessage} req 
+   * @param {ServerResponse} res 
+   * @param {Function} next 
+   * @return {Promise<Object>}
    */
-  hubToAuthenticator() {
-    /**
-       * Example code:
-       *
-       * return (req, res, next) => {
-       *   
-       * }
-       */
+  async hubToAuthenticator(req, res, next) {
+    try {
+      this.debug('enter hub request handler');
+      return await this.authenticate(req, res, next);
+    } catch (error) {
+      const message = `error when running authenticator middleware for authenticator \`${this
+        .name}\``;
+      this.debug(message, error.message);
+      res.status(INTERNAL_SERVER_ERROR).send(message);
+    }
   }
 };
 
