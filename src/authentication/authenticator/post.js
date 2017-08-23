@@ -80,10 +80,11 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
           account,
         );
 
-        // TODO consider storing the login attempt in the DB
+        // TODO consider storing the login attempt in the DB, maybe emit an event on identityDesk for the Audit plugin to listen to
 
-        // TODO this is where we need to consider on-boarding and checking links with the master identity
+        // TODO this is where we need to consider on-boarding
 
+        // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
         const {
           Authentication$Account,
           Core$Identity,
@@ -124,8 +125,8 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   }
 
   /**
-     * Define generic routes
-     */
+   * Define generic routes
+   */
   define() {
     this.router.post(
       '/',
@@ -157,10 +158,10 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   }
 
   /**
-     * Returns a middleware that handles requests from the hub to the authenticator
-     * 
-     * Override this with a function to define an authenticator route
-     */
+   * Returns a middleware that handles requests from the hub to the authenticator
+   * 
+   * Override this with a function to define an authenticator route
+   */
   hubToAuthenticator() {
     /**
        * Example code:
