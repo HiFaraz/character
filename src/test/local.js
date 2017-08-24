@@ -31,7 +31,7 @@ describe('local', function() {
         .post('/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        // .expect('Location', '/login?reason=Unauthorized')
+        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
         .expect(200, done);
     });
 
@@ -42,8 +42,25 @@ describe('local', function() {
         .post('/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        // .expect('Location', '/login?reason=Unauthorized')
+        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
         .expect(409, done);
+    });
+
+    it('should login the user after registration', function(done) {
+      request(TEST_URL)
+        .post('/auth/local/register')
+        .type('urlencoded')
+        .send('username=foo2&password=bar2')
+        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
+        .expect(200, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          request(TEST_URL)
+            .get('/restricted')
+            .set('Cookie', getCookies(res))
+            .expect(200, done);
+        });
     });
   });
 

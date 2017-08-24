@@ -17,7 +17,8 @@ function extend(req, res, next) {
 
   req.isUnauthenticated = () => !req.isAuthenticated();
 
-  // TODO implement req.login/req.logIn?
+  req.login = user => req.identityDesk.set({ user });
+  req.logIn = req.login;
 
   req.logout = () => {
     req.session.destroy();

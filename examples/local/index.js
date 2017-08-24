@@ -52,11 +52,6 @@ app.get('/login', function(req, res) {
   res.sendFile(path.resolve(__dirname, 'login.html'));
 });
 
-app.post('/register', function(req, res, next) {
-  req.path = '/auth/local/register';
-  next();
-});
-
 const server = app.listen();
 console.log(`Express started on port ${server.address().port}`);
 
