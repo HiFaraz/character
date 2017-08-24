@@ -47,24 +47,27 @@ Be sure to [install Identity Desk and its dependencies](#installation)
 
 Complete examples:
 
-  - [Local authentication](examples/local)
+  - [Local authentication](examples/local) (username + password)
 
 ## The business case for Identity Desk
 
-### … vs. building your own solution
+Identity Desk combines several benefits of both custom development and commercial identity services:
 
-  - use security best-practices instantly
-  - get security updates whenever a patch is released
-  - building an identity solution is not your business core competency
-  - save the time and effort of building the same features for each application
-  - avoid exposure to accidental vulnerabilities (e.g. not hashing passwords correctly)
-
-### … vs. using a commercial identity service
-
-  - on-premise: comply with your enterprise security requirements
-  - open source: verify the code that handles your user data
-  - avoid exposing your user data to third parties
-  - avoid costly service fees for registered inactive users
+| Benefit                                                                             | Custom solution (e.g. Passport) | Identity Desk             | Commercial identity service (e.g. Auth0) |
+| ----------------------------------------------------------------------------------- | ------------------------------- | ------------------------- | ---------------------------------------- |
+| **Business benefits**                                                               |                                 |                           |                                          |
+| Pre-built solution: save time and money in R&D                                      |                                 | ✅                         | ✅                                        |
+| **Security benefits**                                                               |                                 |                           |                                          |
+| On-premise: comply with your enterprise security requirements                       |                                 | ✅                         | ❔                                        |
+| Use security best-practices instantly                                               |                                 | ✅                         | ✅                                        |
+| Get security updates whenever a patch is released                                   |                                 | ✅                         | ✅                                        |
+| Avoid exposure to accidental vulnerabilities (e.g. not hashing passwords correctly) |                                 | ✅                         | ✅                                        |
+| Use a security-audited and penetration-tested identity solution                     |                                 | (pending initial release) | ❔                                        |
+| Open source: verify the code that handles your user data                            | ✅                               | ✅                         |                                          |
+| Open source: verify the code that handles your user data                            | ✅                               | ✅                         |                                          |
+| Avoid exposing your user data to third parties                                      | ✅                               | ✅                         |                                          |
+| Avoid costly service fees (e.g. for registered inactive users)                      | ✅                               | ✅                         |                                          |
+| Avoid complicated licensing fee structures                                          | ✅                               | ✅                         |                                          |
 
 ## Features / Roadmap
 
