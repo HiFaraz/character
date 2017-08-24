@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { identityDesk, port } from '../../examples/mock-local';
+import { identityDesk, port, server } from '../../examples/mock-local';
 import request from 'supertest';
 
 /**
@@ -44,6 +44,8 @@ describe('mock-local', function() {
       },
     );
   });
+
+  after(() => server.close());
 
   describe('GET /', function() {
     it('should redirect to /login', function(done) {

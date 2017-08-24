@@ -56,5 +56,5 @@ const server = app.listen();
 console.log(`Express started on port ${server.address().port}`);
 
 if (module.parent) {
-  module.exports = { identityDesk, port: server.address().port };
+  module.exports = { identityDesk, port: server.address().port, server };
 }

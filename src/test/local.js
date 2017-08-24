@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { identityDesk, port } from '../../examples/local';
+import { identityDesk, port, server } from '../../examples/local';
 import request from 'supertest';
 
 /**
@@ -24,6 +24,8 @@ describe('local', function() {
   before(async () => {
     await identityDesk.database.init();
   });
+
+  after(() => server.close());
 
   describe('POST /auth/local/register', function() {
     it('should succeed', function(done) {
