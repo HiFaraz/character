@@ -30,7 +30,15 @@ module.exports = function({ CorePOSTAuthenticator }) {
         res.sendStatus(INTERNAL_SERVER_ERROR);
       } else {
         // `result.status` may be `NOT_FOUND` and `UNAUTHORIZED`
-        // purposely send a status of `UNAUTHORIZED`, even if user does not exist
+
+        /**
+         * Send a status of `UNAUTHORIZED`, even if user does not exist
+         * 
+         * This is **NOT** a fool-proof security measure because other parts of
+         * the application may reveal whether a username exists, such as a
+         * sign-up page or public profile page
+         */
+
         return res.sendStatus(UNAUTHORIZED);
       }
     }
