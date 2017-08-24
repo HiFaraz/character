@@ -71,6 +71,63 @@ module.exports = class CoreGenericAuthenticator {
   }
 
   /**
+   * Find the core identity linked to an authenticator account
+   * 
+   * @param {Object} account 
+   * @param {integer} account.id 
+   * @return {Promise<Object>}
+   */
+  identify(account) {
+    // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
+    const {
+      Authentication$Account,
+      Core$Identity,
+    } = this.dependencies.database.models;
+    return Core$Identity.findOne({
+      attributes: ['id'],
+      include: [
+        {
+          attributes: [],
+          model: Authentication$Account,
+          where: {
+            authenticatorAccountId: account.id, // authenticator must return an id
+            authenticatorName: this.name,
+          },
+        },
+      ],
+      raw: true,
+    });
+  }
+
+  /**
+   * Create a new core identity linked to an authenticator account
+   * 
+   * @param {Object} account 
+   * @param {integer} account.id 
+   * @return {Promise<Object>}
+   */
+  onboard(account) {
+    // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
+    const {
+      Authentication$Account,
+      Core$Identity,
+    } = this.dependencies.database.models;
+    return Core$Identity.create(
+      {
+        authentication$Accounts: [
+          {
+            authenticatorAccountId: account.id,
+            authenticatorName: this.name,
+          },
+        ],
+      },
+      {
+        include: [Authentication$Account],
+      },
+    );
+  }
+
+  /**
    * Define authenticator models
    * 
    * Override this to return authenticator models

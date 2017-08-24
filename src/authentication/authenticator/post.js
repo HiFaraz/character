@@ -105,26 +105,8 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
       );
 
       if (statusCode === OK) {
-        // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
-        const {
-          Authentication$Account,
-          Core$Identity,
-        } = this.dependencies.database.models;
-
-        const identity = await Core$Identity.findOne({
-          attributes: ['id'],
-          include: [
-            {
-              attributes: [],
-              model: Authentication$Account,
-              where: {
-                authenticatorAccountId: account.id, // authenticator must return an id
-                authenticatorName: this.name,
-              },
-            },
-          ],
-          raw: true,
-        });
+        // TODO if the user is already logged in, consider linking the authenticator account to the logged in core identity instead of creating a new core identity
+        const identity = await this.identify(account);
 
         // `account` is the user record with the authenticator (local or external identity provider)
         // `identity` is the user record with Identity Desk
@@ -137,19 +119,8 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
           });
         } else if (this.config.onboardKnownAccounts) {
           // onboard the user by creating a core identity
-          const newIdentity = await Core$Identity.create(
-            {
-              authentication$Accounts: [
-                {
-                  authenticatorAccountId: account.id,
-                  authenticatorName: this.name,
-                },
-              ],
-            },
-            {
-              include: [Authentication$Account],
-            },
-          );
+
+          const newIdentity = await this.onboard(account);
           return res.status(OK).json({
             authenticator: { account, name: this.name },
             id: newIdentity.id,
