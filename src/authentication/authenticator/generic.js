@@ -128,6 +128,15 @@ module.exports = class CoreGenericAuthenticator {
   }
 
   /**
+   * Override this to return authenticator defaults
+   *
+   * @return {Object}
+   */
+  static defaults() {
+    return {};
+  }
+
+  /**
    * Define authenticator models
    * 
    * Override this to return authenticator models

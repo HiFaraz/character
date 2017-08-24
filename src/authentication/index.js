@@ -4,7 +4,15 @@
  * Module dependencies.
  */
 import { and, check } from '../utils';
-import { assign, flow, forEach, mapKeys, mapValues, reduce } from 'lodash';
+import {
+  assign,
+  flow,
+  forEach,
+  mapKeys,
+  mapValues,
+  merge,
+  reduce,
+} from 'lodash';
 import CoreGETAuthenticator from './authenticator/get';
 import CorePOSTAuthenticator from './authenticator/post';
 import arrify from 'arrify';
