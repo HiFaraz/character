@@ -43,6 +43,8 @@ app.get('/restricted', (req, res) => {
 
 Note how authentication was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
 
+Be sure to [install Identity Desk and its dependencies](#installation)
+
 Complete examples:
 
   - [Local authentication](examples/local)
@@ -154,7 +156,7 @@ The lead author is [Faraz Syed](https://github.com/HiFaraz).
 
 Create a GitHub issue to ask a question. Make sure to add `[question]` to the beginning of your issue's title.
 
-Commercial support is also available.
+Commercial support is also available:
 
   - Consulting (install, config, maintain, upgrade, migrate)
   - Sponsored feature development
