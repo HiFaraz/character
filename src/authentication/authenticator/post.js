@@ -142,7 +142,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
               authentication$Accounts: [
                 {
                   authenticatorAccountId: account.id,
-                  authenticatorName: 'local',
+                  authenticatorName: this.name,
                 },
               ],
             },
