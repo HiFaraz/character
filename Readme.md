@@ -5,7 +5,21 @@ Authentication, SSO, user management, and overall identity solution for Node.js
 [![Build Status][travis-image]][travis-url]
 [![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/identity-desk.svg)](https://greenkeeper.io/)
 
-Identity Desk is a flexible identity solution for Node.js. It saves you the effort of building a **complete user system** from various libraries such as Passport. And it is modular, so you can use only what you need.
+Identity Desk makes it faster, easier, and cheaper to add a **complete user system** for your applications. Just install a few modules to gain:
+
+  - authentication
+  - SSO
+  - system administration
+  - user management
+  - [and more ...](#features--roadmap)
+
+Identity Desk bridges the gap between building your own identity solution (often with lower-level libraries such as Passport) and relying on commercial services such as Auth0. Install it on your own server and keep control of your own data!
+
+Best of all, Identity Desk is modular, so you can use only what you need.
+
+## Getting started
+
+Here is a snippet that shows how to attach Identity Desk to your application:
 
 ```javascript
 // Load Identity Desk core and plugins
@@ -27,15 +41,28 @@ app.get('/restricted', (req, res) => {
 })
 ```
 
-## Why Identity Desk?
+Note how authentication was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
 
- - get security updates
- - on-premise & open source
- - maintain control of your user data
- - use security best-practices instantly
- - sensible defaults, customize almost anything
- - save the time and effort of rolling your own identity solution
+Complete examples:
 
+  - [Local authentication](examples/local)
+
+## The business case for Identity Desk
+
+### … vs. building your own solution
+
+  - use security best-practices instantly
+  - get security updates whenever a patch is released
+  - building an identity solution is not your business core competency
+  - save the time and effort of building the same features for each application
+  - avoid exposure to accidental vulnerabilities (e.g. not hashing passwords correctly)
+
+### … vs. using a commercial identity service
+
+  - on-premise: comply with your enterprise security requirements
+  - open source: verify the code that handles your user data
+  - avoid exposing your user data to third parties
+  - avoid costly service fees for registered inactive users
 
 ## Features / Roadmap
 
@@ -48,7 +75,7 @@ app.get('/restricted', (req, res) => {
   - [ ] Registration
   - [ ] User administration panel
 
-### Beyond initial
+### Beyond initial release
 
   - Authentication
     - Passwordless / magic links
@@ -64,6 +91,7 @@ app.get('/restricted', (req, res) => {
   - Single sign-on
   - User on-boarding experience
   - Account locking / anomaly detection
+  - Honeypots
   - Password hash upgrading
 
 ## Installation
@@ -72,7 +100,7 @@ app.get('/restricted', (req, res) => {
 $ npm install identity-desk
 ```
 
-### Dependencies
+### Peer dependencies
 
 To use Identity Desk, you will need the following modules installed:
 
@@ -105,11 +133,8 @@ For a good pull request, we ask you provide the following:
 3. The pull request should include tests for the change. A new feature should
    have tests for the new feature and bug fixes should include a test that fails
    without the corresponding code change and passes after they are applied.
-   The command `npm run test-cov` will generate a `coverage/` folder that
-   contains HTML pages of the code coverage, to better understand if everything
-   you're adding is being tested.
 4. If the pull request is a new feature, please include appropriate documentation 
-   in the `README.md` file as well.
+   in the `Readme.md` file as well.
 5. To help ensure that your code is similar in style to the existing code,
    run the command `npm run lint` and fix any displayed issues.
 
@@ -134,7 +159,7 @@ Commercial support is also available.
   - Consulting (install, config, maintain, upgrade, migrate)
   - Sponsored feature development
   - Training
-  - Hosted Identity Desk / SaaS
+  - Future: Hosted Identity Desk / SaaS
 
 Commercial support contact: [support@identitydesk.io](mailto:support@identitydesk.io)
 
@@ -144,9 +169,3 @@ Commercial support contact: [support@identitydesk.io](mailto:support@identitydes
 
 [travis-image]: https://travis-ci.org/HiFaraz/identity-desk.svg?branch=master
 [travis-url]: https://travis-ci.org/HiFaraz/identity-desk
-
-# Readme TODO
-
-  - Explain Authenticators
-  - Explain how to write a plugin, including models
-  - List core models in reference
