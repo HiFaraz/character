@@ -3,7 +3,13 @@
 /**
  * Module dependencies.
  */
-import { NOT_FOUND, OK, UNAUTHORIZED } from 'http-codes';
+import {
+  CONFLICT,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from 'http-codes';
 import { compare as compareHash, hash as generateHash } from 'bcryptjs';
 import Sequelize from 'sequelize';
 
@@ -30,12 +36,13 @@ export default {
        * @return {Promise<Object>}
        */
       User.authenticate = async (username, password) => {
+        const result = {};
+
         try {
           const user = await User.findOne({
             attributes: ['id', 'password'],
             where: { username },
           });
-          const result = {};
           if (user) {
             result.id = user.id;
             result.status = (await compareHash(password, user.password))
@@ -44,10 +51,12 @@ export default {
           } else {
             result.status = NOT_FOUND;
           }
-          return result;
         } catch (error) {
-          return new Error(error);
+          result.error = error;
+          result.status = INTERNAL_SERVER_ERROR;
         }
+
+        return result;
       };
 
       /**
@@ -59,13 +68,28 @@ export default {
        * @return {Promise<Object>} Sequelize model instance
        */
       User.create = async user => {
-        // Object.getPrototypeOf(User).create.call(User, ...) calls the original User.create method
-        return Object.getPrototypeOf(User).create.call(
-          User,
-          Object.assign({}, user, {
-            password: await generateHash(user.password, saltRounds),
-          }),
-        );
+        const result = {};
+
+        try {
+          // Object.getPrototypeOf(User).create.call(User, ...) calls the original User.create method
+          const created = await Object.getPrototypeOf(User).create.call(
+            User,
+            Object.assign({}, user, {
+              password: await generateHash(user.password, saltRounds),
+            }),
+          );
+          result.id = created.id;
+          result.status = OK;
+        } catch (error) {
+          if (error instanceof Sequelize.UniqueConstraintError) {
+            result.status = CONFLICT;
+          } else {
+            result.error = error;
+            result.status = INTERNAL_SERVER_ERROR;
+          }
+        }
+
+        return result;
       };
 
       // TODO need a class method to change a user's password

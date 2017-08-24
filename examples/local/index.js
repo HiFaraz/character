@@ -52,8 +52,9 @@ app.get('/login', function(req, res) {
   res.sendFile(path.resolve(__dirname, 'login.html'));
 });
 
-app.post('/register', function(req, res) {
-  res.redirect('/auth/local/register');
+app.post('/register', function(req, res, next) {
+  req.path = '/auth/local/register';
+  next();
 });
 
 const server = app.listen();

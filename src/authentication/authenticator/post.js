@@ -3,7 +3,13 @@
 /**
  * Module dependencies.
  */
-import { ACCEPTED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER } from 'http-codes';
+import {
+  ACCEPTED,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  OK,
+  SEE_OTHER,
+} from 'http-codes';
 import CoreGenericAuthenticator from './generic';
 import { STATUS_CODES as httpCodeMessage } from 'http';
 import queryString from 'querystring';
@@ -48,7 +54,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
       }
     } catch (error) {
-      this.debug('error when making a POST request to hub middleware', error);
+      this.debug('error handling request from app to client', error);
       next(error);
     }
   }
@@ -98,51 +104,73 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         account,
       );
 
-      // TODO consider storing the login attempt in the DB, maybe emit an event on identityDesk for the Audit plugin to listen to
+      if (statusCode === OK) {
+        // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
+        const {
+          Authentication$Account,
+          Core$Identity,
+        } = this.dependencies.database.models;
 
-      // TODO this is where we need to consider on-boarding
-
-      // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
-      const {
-        Authentication$Account,
-        Core$Identity,
-      } = this.dependencies.database.models;
-
-      const identity = await Core$Identity.findOne({
-        attributes: ['id'],
-        include: [
-          {
-            attributes: [],
-            model: Authentication$Account,
-            where: {
-              authenticatorAccountId: account.id, // authenticator must return an id
-              authenticatorName: this.name,
+        const identity = await Core$Identity.findOne({
+          attributes: ['id'],
+          include: [
+            {
+              attributes: [],
+              model: Authentication$Account,
+              where: {
+                authenticatorAccountId: account.id, // authenticator must return an id
+                authenticatorName: this.name,
+              },
             },
-          },
-        ],
-        raw: true,
-      });
+          ],
+          raw: true,
+        });
 
-      // return the minimum to record successful authentication, rest can be queried by applications later
-      return res.status(statusCode).json(
-        statusCode === OK
-          ? {
-              authenticator: { account, name: this.name },
-              id: identity.id, // master user ID internal to the hub, not the authenticator user ID // TODO replace with real ID from DB lookup
-            }
-          : {},
-      );
+        // `account` is the user record with the authenticator (local or external identity provider)
+        // `identity` is the user record with Identity Desk
+
+        if (identity) {
+          // return the minimum to record successful authentication, rest can be queried by applications later
+          return res.status(OK).json({
+            authenticator: { account, name: this.name },
+            id: identity.id,
+          });
+        } else if (this.config.onboardKnownAccounts) {
+          // onboard the user by creating a core identity
+          const newIdentity = await Core$Identity.create(
+            {
+              authentication$Accounts: [
+                {
+                  authenticatorAccountId: account.id,
+                  authenticatorName: 'local',
+                },
+              ],
+            },
+            {
+              include: [Authentication$Account],
+            },
+          );
+          return res.status(OK).json({
+            authenticator: { account, name: this.name },
+            id: newIdentity.id,
+          });
+        } else {
+          // only accept recognized core identities
+          res.sendStatus(NOT_FOUND);
+        }
+      } else {
+        res.sendStatus(statusCode);
+      }
+
+      // TODO consider storing the login attempt in the DB, maybe emit an event on identityDesk for the Audit plugin to listen to
     } catch (error) {
-      this.debug(
-        'error when making a POST request to authenticator middleware',
-        error,
-      );
+      this.debug('error when handling request from client to hub', error);
       next(error);
     }
   }
 
   /**
-   * Define generic routes
+   * Define core routes
    */
   define() {
     // binding functions has been known to be slow in older JavaScript runtimes
@@ -179,7 +207,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
       this.debug('enter hub request handler');
       return await this.authenticate(req, res, next);
     } catch (error) {
-      const message = `error when running authenticator middleware for authenticator \`${this
+      const message = `error when handling request from hub to authenticator \`${this
         .name}\``;
       this.debug(message, error.message);
       res.status(INTERNAL_SERVER_ERROR).send(message);

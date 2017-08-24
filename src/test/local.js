@@ -23,32 +23,28 @@ const TEST_URL = `http://localhost:${port}`;
 describe('local', function() {
   before(async () => {
     await identityDesk.database.init();
+  });
 
-    const {
-      Authentication$Account,
-      Authentication$Local$User,
-      Core$Identity,
-    } = identityDesk.database.models;
+  describe('POST /auth/local/register', function() {
+    it('should succeed', function(done) {
+      request(TEST_URL)
+        .post('/auth/local/register')
+        .type('urlencoded')
+        .send('username=foo&password=bar')
+        // .expect('Location', '/login?reason=Unauthorized')
+        .expect(200, done);
+    });
 
-    // set up test identity and authentication account
-    const user = await Authentication$Local$User.create({
-      password: 'bar',
-      username: 'foo',
-    }); // TODO replace with an initial POST call to `/register`
-
-    await Core$Identity.create(
-      {
-        authentication$Accounts: [
-          {
-            authenticatorAccountId: user.id,
-            authenticatorName: 'local',
-          },
-        ],
-      },
-      {
-        include: [Authentication$Account],
-      },
-    );
+    it('should fail when registering a username that already exists', function(
+      done,
+    ) {
+      request(TEST_URL)
+        .post('/auth/local/register')
+        .type('urlencoded')
+        .send('username=foo&password=bar')
+        // .expect('Location', '/login?reason=Unauthorized')
+        .expect(409, done);
+    });
   });
 
   describe('GET /', function() {

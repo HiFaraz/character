@@ -7,7 +7,7 @@ import { clone, forEach } from 'lodash';
 import { Router } from 'express';
 import capitalize from 'capitalize';
 
-module.exports = class CoreAuthenticator {
+module.exports = class CoreGenericAuthenticator {
   /**
    * Do not override the constructor
    * 
@@ -28,6 +28,7 @@ module.exports = class CoreAuthenticator {
 
     this.attachModels();
     this.define();
+    this.extend();
   }
 
   /**
@@ -44,11 +45,24 @@ module.exports = class CoreAuthenticator {
   }
 
   /**
-   * Define generic routes
+   * Define core routes
    * 
-   * Override this to define authenticator routes
+   * Override this to define core routes
    */
   define() {
+    /**
+     * Example code:
+     * 
+     * this.router.post(...);
+     */
+  }
+
+  /**
+   * Define extra authenticator routes
+   * 
+   * Override this to define extra authenticator routes
+   */
+  extend() {
     /**
      * Example code:
      * 
