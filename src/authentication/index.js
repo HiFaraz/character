@@ -36,6 +36,7 @@ module.exports = function(CorePlugin) {
        * Make sure each authenticator has the following properties:
        *  - `authenticatorTargetParameter`
        *  - `failureRedirect`
+       *  - `onboardKnownAccounts`
        *  - `successRedirect`
        */
       const authenticators = mapValues(
