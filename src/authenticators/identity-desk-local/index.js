@@ -39,9 +39,6 @@ module.exports = function({ CorePOSTAuthenticator }) {
      * Define extra authenticator routes
      */
     extend() {
-      // Onboard newly registered accounts by creating a new user id
-      this.config.onboardKnownAccounts = true;
-
       // Registration route
       this.router.post('/register', async (req, res, next) => {
         try {
@@ -50,6 +47,8 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
           const result = await User.create({ password, username });
           if (result.status === OK) {
+            await this.onboard({ id: result.id }); // create a new core identity
+            // TODO add optional logic (based on config) to immediately login the user with req.login()
             return res.status(OK).send({ id: result.id });
           } else {
             return res.sendStatus(result.status);
