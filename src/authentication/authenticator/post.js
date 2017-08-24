@@ -119,7 +119,6 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
           });
         } else if (this.config.onboardKnownAccounts) {
           // onboard the user by creating a core identity
-
           const newIdentity = await this.onboard(account);
           return res.status(OK).json({
             authenticator: { account, name: this.name },
