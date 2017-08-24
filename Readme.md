@@ -43,7 +43,7 @@ app.get('/restricted', (req, res) => {
 
 Note how authentication was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
 
-Be sure to [install Identity Desk and its dependencies](#installation)
+Be sure to [install Identity Desk and its dependencies](docs/guides/Getting-Started.md#installation)
 
 Complete examples:
 
@@ -68,6 +68,13 @@ Identity Desk combines several benefits of both custom development and commercia
 | Avoid exposing your user data to third parties                                      | ✅                               | ✅                         |                                          |
 | Avoid costly service fees (e.g. for registered inactive users)                      | ✅                               | ✅                         |                                          |
 | Avoid complicated licensing fee structures                                          | ✅                               | ✅                         |                                          |
+
+## Documentation
+
+  - [Overview](docs)
+  - [Guides](docs/guides)
+    - [Getting Started](docs/guides/Getting-Started.md)
+  - [Built-in plugins](docs/plugins)
 
 ## Features / Roadmap
 
@@ -99,30 +106,6 @@ Identity Desk combines several benefits of both custom development and commercia
   - Honeypots
   - Password hash upgrading
 
-## Installation
-
-```bash
-$ npm install identity-desk
-```
-
-### Peer dependencies
-
-To use Identity Desk, you will need the following modules installed:
-
-  - `body-parser`
-  - [`connect-session-sequelize`] if you plan to store sessions in the database rather than providing a separate session store
-  - `express`: `^4.0.0`
-  - `express-session`
-
-## Tests
-
-To run the test suite, first install the dependencies, then run `npm test`:
-
-```bash
-$ npm install
-$ npm test
-```
-
 ## Contributing
 
 This project welcomes contributions from the community. Contributions are
@@ -143,7 +126,7 @@ For a good pull request, we ask you provide the following:
 5. To help ensure that your code is similar in style to the existing code,
    run the command `npm run lint` and fix any displayed issues.
 
-## Bug reports
+## Bug reports and security disclosures
 
 Create a [GitHub issue](https://github.com/HiFaraz/identity-desk/issues/new) to report a bug. Please provide sufficient details to reproduce the bug, such as version numbers, error logs, and example code if possible.
 
