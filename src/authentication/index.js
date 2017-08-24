@@ -38,6 +38,7 @@ module.exports = function(CorePlugin) {
               authenticatorTargetParameter: this.config
                 .authenticatorTargetParameter,
               failureRedirect: this.config.login,
+              onboardKnownAccounts: this.config.onboardKnownAccounts,
               successRedirect: this.config.successRedirect,
             },
             authenticator,
