@@ -27,14 +27,6 @@ app.get('/restricted', (req, res) => {
 })
 ```
 
-## Modes
-
-Use Identity Desk in either **embedded** or **hub** mode, depending on your architecture:
-
-| Embedded mode                                                               | Hub mode                                                                                                                             |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Use Identity Desk as a middleware within a single Express-based application | Use Identity Desk as a standalone single sign-on (SSO) server for use with multiple web applications (even non-Node.js applications) |
-
 ## Why Identity Desk?
 
  - get security updates
