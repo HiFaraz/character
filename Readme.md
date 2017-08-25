@@ -5,7 +5,7 @@ Authentication, SSO, user management, and overall identity solution for Node.js
 [![Build Status][travis-image]][travis-url]
 [![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/identity-desk.svg)](https://greenkeeper.io/)
 
-Identity Desk makes it faster, easier, and cheaper to add a **complete user system** for your applications. Just install a few modules to gain:
+Identity Desk is a turnkey solution that makes it faster, easier, and cheaper to add a **complete user system** for your applications:
 
   - authentication
   - SSO
@@ -13,13 +13,48 @@ Identity Desk makes it faster, easier, and cheaper to add a **complete user syst
   - user management
   - [and more ...](#features--roadmap)
 
-Identity Desk bridges the gap between building your own identity solution (often with lower-level libraries such as Passport) and relying on commercial services such as Auth0. Install it on your own server and keep control of your own data!
+You don't have to use all the features. Identity Desk is **modular**, so you can use only the features you need.
 
-Best of all, Identity Desk is modular, so you can use only what you need.
+## Why Identity Desk?
+
+Presently there are two main options for building Node.js applications:
+
+  - build and support a custom solution with a low-level library, e.g. Passport
+  - use a commercial service, e.g. Auth0
+
+Identity Desk combines the key benefits of both options. Install it on your own server and keep control of your own data!
+
+| Benefit                                                            | Custom solution | Identity Desk | Commercial service |
+| ------------------------------------------------------------------ | --------------- | ------------- | ------------------ |
+| Save R&D time and money with a pre-built solution                  |                 | ✅             | ✅                  |
+| Secure your applications with best-practices and security updates  |                 | ✅             | ✅                  |
+| Protect against known vulnerabilities                              |                 | ✅             | ✅                  |
+| Use a security-audited and penetration-tested solution             |                 | (planned)     | ❔                  |
+| On-premise: comply with your enterprise security requirements      | ✅               | ✅             | ❔                  |
+| Open source: verify the code that handles your user data           | ✅               | ✅             |                    |
+| Keep your user data our of third-party hands                       | ✅               | ✅             |                    |
+| Avoid costly service fees (e.g. for registered but inactive users) | ✅               | ✅             |                    |
+| Avoid complicated licensing fee structures                         | ✅               | ✅             |                    |
 
 ## Getting started
 
-Here is a snippet that shows how to attach Identity Desk to your application:
+### Installing
+
+Install Identity Desk from `npm`:
+
+```bash
+$ npm install identity-desk
+```
+
+You also need to install the [peer dependencies](docs/guides/Getting-Started.md#installation).
+
+### Usage
+
+Identity Desk exports an Express Router which can be mounted onto any Express 4.x app with `app.use`. This is a clean mount which does not interfere with existing routes, because almost all middleware is mounted under `/auth` (configurable).
+
+It reads its configuration from `identity-desk.yml` by default (configurable).
+
+Here is example usage from the [Local authenticator example](examples/local):
 
 ```javascript
 // Load Identity Desk core and plugins
@@ -41,40 +76,13 @@ app.get('/restricted', (req, res) => {
 })
 ```
 
-Note how authentication was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
-
-Be sure to [install Identity Desk and its dependencies](docs/guides/Getting-Started.md#installation)
-
-Complete examples:
-
-  - [Local authentication](examples/local) (username + password)
-
-## The business case for Identity Desk
-
-Identity Desk combines several benefits of both custom development and commercial identity services:
-
-| Benefit                                                                             | Custom solution (e.g. Passport) | Identity Desk             | Commercial identity service (e.g. Auth0) |
-| ----------------------------------------------------------------------------------- | ------------------------------- | ------------------------- | ---------------------------------------- |
-| **Business benefits**                                                               |                                 |                           |                                          |
-| Pre-built solution: save time and money in R&D                                      |                                 | ✅                         | ✅                                        |
-| **Security benefits**                                                               |                                 |                           |                                          |
-| On-premise: comply with your enterprise security requirements                       |                                 | ✅                         | ❔                                        |
-| Use security best-practices instantly                                               |                                 | ✅                         | ✅                                        |
-| Get security updates whenever a patch is released                                   |                                 | ✅                         | ✅                                        |
-| Avoid exposure to accidental vulnerabilities (e.g. not hashing passwords correctly) |                                 | ✅                         | ✅                                        |
-| Use a security-audited and penetration-tested identity solution                     |                                 | (pending initial release) | ❔                                        |
-| Open source: verify the code that handles your user data                            | ✅                               | ✅                         |                                          |
-| Open source: verify the code that handles your user data                            | ✅                               | ✅                         |                                          |
-| Avoid exposing your user data to third parties                                      | ✅                               | ✅                         |                                          |
-| Avoid costly service fees (e.g. for registered inactive users)                      | ✅                               | ✅                         |                                          |
-| Avoid complicated licensing fee structures                                          | ✅                               | ✅                         |                                          |
+Note how `authentication` was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
 
 ## Documentation
 
-  - [Overview](docs)
-  - [Guides](docs/guides)
-    - [Getting Started](docs/guides/Getting-Started.md)
-  - [Built-in plugins](docs/plugins)
+  - [Overview](docs/Readme.md)
+  - [Examples](examples)
+    - [Local authentication](examples/local) (username + password)
 
 ## Features / Roadmap
 
