@@ -57,6 +57,7 @@
   "dependencies": {
     "arrify": "^1.0.1",
     "babel-polyfill": "^6.23.0",
+    "bcryptjs": "^2.4.3",
     "capitalize": "^1.0.0",
     "debug": "^3.0.0",
     "http-codes": "^1.0.0",
