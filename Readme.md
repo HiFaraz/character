@@ -15,27 +15,6 @@ Identity Desk is a turnkey solution that makes it faster, easier, and cheaper to
 
 You don't have to use all the features. Identity Desk is **modular**, so you can use only the features you need.
 
-## Why Identity Desk?
-
-Presently there are two main options for building Node.js applications:
-
-  - build and support a custom solution with a low-level library, e.g. Passport
-  - use a commercial service, e.g. Auth0
-
-Identity Desk combines the key benefits of both options. Install it on your own server and keep control of your own data!
-
-| Benefit                                                            | Custom solution | Identity Desk | Commercial service |
-| ------------------------------------------------------------------ | --------------- | ------------- | ------------------ |
-| Save R&D time and money with a pre-built solution                  |                 | ✅             | ✅                  |
-| Secure your applications with best-practices and security updates  |                 | ✅             | ✅                  |
-| Protect against known vulnerabilities                              |                 | ✅             | ✅                  |
-| Use a security-audited and penetration-tested solution             |                 | (planned)     | ❔                  |
-| On-premise: comply with your enterprise security requirements      | ✅               | ✅             | ❔                  |
-| Open source: verify the code that handles your user data           | ✅               | ✅             |                    |
-| Keep your user data our of third-party hands                       | ✅               | ✅             |                    |
-| Avoid costly service fees (e.g. for registered but inactive users) | ✅               | ✅             |                    |
-| Avoid complicated licensing fee structures                         | ✅               | ✅             |                    |
-
 ## Getting started
 
 ### Installing
@@ -83,6 +62,27 @@ Note how `authentication` was added as a plugin. The modular nature of Identity 
   - [Overview](docs/Readme.md)
   - [Examples](examples)
     - [Local authentication](examples/local) (username + password)
+
+## Why Identity Desk?
+
+Presently there are two main options for building Node.js applications:
+
+  - build and support a custom solution with a low-level library, e.g. Passport
+  - use a commercial service, e.g. Auth0
+
+Identity Desk combines the key benefits of both options. Install it on your own server and keep control of your own data!
+
+| Benefit                                                            | Custom solution | Identity Desk | Commercial service |
+| ------------------------------------------------------------------ | --------------- | ------------- | ------------------ |
+| Save R&D time and money with a pre-built solution                  |                 | ✅             | ✅                  |
+| Secure your applications with best-practices and security updates  |                 | ✅             | ✅                  |
+| Protect against known vulnerabilities                              |                 | ✅             | ✅                  |
+| Use a security-audited and penetration-tested solution             |                 | (planned)     | ❔                  |
+| On-premise: comply with your enterprise security requirements      | ✅               | ✅             | ❔                  |
+| Open source: verify the code that handles your user data           | ✅               | ✅             |                    |
+| Keep your user data our of third-party hands                       | ✅               | ✅             |                    |
+| Avoid costly service fees (e.g. for registered but inactive users) | ✅               | ✅             |                    |
+| Avoid complicated licensing fee structures                         | ✅               | ✅             |                    |
 
 ## Features / Roadmap
 
