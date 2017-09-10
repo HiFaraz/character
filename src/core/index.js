@@ -40,71 +40,16 @@ class IdentityDesk {
     this.options.framework = this.options.framework || ExpressFramework;
 
     this.prepareModules();
-
-    const [Framework] = this.options.framework;
-
-    // configure
-
-    const defaults = [
-      Framework.defaults(),
-      ...this.options.plugins.map(([Plugin]) => ({
-        plugins: { [Plugin.name()]: Plugin.defaults() },
-      })),
-    ].filter(Boolean);
-
-    const validators = [
-      Framework.validateConfig,
-      ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
-    ].filter(Boolean);
-
-    this.config = config.load(this.options.config, {
-      defaults,
-      validators,
-    });
+    this.loadConfig();
 
     if (this.config.isValid) {
-      // load Core and Plugin models
-      this.models = {};
-      Object.keys(models).forEach(
-        name => (this.models[`core$${name}`] = models[name]),
-      );
-      // plugins are passed their config to let them dynamically generate models
-      this.options.plugins.forEach(([Plugin]) =>
-        map(
-          Plugin.models(this.config.plugins[Plugin.name()]),
-          (model, name) => {
-            this.models[`${Plugin.name()}$${name}`] = model;
-          },
-        ),
-      );
-
-      // Convert the model names into camel$Case, which is camelCase but with `$` to denote namespaces
-      this.models = mapKeys(this.models, (model, key) =>
-        flow(
-          key => key.split('$'),
-          pieces => [pieces[0], ...pieces.slice(1).map(capitalize)].join('$'),
-        )(key),
-      );
-
-      this.database = database.load(this.config.database, this.models);
+      this.loadModels();
     }
 
     debug(require('util').inspect(this.config, false, null));
 
-    // initialize
-
-    this.plugins = this.options.plugins.map(([Plugin, dependencies]) => {
-      // TODO document that plugin dependencies will already contain a `database` property, which will overwrite whatever is provided
-      dependencies.database = this.database;
-      return new Plugin(
-        Object.assign(this.config.plugins[Plugin.name()], {
-          isValid: this.config.isValid,
-        }),
-        dependencies,
-      );
-    });
-
-    this.framework = new Framework(this.config, this.database, this.plugins);
+    this.instantiatePlugins();
+    this.instantiateFramework();
   }
 
   /**
@@ -116,6 +61,87 @@ class IdentityDesk {
    */
   get app() {
     return this.framework.app;
+  }
+
+  get defaults() {
+    const [Framework] = this.options.framework;
+    return [
+      Framework.defaults(),
+      ...this.options.plugins.map(([Plugin]) => ({
+        plugins: { [Plugin.name()]: Plugin.defaults() },
+      })),
+    ].filter(Boolean);
+  }
+
+  get validators() {
+    const [Framework] = this.options.framework;
+    return [
+      Framework.validateConfig,
+      ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
+    ].filter(Boolean);
+  }
+
+  /**
+   * Instantiate the framework
+   */
+  instantiateFramework() {
+    const [Framework] = this.options.framework;
+    this.framework = new Framework(this.config, this.database, this.plugins);
+  }
+
+  /**
+   * Instantiate plugins
+   * 
+   * Plugins are passed their specific config (i.e. the contents of
+   * `plugins.<name>`)
+   */
+  instantiatePlugins() {
+    const instantiate = ([Plugin, dependencies]) => {
+      // TODO document that plugin dependencies will already contain a `database` property, which will overwrite whatever is provided
+      dependencies.database = this.database;
+      const config = Object.assign(this.config.plugins[Plugin.name()], {
+        isValid: this.config.isValid,
+      });
+      return new Plugin(config, dependencies);
+    };
+    this.plugins = this.options.plugins.map(instantiate);
+  }
+
+  /**
+   * Load configuration with defaults and validate it
+   */
+  loadConfig() {
+    this.config = config.load(this.options.config, {
+      defaults: this.defaults,
+      validators: this.validators,
+    });
+  }
+
+  /**
+   * Load core and plugin models and declare the database/ORM object
+   */
+  loadModels() {
+    // load Core and Plugin models
+    this.models = {};
+    Object.keys(models).forEach(
+      name => (this.models[`core$${name}`] = models[name]),
+    );
+    // plugins are passed their config to let them dynamically generate models
+    this.options.plugins.forEach(([Plugin]) =>
+      map(Plugin.models(this.config.plugins[Plugin.name()]), (model, name) => {
+        this.models[`${Plugin.name()}$${name}`] = model;
+      }),
+    );
+
+    // Convert the model names into camel$Case, which is camelCase but with `$` to denote namespaces
+    this.models = mapKeys(this.models, (model, key) =>
+      flow(
+        key => key.split('$'),
+        pieces => [pieces[0], ...pieces.slice(1).map(capitalize)].join('$'),
+      )(key),
+    );
+
+    this.database = database.load(this.config.database, this.models);
   }
 
   /**
