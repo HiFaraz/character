@@ -90,6 +90,8 @@ module.exports = function(CorePlugin) {
       return {
         authenticatorTargetParameter: 'identity_desk_target',
         login: '/login',
+        onboardKnownAccounts: true,
+        successRedirect: '/',
       };
     }
 
