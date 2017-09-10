@@ -39,19 +39,7 @@ class IdentityDesk {
     // default to Express framework support
     this.options.framework = this.options.framework || ExpressFramework;
 
-    // transform inputs into structure: `[module, dependencies = {}]`
-    // and expose the underlying class to gain access to defaults and validators
-    const transform = value => (Array.isArray(value) ? value : [value, {}]);
-    this.options.framework = flow(transform, ([module, dependencies]) => [
-      module(CoreFramework),
-      dependencies,
-    ])(this.options.framework);
-    this.options.plugins = options.plugins.map(
-      flow(transform, ([module, dependencies]) => [
-        module(CorePlugin),
-        dependencies,
-      ]),
-    );
+    this.prepareModules();
 
     const [Framework] = this.options.framework;
 
@@ -130,6 +118,28 @@ class IdentityDesk {
     return this.framework.app;
   }
 
+  /**
+   * Hydrate the framework and plugin modules, and default to empty
+   * dependencies with the structure: `[module, dependencies = {}]`
+   * 
+   * Framework and plugins are passed to Identity Desk as functions which need
+   * to be provided core classes to enable class extension
+   */
+  prepareModules() {
+    const transform = component =>
+      flow(
+        value => (Array.isArray(value) ? value : [value, {}]),
+        ([module, dependencies]) => [module(component), dependencies],
+      );
+    this.options.framework = transform(CoreFramework)(this.options.framework);
+    this.options.plugins = this.options.plugins.map(transform(CorePlugin));
+  }
+
+  /**
+   * Close open connections
+   * 
+   * Call this when terminating the process
+   */
   shutdown() {
     debug('shutting down');
     this.database.close();
