@@ -15,6 +15,7 @@ export default main;
 import { clone, flow, map, mapKeys } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
+import ExpressFramework from '../frameworks/express';
 import capitalize from 'capitalize';
 import config from './config';
 import database from './database';
@@ -36,8 +37,7 @@ class IdentityDesk {
     this.options = clone(options);
 
     // default to Express framework support
-    this.options.framework =
-      this.options.framework || require('../frameworks/express');
+    this.options.framework = this.options.framework || ExpressFramework;
 
     // transform inputs into structure: `[module, dependencies = {}]`
     // and expose the underlying class to gain access to defaults and validators
