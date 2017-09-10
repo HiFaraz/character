@@ -39,7 +39,7 @@ function applyDefaults(defaults = []) {
 /**
  * Assemble a configuration
  *
- * @param {string|Object} [source='.identity-desk.yml'] Path to the configuration YAML/JSON file or configuration object
+ * @param {string|Object} [source='identity-desk.yml'] Path to the configuration YAML/JSON file or configuration object
  * @param {Object} [extras]
  * @param {Object[]} [extras.defaults] Framework and plugin defaults
  * @param {function[]} [extras.validators] Framework and plugin validators
