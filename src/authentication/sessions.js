@@ -39,7 +39,7 @@ function setup(config, db, store) {
       name: 'identityDesk.sid',
       resave: false,
       saveUninitialized: false,
-      secret: _config.session.keys.split(','), // TODO document that the string is split by commas
+      secret: _config.session.keys.split(','),
       store: _store,
     }),
     sessionMethods: function(req, res, next) {
