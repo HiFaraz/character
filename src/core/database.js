@@ -1,7 +1,7 @@
 'use strict';
 
 export default {
-  load,
+  instantiate,
 };
 
 /**
@@ -21,7 +21,7 @@ const debug = require('debug')('identity-desk:database');
  * @param {Object} models 
  * @return {Object}
  */
-function load(options, models) {
+function instantiate(options, models) {
   return new Database(options, models);
 }
 

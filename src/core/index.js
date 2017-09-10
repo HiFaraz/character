@@ -12,7 +12,7 @@ export default main;
  * Module dependencies.
  */
 
-import { clone, flow, map, mapKeys } from 'lodash';
+import { clone, flow, mapKeys } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
 import ExpressFramework from '../frameworks/express';
@@ -44,6 +44,7 @@ class IdentityDesk {
 
     if (this.config.isValid) {
       this.loadModels();
+      this.instantiateDatabase();
     }
 
     debug(require('util').inspect(this.config, false, null));
@@ -79,6 +80,13 @@ class IdentityDesk {
       Framework.validateConfig,
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
     ].filter(Boolean);
+  }
+
+  /**
+   * Instantiate the database
+   */
+  instantiateDatabase() {
+    this.database = database.instantiate(this.config.database, this.models);
   }
 
   /**
@@ -121,27 +129,31 @@ class IdentityDesk {
    * Load core and plugin models and declare the database/ORM object
    */
   loadModels() {
-    // load Core and Plugin models
-    this.models = {};
-    Object.keys(models).forEach(
-      name => (this.models[`core$${name}`] = models[name]),
-    );
-    // plugins are passed their config to let them dynamically generate models
-    this.options.plugins.forEach(([Plugin]) =>
-      map(Plugin.models(this.config.plugins[Plugin.name()]), (model, name) => {
-        this.models[`${Plugin.name()}$${name}`] = model;
-      }),
-    );
+    const prefixModelKeys = (models, prefix) =>
+      mapKeys(models, (model, name) => `${prefix}$${name}`);
+
+    const attachCoreModels = data =>
+      Object.assign(data, prefixModelKeys(models, 'core'));
+
+    const attachPluginModels = data => {
+      const allPluginModels = [];
+      this.options.plugins.forEach(([Plugin]) => {
+        const config = this.config.plugins[Plugin.name()]; // TODO validate that each plugin has a name and that it is a string
+        const pluginModels = Plugin.models(config); // plugins are passed their config to let them dynamically generate models
+        allPluginModels.push(prefixModelKeys(pluginModels, Plugin.name()));
+      });
+      return Object.assign(data, ...allPluginModels);
+    };
 
     // Convert the model names into camel$Case, which is camelCase but with `$` to denote namespaces
-    this.models = mapKeys(this.models, (model, key) =>
+    const toCamel$Case = (model, key) =>
       flow(
         key => key.split('$'),
         pieces => [pieces[0], ...pieces.slice(1).map(capitalize)].join('$'),
-      )(key),
-    );
+      )(key);
+    const convertNames = data => mapKeys(data, toCamel$Case);
 
-    this.database = database.load(this.config.database, this.models);
+    this.models = flow(attachCoreModels, attachPluginModels, convertNames)({});
   }
 
   /**
