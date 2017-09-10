@@ -2,12 +2,13 @@
 
 Add authentication to Identity Desk
 
-## Features
+## Introduction
 
-  - authentication
-  - account on-boarding/registration
-  - session handling
-  - define your own session store
+This plugin allows you to protect your application by requiring users to authenticate for chosen routes/endpoints.
+
+Authentication works with session handling using cryptographically signed cookies and allows you to use your own session store.
+
+This plugin simply provides the base layer for authentication. It is meant to be used with "authenticators": modules that connect you to identity providers such as Facebook, Google, or even your own database.
 
 ## Installation
 
@@ -17,27 +18,37 @@ This is a built-in plugin and does not need to be installed separately.
 
 Add these properties under `plugins.authentication`:
 
-### authenticatorTargetParameter
+**authenticatorTargetParameter**
 
 The parameter name used for internal routing. Implemented as either request body property or URL parameter.
 
 The default value is `'identity_desk_target'`.
 
-### authenticators
+**authenticators**
 
 Authenticators to use and their configuration. See [Authenticators](#authenticators) for details.
 
-### login
+**login**
 
 Path to use to redirect failed authentication attempts. This can be overridden at the authenticator level.
 
-The default value is `'/login'`
+The default value is `'/login'`.
 
-### session
+**onboardKnownAccounts**
 
-**Required option**
+Determines whether to create an identity if an account does not already have one. For example, when a new user authenticates via Facebook there will be no corresponding identity for the Facebook account. If set to `true` this allows the plugin to create a new identity, thereby "onboarding" the account.
+
+The default value is `true`.
+
+**session** (required)
 
 Session configuration. See [Sessions](#sessions) for details.
+
+**successRedirect**
+
+Path to use to redirect successful authentication attempts. This can be overridden at the authenticator level.
+
+The default value is `'/'`.
 
 ## API
 
@@ -90,11 +101,11 @@ Authentication uses [`express-sessions`](https://github.com/expressjs/session) f
 
 The session cookie is called `identityDesk.sid` and is created as an HTTP-only cookie.
 
-### Configuration
+### Configuring sessions
 
 Add these properties under `plugins.authentication.sessions`:
 
-#### cookie
+**cookie**
 
 Cookie options. This is compatible with the `cookie` property from `express-sessions`, with the following exceptions:
 
@@ -102,7 +113,7 @@ Cookie options. This is compatible with the `cookie` property from `express-sess
   - `cookie.maxAge` is required and cannot be `null` (TODO implement the null check)
   - `cookie.secure = false` will issue a warning through `console.warn` if `process.env.NODE_ENV === 'production'` (TODO implement this)
 
-#### keys
+**keys**
 
 Secret key for signing sessions. This is compatible with the `secret` property from `express-sessions`, with the following exception: the string value provided to `keys` will be split by commas to create an array.
 
