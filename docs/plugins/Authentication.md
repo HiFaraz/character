@@ -15,14 +15,29 @@ This is a built-in plugin and does not need to be installed separately.
 
 ## Configuration
 
-Add all plugin configuration under `plugins.authentication`.
+Add these properties under `plugins.authentication`:
 
-There are four primary configuration properties:
+### authenticatorTargetParameter
 
-  - `[authenticatorTargetParameter='identity_desk_target']` [string] request body property or URL parameter used for internal routing
-  - `[authenticators]` [object] authenticators, see [Authenticators](#authenticators) for details
-  - `[login='/login']` [string] used to redirect failed authentication attempts, can be overridden at the authenticator level
-  - `session` [object] session properties, see [Sessions](#sessions) for details
+The parameter name used for internal routing. Implemented as either request body property or URL parameter.
+
+The default value is `'identity_desk_target'`.
+
+### authenticators
+
+Authenticators to use and their configuration. See [Authenticators](#authenticators) for details.
+
+### login
+
+Path to use to redirect failed authentication attempts. This can be overridden at the authenticator level.
+
+The default value is `'/login'`
+
+### session
+
+**Required option**
+
+Session configuration. See [Sessions](#sessions) for details.
 
 ## API
 
@@ -75,21 +90,21 @@ Authentication uses [`express-sessions`](https://github.com/expressjs/session) f
 
 The session cookie is called `identityDesk.sid` and is created as an HTTP-only cookie.
 
-Add session configuration under `plugins.authentication.sessions` in your configuration file.
+### Configuration
 
-### Required properties
+Add these properties under `plugins.authentication.sessions`:
 
-**cookie**
+#### cookie
 
-This is the `cookie` property from `express-sessions`, with the following exceptions:
+Cookie options. This is compatible with the `cookie` property from `express-sessions`, with the following exceptions:
 
   - `cookie.expires` is not allowed
   - `cookie.maxAge` is required and cannot be `null` (TODO implement the null check)
   - `cookie.secure = false` will issue a warning through `console.warn` if `process.env.NODE_ENV === 'production'` (TODO implement this)
 
-**keys**
+#### keys
 
-This is the `secret` property from `express-sessions`, with the following exception: the string value provided to `keys` will be split by commas to create an array.
+Secret key for signing sessions. This is compatible with the `secret` property from `express-sessions`, with the following exception: the string value provided to `keys` will be split by commas to create an array.
 
 ### Sessions store
 
