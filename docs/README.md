@@ -6,7 +6,7 @@ Everything you need to know about Identity Desk
 
   - [Overview](overview)
     - [Getting Started](overview/Getting-Started.md)
-    - [Using Plugins](Using-Plugins.md)
+    - [Using Plugins](overview/Using-Plugins.md)
   - [Examples](../examples)
     - [Local authentication](../examples/local) (username + password)
   - [Plugins](plugins)

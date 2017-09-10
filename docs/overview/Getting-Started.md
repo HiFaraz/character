@@ -1,4 +1,4 @@
-# Getting Started with Identity Desk
+# Getting Started
 
 ## Required knowledge
 
