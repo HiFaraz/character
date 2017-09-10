@@ -13,6 +13,17 @@ Add authentication to Identity Desk
 
 This is a built-in plugin and does not need to be installed separately.
 
+## Configuration
+
+Add all plugin configuration under `plugins.authentication`.
+
+There are four primary configuration properties:
+
+  - `[authenticatorTargetParameter='identity_desk_target']` [string] request body property or URL parameter used for internal routing
+  - `[authenticators]` [object] authenticators, see [Authenticators](#authenticators) for details
+  - `[login='/login']` [string] used to redirect failed authentication attempts, can be overridden at the authenticator level
+  - `session` [object] session properties, see [Sessions](#sessions) for details
+
 ## API
 
 Attach to Identity Desk by adding it to the `plugins` property array:
@@ -39,10 +50,6 @@ app.get('/restricted', (req, res) => {
 })
 ```
 
-### Configuration
-
-Add all plugin configuration under `plugins.authentication` in your configuration file. See [Authenticators](#authenticators) and [Session handling](#session-handling) for configuration properties.
-
 ## How it works
 
 Three layers, post-router middleware for sessions and custom methods
@@ -62,13 +69,13 @@ plugins:
         successRedirect: /restricted
 ```
 
-## Session handling
+## Sessions
 
 Authentication uses [`express-sessions`](https://github.com/expressjs/session) for session handling.
 
 The session cookie is called `identityDesk.sid` and is created as an HTTP-only cookie.
 
-Session configuration is stored under `plugins.authentication.sessions` in your configuration file.
+Add session configuration under `plugins.authentication.sessions` in your configuration file.
 
 ### Required properties
 
@@ -102,5 +109,3 @@ const identityDesk = require('identity-desk')({
 ## Internal name
 
 The internal name for this plugin is `authentication`.
-
-TODO add a link explaining internal names.
