@@ -59,7 +59,7 @@ Note how `authentication` was added as a plugin. The modular nature of Identity 
 
 ## Documentation
 
-  - [Overview](docs/Readme.md)
+  - [Overview](docs/README.md)
   - [Examples](examples)
     - [Local authentication](examples/local) (username + password)
 
