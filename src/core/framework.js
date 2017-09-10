@@ -7,8 +7,6 @@
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { clone } from 'lodash';
-import path from 'path';
-import read from 'read-data';
 
 const debug = require('debug')('identity-desk:core:framework');
 
@@ -58,7 +56,10 @@ module.exports = class CoreFramework {
   }
 
   static defaults() {
-    return read.sync(path.resolve(__dirname, './defaults.yml'));
+    return {
+      base: '/auth',
+      proxy: false,
+    };
   }
 
   /**
