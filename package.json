@@ -40,7 +40,7 @@
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.5.2",
     "body-parser": "^1.17.2",
-    "connect-session-sequelize": "^4.1.0",
+    "connect-session-sequelize": "^5.0.0",
     "eslint": "^4.0.0",
     "eslint-config-prettier": "^2.3.0",
     "eslint-plugin-prettier": "^2.1.2",
