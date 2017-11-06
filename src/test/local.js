@@ -34,6 +34,7 @@ describe('local', function() {
         .type('urlencoded')
         .send('username=foo&password=bar')
         // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
+        .expect('Location', '/restricted') // TODO what about registration failure?
         .expect(303, done);
     });
 
