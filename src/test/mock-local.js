@@ -49,13 +49,18 @@ describe('mock-local', function() {
 
   describe('GET /', function() {
     it('should redirect to /login', function(done) {
-      request(TEST_URL).get('/').expect('Location', '/login').expect(302, done);
+      request(TEST_URL)
+        .get('/')
+        .expect('Location', '/login')
+        .expect(302, done);
     });
   });
 
   describe('GET /login', function() {
     it('should render login form', function(done) {
-      request(TEST_URL).get('/login').expect(200, /<form/, done);
+      request(TEST_URL)
+        .get('/login')
+        .expect(200, /<form/, done);
     });
 
     it('should display login error', function(done) {
