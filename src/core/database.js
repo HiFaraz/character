@@ -41,6 +41,9 @@ class Database {
     this._afterDefine();
   }
 
+  /**
+   * Run model-specific `define` and `associate` methods
+   */
   _afterDefine() {
     Object.keys(this._models).forEach(name => {
       const Model = this._models[name];
@@ -57,6 +60,14 @@ class Database {
     });
   }
 
+  /**
+   * Define a Sequelize model
+   * 
+   * @param {string} name 
+   * @param {Object} model 
+   * @param {function} [model.attributes=()=>{}] 
+   * @param {Object} [model.options={}] 
+   */
   _define(name, { attributes = () => {}, options = {} }) {
     const Model = this.connection.define(name, attributes(Sequelize), options);
     this.models[capitalize(name)] = Model;
