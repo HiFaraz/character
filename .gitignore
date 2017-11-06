@@ -43,3 +43,5 @@ jspm_packages
 # Build files
 lib
 shrinkwrap\.yaml
+
+package-lock\.json
