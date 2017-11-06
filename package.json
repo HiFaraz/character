@@ -13,8 +13,8 @@
     "clean-build": "rimraf lib",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
-    "test": "npm run unit-tests && npm run functional-tests",
-    "functional-tests": "mocha lib/test",
+    "test": "npm run unit-tests && npm run integration-tests",
+    "integration-tests": "mocha lib/test",
     "unit-tests": "mocha lib/**/*.spec.js"
   },
   "repository": {
