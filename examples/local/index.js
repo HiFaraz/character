@@ -52,6 +52,10 @@ app.get('/login', function(req, res) {
   res.sendFile(path.resolve(__dirname, 'login.html'));
 });
 
+app.get('/register', function(req, res) {
+  res.sendFile(path.resolve(__dirname, 'register.html'));
+});
+
 const server = app.listen();
 console.log(`Express started on port ${server.address().port}`);
 
