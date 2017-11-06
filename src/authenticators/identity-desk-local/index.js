@@ -11,8 +11,6 @@ module.exports = function({ CorePOSTAuthenticator }) {
     /**
      * Handles requests from the hub to the authenticator
      * 
-     * Override this with a function to define an authenticator route
-     * 
      * @param {IncomingMessage} req 
      * @param {ServerResponse} res 
      * @param {Function} next 
