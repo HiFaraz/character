@@ -143,7 +143,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
    * Define core routes
    */
   define() {
-    // binding functions has been known to be slow in older JavaScript runtimes
+    // binding functions have been known to be slow in older JavaScript runtimes
     // this may be an optimization target
     this.router.post(
       '/',
