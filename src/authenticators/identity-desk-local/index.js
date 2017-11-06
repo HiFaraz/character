@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from 'http-codes';
+import { INTERNAL_SERVER_ERROR, OK, SEE_OTHER, UNAUTHORIZED } from 'http-codes';
 import models from './models';
 
 module.exports = function({ CorePOSTAuthenticator }) {
@@ -80,7 +80,7 @@ module.exports = function({ CorePOSTAuthenticator }) {
                 });
               }
 
-              return res.status(OK).send({ id: result.id });
+              return res.redirect(SEE_OTHER, this.config.registrationRedirect); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
             } else {
               return res.sendStatus(result.status);
             }

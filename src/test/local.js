@@ -34,7 +34,7 @@ describe('local', function() {
         .type('urlencoded')
         .send('username=foo&password=bar')
         // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
-        .expect(200, done);
+        .expect(303, done);
     });
 
     it('should fail when registering a username that already exists', function(
@@ -54,7 +54,7 @@ describe('local', function() {
         .type('urlencoded')
         .send('username=foo2&password=bar2')
         // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
-        .expect(200, function(err, res) {
+        .expect(303, function(err, res) {
           if (err) {
             return done(err);
           }
