@@ -3,7 +3,6 @@
 Authentication, SSO, user management, and overall identity solution for Node.js
 
 [![Build Status][travis-image]][travis-url]
-[![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/identity-desk.svg)](https://greenkeeper.io/)
 
 Identity Desk is a turnkey solution that makes it faster, easier, and cheaper to add a **complete user system** for your applications:
 
