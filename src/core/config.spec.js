@@ -7,8 +7,6 @@
 import assert from 'assert';
 import config from './config';
 
-console.log(assert);
-
 describe('config', () => {
   describe('safeGetEnvString', () => {
     it('should get an existing environment variable', () => {
