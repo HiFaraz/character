@@ -83,7 +83,11 @@ module.exports = function({ CorePOSTAuthenticator }) {
                 this.config.registrationRedirect || this.config.successRedirect,
               ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
             } else {
-              return res.sendStatus(result.status);
+              return res.redirect(
+                SEE_OTHER,
+                this.config.registrationFailureRedirect ||
+                  this.config.failureRedirect,
+              ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
             }
           } catch (error) {
             next(error);

@@ -33,8 +33,7 @@ describe('local', function() {
         .post('/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
-        .expect('Location', '/restricted') // TODO what about registration failure?
+        .expect('Location', '/restricted')
         .expect(303, done);
     });
 
@@ -45,8 +44,8 @@ describe('local', function() {
         .post('/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
-        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
-        .expect(409, done);
+        .expect('Location', '/register')
+        .expect(303, done);
     });
 
     it('should login the user after registration', function(done) {
@@ -54,7 +53,6 @@ describe('local', function() {
         .post('/auth/local/register')
         .type('urlencoded')
         .send('username=foo2&password=bar2')
-        // .expect('Location', '/login?reason=Unauthorized') // TODO where should the route redirect you after registration success/fail?
         .expect(303, function(err, res) {
           if (err) {
             return done(err);

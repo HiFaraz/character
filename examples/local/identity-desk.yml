@@ -9,7 +9,7 @@ plugins:
         module: identity-desk-local
         source: npm
         version: ^0.1.0
-        registrationRedirect: /restricted
+        registrationFailureRedirect: /register
         successRedirect: /restricted
     session:
       cookie:
