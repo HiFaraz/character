@@ -39,7 +39,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
       this.debug('hub middleware responded', formatURL(req), statusCode, user);
 
       if ([ACCEPTED, OK].includes(statusCode)) {
-        // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocal (like Email or other platforms) to deliver the magic link
+        // ACCEPTED can be used by magic link authenticators, which use a non-HTTP protocol (like Email or other platforms) to deliver the magic link
         if (statusCode === OK) {
           req.identityDesk.set({ user });
         }
