@@ -19,9 +19,10 @@ module.exports = function({ CorePOSTAuthenticator }) {
     */
     async authenticate(req, res, next) {
       // errors are handled upstream by the Authentication plugin
-      const { User } = this.models;
-      const { username, password } = req.body;
-      const result = await User.authenticate(username, password);
+      const result = await this.models.User.authenticate(
+        req.body.username,
+        req.body.password,
+      );
 
       if (result.status === OK) {
         return res.status(OK).send({ id: result.id });
