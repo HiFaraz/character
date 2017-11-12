@@ -3,13 +3,7 @@
 /**
  * Module dependencies.
  */
-import {
-  CONFLICT,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-  OK,
-  UNAUTHORIZED,
-} from 'http-codes';
+import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from 'http-codes';
 import { compare as compareHash, hash as generateHash } from 'bcryptjs';
 import Sequelize from 'sequelize';
 
@@ -82,10 +76,9 @@ export default {
           result.status = OK;
         } catch (error) {
           if (error instanceof Sequelize.UniqueConstraintError) {
-            result.status = CONFLICT;
+            throw new Error('Username already exists');
           } else {
-            result.error = error;
-            result.status = INTERNAL_SERVER_ERROR;
+            throw error;
           }
         }
 

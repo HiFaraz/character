@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 import { INTERNAL_SERVER_ERROR, OK, SEE_OTHER, UNAUTHORIZED } from 'http-codes';
+import asyncpipe from 'asyncpipe';
 import models from './models';
 
 module.exports = function({ CorePOSTAuthenticator }) {
@@ -59,38 +60,23 @@ module.exports = function({ CorePOSTAuthenticator }) {
         // add registration middleware
         this.router.post(registrationPath, async (req, res, next) => {
           try {
-            const { User } = this.models;
-            const { password, username } = req.body;
-
-            const result = await User.create({ password, username });
-            if (result.status === OK) {
-              // onboard the new user account as a core identity
-              const identity = await this.onboard({ id: result.id }); // create a new core identity
-
-              // login the user if enabled
-              if (this.config.loginAfterRegistration) {
-                req.login({
-                  authenticator: {
-                    account: { id: result.id },
-                    name: this.name,
-                  },
-                  id: identity.id,
-                });
-              }
-
-              return res.redirect(
+            await asyncpipe(register, onboard, login, () =>
+              res.redirect(
                 SEE_OTHER,
                 this.config.registrationRedirect || this.config.successRedirect,
-              ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
-            } else {
-              return res.redirect(
-                SEE_OTHER,
-                this.config.registrationFailureRedirect ||
-                  this.config.failureRedirect,
-              ); // SEE OTHER (303) is the spec for a GET redirect from a POST request, though most browsers allow FOUND (302) as well (technically this is not allowed)
-            }
+              ),
+            )({
+              User: this.models.User,
+              authenticator: this,
+              req,
+              res,
+            });
           } catch (error) {
-            next(error);
+            return res.redirect(
+              SEE_OTHER,
+              this.config.registrationFailureRedirect ||
+                this.config.failureRedirect,
+            );
           }
         });
       }
@@ -108,3 +94,50 @@ module.exports = function({ CorePOSTAuthenticator }) {
     }
   };
 };
+
+/**
+ * Login the user after registration if enabled
+ * 
+ * @param {Object} context 
+ * @return {Promise<Object>}
+ */
+async function login(context) {
+  // login the user if enabled
+  if (context.authenticator.config.loginAfterRegistration) {
+    context.req.login({
+      authenticator: {
+        account: { id: context.result.id },
+        name: context.authenticator.name,
+      },
+      id: context.identity.id,
+    });
+  }
+  return context;
+}
+
+/**
+ * Onboard the authenticator account by creating a new core identity
+ * 
+ * @param {Object} context 
+ * @return {Promise<Object>}
+ */
+async function onboard(context) {
+  const identity = await context.authenticator.onboard({
+    id: context.result.id,
+  }); // create a new core identity
+  return Object.assign({ identity }, context);
+}
+
+/**
+ * Register username and password
+ * 
+ * @param {Object} context 
+ * @return {Promise<Object>}
+ */
+async function register(context) {
+  const result = await context.User.create({
+    password: context.req.body.password,
+    username: context.req.body.username,
+  });
+  return Object.assign({ result }, context);
+}
