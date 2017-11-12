@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "arrify": "^1.0.1",
+    "asyncpipe": "^0.1.0",
     "babel-polyfill": "^6.26.0",
     "bcryptjs": "^2.4.3",
     "capitalize": "^1.0.0",
