@@ -77,7 +77,7 @@ module.exports = class CoreGenericAuthenticator {
    * @param {integer} account.id 
    * @return {Promise<Object>}
    */
-  identify(account) {
+  findIdentity(account) {
     // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
     const {
       Authentication$Account,

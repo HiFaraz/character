@@ -7,7 +7,15 @@ import { UNAUTHORIZED } from 'http-codes';
 
 module.exports = function({ CorePOSTAuthenticator }) {
   return class MockLocalAuthenticator extends CorePOSTAuthenticator {
-    authenticate(req, res, next) {
+    /**
+     * Handles requests from the hub to the authenticator
+     * 
+     * @param {Object} context
+     * @param {IncomingMessage} context.req 
+     * @param {ServerResponse} context.res 
+     * @return {Promise<Object>}
+    */
+    authenticate({ req, res }) {
       const { username, password } = req.body;
       this.debug(
         `authenticating username ${username} and password ${password}`,
@@ -15,9 +23,17 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
       // Mock authentication code
       if (username === 'foo' && password === 'bar') {
-        res.send({ id: 1 });
+        return {
+          account: {
+            id: 1,
+          },
+          req,
+          res,
+        };
       } else {
-        res.sendStatus(UNAUTHORIZED);
+        const error = new Error('Unable to authenticate');
+        error.httpStatusCode = UNAUTHORIZED;
+        throw error;
       }
     }
   };

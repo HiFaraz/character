@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from 'http-codes';
+import { OK, UNAUTHORIZED } from 'http-codes';
 import { compare as compareHash, hash as generateHash } from 'bcryptjs';
 import Sequelize from 'sequelize';
 
@@ -30,27 +30,29 @@ export default {
        * @return {Promise<Object>}
        */
       User.authenticate = async (username, password) => {
-        const result = {};
-
-        try {
-          const user = await User.findOne({
-            attributes: ['id', 'password'],
-            where: { username },
-          });
-          if (user) {
-            result.id = user.id;
-            result.status = (await compareHash(password, user.password))
-              ? OK
-              : UNAUTHORIZED;
-          } else {
-            result.status = NOT_FOUND;
-          }
-        } catch (error) {
-          result.error = error;
-          result.status = INTERNAL_SERVER_ERROR;
+        const user = await User.findOne({
+          attributes: ['id', 'password'],
+          where: { username },
+        });
+        if (user && (await compareHash(password, user.password))) {
+          return {
+            id: user.id,
+          };
+        } else {
+          // either user does not exist, or password is incorrect
+          /**
+             * Send a status of `UNAUTHORIZED` instead of `NOT_FOUND`, even if user
+             * does not exist
+             * 
+             * 
+             * This is **NOT** a fool-proof security measure because other parts of
+             * the application may reveal whether a username exists, such as a
+             * sign-up page or public profile page
+             */
+          const error = new Error('Unable to authenticate');
+          error.httpStatusCode = UNAUTHORIZED;
+          throw error;
         }
-
-        return result;
       };
 
       /**

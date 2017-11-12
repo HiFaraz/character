@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { INTERNAL_SERVER_ERROR, OK, SEE_OTHER, UNAUTHORIZED } from 'http-codes';
+import { SEE_OTHER } from 'http-codes';
 import asyncpipe from 'asyncpipe';
 import models from './models';
 
@@ -12,37 +12,21 @@ module.exports = function({ CorePOSTAuthenticator }) {
     /**
      * Handles requests from the hub to the authenticator
      * 
-     * @param {IncomingMessage} req 
-     * @param {ServerResponse} res 
-     * @param {Function} next 
+     * @param {Object} context
+     * @param {IncomingMessage} context.req 
+     * @param {ServerResponse} context.res 
      * @return {Promise<Object>}
     */
-    async authenticate(req, res, next) {
+    async authenticate({ req, res }) {
       // errors are handled upstream by the Authentication plugin
-      const result = await this.models.User.authenticate(
-        req.body.username,
-        req.body.password,
-      );
-
-      if (result.status === OK) {
-        return res.status(OK).send({ id: result.id });
-      } else if (result.status === INTERNAL_SERVER_ERROR) {
-        res.sendStatus(INTERNAL_SERVER_ERROR);
-      } else {
-        // `result.status` may be `NOT_FOUND` and `UNAUTHORIZED`
-
-        /**
-         * Send a status of `UNAUTHORIZED` instead of `NOT_FOUND`, even if user
-         * does not exist
-         * 
-         * 
-         * This is **NOT** a fool-proof security measure because other parts of
-         * the application may reveal whether a username exists, such as a
-         * sign-up page or public profile page
-         */
-
-        return res.sendStatus(UNAUTHORIZED);
-      }
+      return {
+        account: await this.models.User.authenticate(
+          req.body.username,
+          req.body.password,
+        ),
+        req,
+        res,
+      };
     }
 
     /**
