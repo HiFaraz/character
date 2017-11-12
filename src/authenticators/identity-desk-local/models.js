@@ -62,6 +62,10 @@ export default {
        * @return {Promise<Object>} Sequelize model instance
        */
       User.create = async user => {
+        if (user.username === '' || user.password === '') {
+          throw new Error('Empty username and/or password');
+        }
+
         const result = {};
 
         try {
