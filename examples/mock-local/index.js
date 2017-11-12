@@ -57,4 +57,6 @@ console.log(`Express started on port ${server.address().port}`);
 
 if (module.parent) {
   module.exports = { identityDesk, port: server.address().port, server };
+} else {
+  identityDesk.database.init().then(() => console.log('Database initialized'));
 }
