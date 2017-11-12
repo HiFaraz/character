@@ -32,10 +32,11 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         [this.config.authenticatorTargetParameter]: 'hub',
       };
 
-      const { body: user, statusCode } = await post(
-        formatURL(req),
-        Object.assign({}, req.body, middlewareTarget),
+      const { body: user, statusCode } = await specialPOST(
+        req,
+        middlewareTarget,
       );
+
       this.debug('hub middleware responded', formatURL(req), statusCode, user);
 
       if ([ACCEPTED, OK].includes(statusCode)) {
@@ -93,9 +94,9 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         [this.config.authenticatorTargetParameter]: 'authenticator',
       };
 
-      const { body: account, statusCode } = await post(
-        formatURL(req),
-        Object.assign({}, req.body, middlewareTarget),
+      const { body: account, statusCode } = await specialPOST(
+        req,
+        middlewareTarget,
       );
       this.debug(
         'authenticator middleware responded',
@@ -184,6 +185,17 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
     }
   }
 };
+
+/**
+ * Special wrapper for the generic `post` method
+ * 
+ * @param {IncomingMessage} req 
+ * @param {string} target 
+ * @return {Promise<Object>}
+ */
+function specialPOST(req, target) {
+  return post(formatURL(req), Object.assign({}, req.body, target));
+}
 
 /**
  * Send a POST request
