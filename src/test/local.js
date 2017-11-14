@@ -48,6 +48,24 @@ describe('local', function() {
         .expect(303, done);
     });
 
+    it('should fail when registering with an empty username', function(done) {
+      request(TEST_URL)
+        .post('/auth/local/register')
+        .type('urlencoded')
+        .send('username=&password=bar')
+        .expect('Location', '/register')
+        .expect(303, done);
+    });
+
+    it('should fail when registering with an empty password', function(done) {
+      request(TEST_URL)
+        .post('/auth/local/register')
+        .type('urlencoded')
+        .send('username=foo2&password=')
+        .expect('Location', '/register')
+        .expect(303, done);
+    });
+
     it('should login the user after registration', function(done) {
       request(TEST_URL)
         .post('/auth/local/register')
