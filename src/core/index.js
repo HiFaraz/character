@@ -164,13 +164,13 @@ class IdentityDesk {
    * to be provided core classes to enable class extension
    */
   prepareModules() {
-    const transform = component =>
+    const prepareWith = component =>
       flow(
-        value => (Array.isArray(value) ? value : [value, {}]),
-        ([module, dependencies]) => [module(component), dependencies],
+        value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
+        ([module, dependencies]) => [module(component), dependencies], // hydrate with `component`
       );
-    this.options.framework = transform(CoreFramework)(this.options.framework);
-    this.options.plugins = this.options.plugins.map(transform(CorePlugin));
+    this.options.framework = prepareWith(CoreFramework)(this.options.framework);
+    this.options.plugins = this.options.plugins.map(prepareWith(CorePlugin));
   }
 
   /**
