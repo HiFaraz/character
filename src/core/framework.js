@@ -33,7 +33,10 @@ module.exports = class CoreFramework {
     // load plugins
     plugins.forEach(plugin => {
       this.preRouterMiddleware.push(...plugin.preRouterMiddleware);
-      this.router.use(this.config.base, plugin.router);
+      this.router.use(
+        `${this.config.base}${plugin.config.base}`,
+        plugin.router,
+      );
       this.postRouterMiddleware.push(...plugin.postRouterMiddleware);
     });
   }
@@ -57,7 +60,7 @@ module.exports = class CoreFramework {
 
   static defaults() {
     return {
-      base: '/auth',
+      base: '/id',
       proxy: false,
     };
   }

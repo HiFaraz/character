@@ -65,7 +65,7 @@ describe('mock-local', function() {
 
     it('should display login error', function(done) {
       request(TEST_URL)
-        .post('/auth/mock-local')
+        .post('/id/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -92,7 +92,7 @@ describe('mock-local', function() {
 
     it('should succeed with proper cookie', function(done) {
       request(TEST_URL)
-        .post('/auth/mock-local')
+        .post('/id/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')
@@ -108,10 +108,10 @@ describe('mock-local', function() {
     });
   });
 
-  describe('POST /auth/mock-local', function() {
+  describe('POST /id/auth/mock-local', function() {
     it('should fail without proper username', function(done) {
       request(TEST_URL)
-        .post('/auth/mock-local')
+        .post('/id/auth/mock-local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -120,7 +120,7 @@ describe('mock-local', function() {
 
     it('should fail without proper password', function(done) {
       request(TEST_URL)
-        .post('/auth/mock-local')
+        .post('/id/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=baz')
         .expect('Location', '/login?reason=Unauthorized')
@@ -129,7 +129,7 @@ describe('mock-local', function() {
 
     it('should succeed with proper credentials', function(done) {
       request(TEST_URL)
-        .post('/auth/mock-local')
+        .post('/id/auth/mock-local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')

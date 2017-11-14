@@ -27,10 +27,10 @@ describe('local', function() {
 
   after(() => server.close());
 
-  describe('POST /auth/local/register', function() {
+  describe('POST /id/auth/local/register', function() {
     it('should succeed', function(done) {
       request(TEST_URL)
-        .post('/auth/local/register')
+        .post('/id/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')
@@ -41,7 +41,7 @@ describe('local', function() {
       done,
     ) {
       request(TEST_URL)
-        .post('/auth/local/register')
+        .post('/id/auth/local/register')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/register')
@@ -50,7 +50,7 @@ describe('local', function() {
 
     it('should fail when registering with an empty username', function(done) {
       request(TEST_URL)
-        .post('/auth/local/register')
+        .post('/id/auth/local/register')
         .type('urlencoded')
         .send('username=&password=bar')
         .expect('Location', '/register')
@@ -59,7 +59,7 @@ describe('local', function() {
 
     it('should fail when registering with an empty password', function(done) {
       request(TEST_URL)
-        .post('/auth/local/register')
+        .post('/id/auth/local/register')
         .type('urlencoded')
         .send('username=foo2&password=')
         .expect('Location', '/register')
@@ -68,7 +68,7 @@ describe('local', function() {
 
     it('should login the user after registration', function(done) {
       request(TEST_URL)
-        .post('/auth/local/register')
+        .post('/id/auth/local/register')
         .type('urlencoded')
         .send('username=foo2&password=bar2')
         .expect(303, function(err, res) {
@@ -101,7 +101,7 @@ describe('local', function() {
 
     it('should display login error', function(done) {
       request(TEST_URL)
-        .post('/auth/local')
+        .post('/id/auth/local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -128,7 +128,7 @@ describe('local', function() {
 
     it('should succeed with proper cookie', function(done) {
       request(TEST_URL)
-        .post('/auth/local')
+        .post('/id/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')
@@ -144,10 +144,10 @@ describe('local', function() {
     });
   });
 
-  describe('POST /auth/local', function() {
+  describe('POST /id/auth/local', function() {
     it('should fail without proper username', function(done) {
       request(TEST_URL)
-        .post('/auth/local')
+        .post('/id/auth/local')
         .type('urlencoded')
         .send('username=not-foo&password=bar')
         .expect('Location', '/login?reason=Unauthorized')
@@ -156,7 +156,7 @@ describe('local', function() {
 
     it('should fail without proper password', function(done) {
       request(TEST_URL)
-        .post('/auth/local')
+        .post('/id/auth/local')
         .type('urlencoded')
         .send('username=foo&password=baz')
         .expect('Location', '/login?reason=Unauthorized')
@@ -165,7 +165,7 @@ describe('local', function() {
 
     it('should succeed with proper credentials', function(done) {
       request(TEST_URL)
-        .post('/auth/local')
+        .post('/id/auth/local')
         .type('urlencoded')
         .send('username=foo&password=bar')
         .expect('Location', '/restricted')

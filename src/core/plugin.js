@@ -37,7 +37,9 @@ module.exports = class CorePlugin {
    * @return {Object}
    */
   static defaults() {
-    return {};
+    return {
+      base: '', // the base mount path for the plugin router
+    };
   }
 
   /**

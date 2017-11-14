@@ -89,6 +89,7 @@ module.exports = function(CorePlugin) {
     static defaults() {
       return {
         authenticatorTargetParameter: 'identity_desk_target',
+        base: '/auth',
         login: '/login',
         onboardKnownAccounts: true,
         successRedirect: '/',
