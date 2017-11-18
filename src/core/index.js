@@ -15,7 +15,6 @@ export default main;
 import { clone, flow, mapKeys } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
-import ExpressFramework from '../frameworks/express';
 import capitalize from 'capitalize';
 import config from './config';
 import database from './database';
@@ -29,15 +28,11 @@ class IdentityDesk {
    *
    * @param {Object} options
    * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
-   * @param {Array|Object} options.framework Array with structure: `[framework, dependencies]`. Can also pass a framework module directly if there are no dependencies
    * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
    */
   constructor(options) {
     debug('initializing');
     this.options = clone(options);
-
-    // default to Express framework support
-    this.options.framework = this.options.framework || ExpressFramework;
 
     this.prepareModules();
     this.loadConfig();
@@ -65,9 +60,8 @@ class IdentityDesk {
   }
 
   get defaults() {
-    const [Framework] = this.options.framework;
     return [
-      Framework.defaults(),
+      CoreFramework.defaults(),
       ...this.options.plugins.map(([Plugin]) => ({
         plugins: { [Plugin.name()]: Plugin.defaults() },
       })),
@@ -75,9 +69,8 @@ class IdentityDesk {
   }
 
   get validators() {
-    const [Framework] = this.options.framework;
     return [
-      Framework.validateConfig,
+      CoreFramework.validateConfig,
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
     ].filter(Boolean);
   }
@@ -93,8 +86,11 @@ class IdentityDesk {
    * Instantiate the framework
    */
   instantiateFramework() {
-    const [Framework] = this.options.framework;
-    this.framework = new Framework(this.config, this.database, this.plugins);
+    this.framework = new CoreFramework(
+      this.config,
+      this.database,
+      this.plugins,
+    );
   }
 
   /**
@@ -169,7 +165,6 @@ class IdentityDesk {
         value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
         ([module, dependencies]) => [module(component), dependencies], // hydrate with `component`
       );
-    this.options.framework = prepareWith(CoreFramework)(this.options.framework);
     this.options.plugins = this.options.plugins.map(prepareWith(CorePlugin));
   }
 
@@ -189,7 +184,6 @@ class IdentityDesk {
    *
    * @param {Object} options
    * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
-   * @param {Array|Object} options.framework Array with structure: `[framework, dependencies]`. Can also pass a framework module directly if there are no dependencies
    * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
    * @return {Object}
    */
