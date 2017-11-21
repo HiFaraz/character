@@ -86,4 +86,13 @@ module.exports = class CorePlugin {
   static validateConfig(data) {
     return true;
   }
+
+  /**
+   * Check if the plugin is properly defined
+   * 
+   * @return {Boolean}
+   */
+  static validateSelf() {
+    return this.name().trim() !== '';
+  }
 };

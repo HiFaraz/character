@@ -37,7 +37,7 @@ class IdentityDesk {
 
     this.events = new EventEmitter();
 
-    this.prepareModules();
+    this.preparePlugins();
     this.loadConfig();
 
     if (this.config.isValid) {
@@ -162,13 +162,22 @@ class IdentityDesk {
    * Framework and plugins are passed to Identity Desk as functions which need
    * to be provided core classes to enable class extension
    */
-  prepareModules() {
+  preparePlugins() {
     const prepareWith = component =>
       flow(
         value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
         ([module, dependencies]) => [module(component), dependencies], // hydrate with `component`
       );
-    this.options.plugins = this.options.plugins.map(prepareWith(CorePlugin));
+    this.options.plugins = this.options.plugins
+      .map(prepareWith(CorePlugin))
+      .filter(([Plugin]) => {
+        if (!Plugin.validateSelf()) {
+          debug(`could not load plugin ${Plugin.name()}`);
+          return false;
+        } else {
+          return true;
+        }
+      });
   }
 
   /**
