@@ -13,10 +13,12 @@ module.exports = class CorePlugin {
    * 
    * @param {Object} config Plugin configuration
    * @param {Object} dependencies
+   * @param {Object} events Top-level event emitter for communication across plugins
    */
-  constructor(config, dependencies) {
+  constructor(config, dependencies, events) {
     this.config = clone(config);
     this.dependencies = dependencies;
+    this.events = events;
     this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
     this.router = Router(); // is mounted to the base path
     this.postRouterMiddleware = []; // not part of the router, is mounted directly to the root app

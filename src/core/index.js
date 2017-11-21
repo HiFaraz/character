@@ -15,6 +15,7 @@ export default main;
 import { clone, flow, mapKeys } from 'lodash';
 import CoreFramework from './framework';
 import CorePlugin from './plugin';
+import EventEmitter from 'events';
 import capitalize from 'capitalize';
 import config from './config';
 import database from './database';
@@ -33,6 +34,8 @@ class IdentityDesk {
   constructor(options) {
     debug('initializing');
     this.options = clone(options);
+
+    this.events = new EventEmitter();
 
     this.prepareModules();
     this.loadConfig();
@@ -106,7 +109,7 @@ class IdentityDesk {
       const config = Object.assign(this.config.plugins[Plugin.name()], {
         isValid: this.config.isValid,
       });
-      return new Plugin(config, dependencies);
+      return new Plugin(config, dependencies, this.events);
     };
     this.plugins = this.options.plugins.map(instantiate);
   }
