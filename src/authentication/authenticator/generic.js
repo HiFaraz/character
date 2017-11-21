@@ -14,12 +14,14 @@ module.exports = class CoreGenericAuthenticator {
    * @param {string} name
    * @param {Object} config
    * @param {Object} dependencies
+   * @param {Object} events
    */
-  constructor(name, config, dependencies) {
+  constructor(name, config, dependencies, events) {
     this.debug = require('debug')(
       `identity-desk:authentication:authenticator:${name}`,
     );
     this.dependencies = dependencies;
+    this.events = events;
     this.name = name;
     this.router = Router();
     this.config = clone(config);
@@ -106,13 +108,13 @@ module.exports = class CoreGenericAuthenticator {
    * @param {integer} account.id 
    * @return {Promise<Object>}
    */
-  onboard(account) {
+  async onboard(account) {
     // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
     const {
       Authentication$Account,
       Core$Identity,
     } = this.dependencies.database.models;
-    return Core$Identity.create(
+    const identity = (await Core$Identity.create(
       {
         authentication$Accounts: [
           {
@@ -124,7 +126,13 @@ module.exports = class CoreGenericAuthenticator {
       {
         include: [Authentication$Account],
       },
-    );
+    )).get({ plain: true });
+    this.events.emit('authentication:onboard', {
+      account,
+      datetime: new Date(),
+      identity,
+    });
+    return identity;
   }
 
   /**

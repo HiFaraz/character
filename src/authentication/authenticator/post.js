@@ -90,10 +90,15 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   async identify({ account, req, res }) {
     this.debug('got account', account);
 
-    let user = {};
+    const user = {
+      authenticator: {
+        account,
+        name: this.name,
+      },
+    };
 
     if (account.deferred) {
-      user = { deferred: true };
+      user.deferred = true;
     } else {
       // TODO if the user is already logged in, consider linking the authenticator account to the logged in core identity instead of creating a new core identity
       const identity = await this.findIdentity(account);
@@ -103,23 +108,11 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
 
       if (identity) {
         // return the minimum to record successful authentication, rest can be queried by applications later
-        user = {
-          authenticator: {
-            account,
-            name: this.name,
-          },
-          id: identity.id,
-        };
+        user.id = identity.id;
       } else if (this.config.onboardKnownAccounts) {
         // onboard the user by creating a core identity
         const newIdentity = await this.onboard(account);
-        user = {
-          authenticator: {
-            account,
-            name: this.name,
-          },
-          id: newIdentity.id,
-        };
+        user.id = newIdentity.id;
       } else {
         // only accept recognized core identities
         const error = new Error('Could not find identity for account');
@@ -127,6 +120,10 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         throw error;
       }
     }
+    this.events.emit('authentication:authenticate', {
+      datetime: new Date(),
+      user,
+    });
     return { req, res, user };
   }
 };
