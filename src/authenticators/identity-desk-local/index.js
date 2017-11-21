@@ -91,11 +91,11 @@ async function login(context) {
   if (context.authenticator.config.loginAfterRegistration) {
     context.req.login({
       authenticator: {
-        account: { id: context.result.id },
+        account: { id: context.account.id },
         name: context.authenticator.name,
       },
       id: context.identity.id,
-    });
+    }); // TODO feels like I have to remember a complex interface whenever I want to login, fix this
   }
   return context;
 }
@@ -108,7 +108,8 @@ async function login(context) {
  */
 async function onboard(context) {
   const identity = await context.authenticator.onboard({
-    id: context.result.id,
+    id: context.account.id,
+    username: context.account.username, // the function doesn't need this, but it is passed so that it gets emitted for auditing
   }); // create a new core identity
   return Object.assign({ identity }, context);
 }
@@ -120,9 +121,12 @@ async function onboard(context) {
  * @return {Promise<Object>}
  */
 async function register(context) {
-  const result = await context.User.create({
+  const account = await context.User.create({
     password: context.req.body.password,
     username: context.req.body.username,
   });
-  return Object.assign({ result }, context);
+  return Object.assign(
+    { account: { id: account.id, username: context.req.body.username } },
+    context,
+  );
 }
