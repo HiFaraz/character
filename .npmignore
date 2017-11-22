@@ -1,0 +1,9 @@
+# Do not publish source code
+src
+
+# Do not publish dev config
+.vscode
+.babelrc
+.eslintignore
+.eslintrc.yml
+.travis.yml
