@@ -6,9 +6,9 @@
 const express = require('express');
 const path = require('path');
 
-process.env.DEBUG = 'identity-desk*';
+process.env.DEBUG = 'character*';
 
-const IdentityDesk = require('../../lib');
+const Character = require('../../lib');
 const admin = require('../../lib/admin');
 const authentication = require('../../lib/authentication');
 
@@ -17,17 +17,17 @@ module.exports = app;
 
 // configuration
 
-const CONFIG_PATH = path.resolve(__dirname, 'identity-desk.yml');
+const CONFIG_PATH = path.resolve(__dirname, 'character.yml');
 process.env.DATABASE_URL = 'sqlite://:memory:';
 process.env.SESSION_COOKIE_MAXAGE = 7 * 24 * 60 * 60 * 1000;
 process.env.SESSION_KEYS = ['secret key 1', 'secret key 2'];
 
-const identityDesk = IdentityDesk({
-  config: CONFIG_PATH, // or you can just put identity-desk.yml/json in your application root folder
+const character = Character({
+  config: CONFIG_PATH, // or you can just put character.yml/json in your application root folder
   plugins: [admin, authentication],
 });
 
-app.use(identityDesk.app);
+app.use(character.app);
 
 const restrict = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -60,14 +60,11 @@ app.get('/register', function(req, res) {
 const server = app.listen();
 console.log(`Express started on port ${server.address().port}`);
 
-identityDesk.events.on('authentication:onboard', console.log.bind(console));
-identityDesk.events.on(
-  'authentication:authenticate',
-  console.log.bind(console),
-);
+character.events.on('authentication:onboard', console.log.bind(console));
+character.events.on('authentication:authenticate', console.log.bind(console));
 
 if (module.parent) {
-  module.exports = { identityDesk, port: server.address().port, server };
+  module.exports = { character, port: server.address().port, server };
 } else {
-  identityDesk.database.init().then(() => console.log('Database initialized'));
+  character.database.init().then(() => console.log('Database initialized'));
 }

@@ -1,7 +1,8 @@
 {
-  "name": "identity-desk",
+  "name": "character",
   "version": "0.0.0",
-  "description": "Authentication, SSO, user management, and overall identity solution for Node.js",
+  "description":
+    "Authentication, SSO, user management, and overall identity solution for Node.js",
   "main": "lib",
   "scripts": {
     "prebuild": "npm run lint && npm run clean-build",
@@ -19,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HiFaraz/identity-desk.git"
+    "url": "git+https://github.com/HiFaraz/character.git"
   },
   "keywords": [
     "auth",
@@ -33,9 +34,9 @@
   "author": "Faraz Syed <hello@farazsyed.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HiFaraz/identity-desk/issues"
+    "url": "https://github.com/HiFaraz/character/issues"
   },
-  "homepage": "http://identitydesk.io/",
+  "homepage": "http://characterjs.com/",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",

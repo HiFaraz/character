@@ -5,11 +5,10 @@ database:
 plugins:
   authentication:
     authenticators:
-      local:
-        module: identity-desk-local
+      mock-local:
+        module: character-mock-local
         source: npm
         version: ^0.1.0
-        registrationFailureRedirect: /register
         successRedirect: /restricted
     session:
       cookie:

@@ -1,6 +1,6 @@
 /**
  * This file is reserved for future development
- * 
+ *
  * Not ready for use
  */
 'use strict';
@@ -14,7 +14,7 @@ import { clone } from 'lodash';
 module.exports = class CoreGETAuthenticator {
   /**
    * Do not override the constructor
-   * 
+   *
    * @param {string} name
    * @param {Object} settings
    * @param {Object} dependencies
@@ -33,7 +33,7 @@ module.exports = class CoreGETAuthenticator {
      * Example code:
      *
      * return (req, res, next) => {
-     *   
+     *
      * }
      */
   }

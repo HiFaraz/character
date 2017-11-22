@@ -21,7 +21,7 @@ import modules from './modules';
 import requests from './requests';
 import sessions from './sessions';
 
-const debug = require('debug')('identity-desk:authentication');
+const debug = require('debug')('character:authentication');
 
 module.exports = function(CorePlugin) {
   return class Authentication extends CorePlugin {
@@ -62,7 +62,7 @@ module.exports = function(CorePlugin) {
         this.dependencies.database.connection,
         this.dependencies.sessionStore,
       );
-      this.preRouterMiddleware.push(sessionMethods); // adds `req.identityDesk.get/set` for safe access of Identity Desk session data
+      this.preRouterMiddleware.push(sessionMethods); // adds `req.character.get/set` for safe access of Character session data
       this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes, else internal requests to self will generate extra sessions
 
       // add request methods such as `req.isAuthenticated`
@@ -93,7 +93,7 @@ module.exports = function(CorePlugin) {
 
     static defaults() {
       return {
-        authenticatorTargetParameter: 'identity_desk_target',
+        authenticatorTargetParameter: 'character_target',
         base: '/auth',
         login: '/login',
         onboardKnownAccounts: true,
@@ -172,7 +172,9 @@ function validateAuthenticator(name, authenticator) {
       ),
       check(
         authenticator.source,
-        `missing source for authenticator \`${name}\`. Must be either \`npm\` or \`local\``,
+        `missing source for authenticator \`${
+          name
+        }\`. Must be either \`npm\` or \`local\``,
       ),
       check(
         authenticator.source === 'local' ? authenticator.path : true,

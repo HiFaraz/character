@@ -1,6 +1,6 @@
-# Identity Desk documentation
+# Character documentation
 
-Everything you need to know about Identity Desk
+Everything you need to know about Character
 
 ## Contents
 
@@ -19,17 +19,17 @@ Everything you need to know about Identity Desk
 
 ## Getting started
 
-If you're new to Identity Desk, read the [Getting Started](overview/Getting-Started.md) guide.
+If you're new to Character, read the [Getting Started](overview/Getting-Started.md) guide.
 
 ## Example applications
 
-These applications demonstrate different ways of using Identity Desk:
+These applications demonstrate different ways of using Character:
 
   - [Local authentication](../examples/local) (username + password)
 
 ## Plugins
 
-Identity Desk provides features as separate modules called "plugins". This allows you to only use the features you need. You can use both built-in and custom plugins.
+Character provides features as separate modules called "plugins". This allows you to only use the features you need. You can use both built-in and custom plugins.
 
 The following plugins are built-in and do not need to be installed separately:
 
@@ -45,4 +45,4 @@ The following plugins are built-in and do not need to be installed separately:
 
 ### Developing custom plugins
 
-Identity Desk exposes a standard plugin API to support custom plugins. Read the [Developing Custom Plugins](plugins/Developing-Custom-Plugins.md) guide to learn more.
+Character exposes a standard plugin API to support custom plugins. Read the [Developing Custom Plugins](plugins/Developing-Custom-Plugins.md) guide to learn more.

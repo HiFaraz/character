@@ -10,7 +10,7 @@ import capitalize from 'capitalize';
 module.exports = class CoreGenericAuthenticator {
   /**
    * Do not override the constructor
-   * 
+   *
    * @param {string} name
    * @param {Object} config
    * @param {Object} dependencies
@@ -18,7 +18,7 @@ module.exports = class CoreGenericAuthenticator {
    */
   constructor(name, config, dependencies, events) {
     this.debug = require('debug')(
-      `identity-desk:authentication:authenticator:${name}`,
+      `character:authentication:authenticator:${name}`,
     );
     this.dependencies = dependencies;
     this.events = events;
@@ -48,35 +48,35 @@ module.exports = class CoreGenericAuthenticator {
 
   /**
    * Define core routes
-   * 
+   *
    * Override this to define core routes
    */
   define() {
     /**
      * Example code:
-     * 
+     *
      * this.router.post(...);
      */
   }
 
   /**
    * Define extra authenticator routes
-   * 
+   *
    * Override this to define extra authenticator routes
    */
   extend() {
     /**
      * Example code:
-     * 
+     *
      * this.router.post(...);
      */
   }
 
   /**
    * Find the core identity linked to an authenticator account
-   * 
-   * @param {Object} account 
-   * @param {integer} account.id 
+   *
+   * @param {Object} account
+   * @param {integer} account.id
    * @return {Promise<Object>}
    */
   findIdentity(account) {
@@ -103,9 +103,9 @@ module.exports = class CoreGenericAuthenticator {
 
   /**
    * Create a new core identity linked to an authenticator account
-   * 
-   * @param {Object} account 
-   * @param {integer} account.id 
+   *
+   * @param {Object} account
+   * @param {integer} account.id
    * @return {Promise<Object>}
    */
   async onboard(account) {
@@ -146,17 +146,17 @@ module.exports = class CoreGenericAuthenticator {
 
   /**
    * Define authenticator models
-   * 
+   *
    * Override this to return authenticator models
-   * 
+   *
    * @return {Object}
    */
   static models() {
     /**
      * Each model must implement some or all of the standard interface below
-     * 
+     *
      * Example code:
-     * 
+     *
      * return {
      *   modelName: {
      *     associate: models => {},

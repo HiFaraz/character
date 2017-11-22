@@ -12,9 +12,9 @@ import queryString from 'querystring';
 module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   /**
    * Handle requests from the application to the client
-   * 
-   * @param {IncomingMessage} req 
-   * @param {ServerResponse} res 
+   *
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
    * @return {Promise<Object>}
    */
   async receiver(req, res) {
@@ -28,7 +28,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
         context => {
           if (!context.user.deferred) {
             // deferred can be used by magic link authenticators, which use a non-HTTP protocol (e.g. email) to deliver the magic link
-            req.identityDesk.set({ user: context.user });
+            req.character.set({ user: context.user });
           }
           return context;
         },
@@ -52,12 +52,12 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
 
   /**
    * Handles requests from the client to the authenticator
-   * 
+   *
    * Override this with a function to define an authenticator route
-   * 
+   *
    * @param {Object} context
-   * @param {IncomingMessage} context.req 
-   * @param {ServerResponse} context.res 
+   * @param {IncomingMessage} context.req
+   * @param {ServerResponse} context.res
    * @return {Promise<Object>}
    */
   authenticate({ req, res }) {
@@ -80,13 +80,13 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
 
   /**
    * Identity or onboard the authenticator account
-   * 
-   * @param {Object} context 
-   * @param {Object} context.account 
-   * @param {IncomingMessage} context.req 
-   * @param {ServerResponse} context.res 
+   *
+   * @param {Object} context
+   * @param {Object} context.account
+   * @param {IncomingMessage} context.req
+   * @param {ServerResponse} context.res
    * @return {Promise<Object>}
-  */
+   */
   async identify({ account, req, res }) {
     this.debug('got account', account);
 
@@ -104,7 +104,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
       const identity = await this.findIdentity(account);
 
       // `account` is the user record with the authenticator (local or external identity provider)
-      // `identity` is the user record with Identity Desk
+      // `identity` is the user record with Character
 
       if (identity) {
         // return the minimum to record successful authentication, rest can be queried by applications later

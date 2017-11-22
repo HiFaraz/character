@@ -3,13 +3,13 @@
  */
 'use strict';
 
-import { identityDesk, port, server } from '../../examples/mock-local';
+import { character, port, server } from '../../examples/mock-local';
 import request from 'supertest';
 
 /**
  * Create a Cookie header value from a request's `Set-Cookie` header
- * 
- * @param {IncomingMessage} res 
+ *
+ * @param {IncomingMessage} res
  * @return {string}
  */
 function getCookies(res) {
@@ -22,12 +22,9 @@ const TEST_URL = `http://localhost:${port}`;
 
 describe('mock-local', function() {
   before(async () => {
-    await identityDesk.database.init();
+    await character.database.init();
 
-    const {
-      Authentication$Account,
-      Core$Identity,
-    } = identityDesk.database.models;
+    const { Authentication$Account, Core$Identity } = character.database.models;
 
     // set up test identity and authentication account
     await Core$Identity.create(

@@ -5,7 +5,7 @@
  */
 // import { and, check } from '../utils';
 
-// const debug = require('debug')('identity-desk:admin');
+// const debug = require('debug')('character:admin');
 
 module.exports = function(CorePlugin) {
   return class Admin extends CorePlugin {

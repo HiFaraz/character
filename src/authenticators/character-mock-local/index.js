@@ -9,12 +9,12 @@ module.exports = function({ CorePOSTAuthenticator }) {
   return class MockLocalAuthenticator extends CorePOSTAuthenticator {
     /**
      * Handles requests from the hub to the authenticator
-     * 
+     *
      * @param {Object} context
-     * @param {IncomingMessage} context.req 
-     * @param {ServerResponse} context.res 
+     * @param {IncomingMessage} context.req
+     * @param {ServerResponse} context.res
      * @return {Promise<Object>}
-    */
+     */
     authenticate({ req, res }) {
       const { username, password } = req.body;
       this.debug(

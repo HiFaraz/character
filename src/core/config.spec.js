@@ -10,17 +10,17 @@ import config from './config';
 describe('config', () => {
   describe('safeGetEnvString', () => {
     it('should get an existing environment variable', () => {
-      process.env.IDENTITY_DESK_TEST_VARIABLE = 'foo ';
+      process.env.CHARACTER_TEST_VARIABLE = 'foo ';
       assert.strictEqual(
-        config._safeGetEnvString('$IDENTITY_DESK_TEST_VARIABLE'),
+        config._safeGetEnvString('$CHARACTER_TEST_VARIABLE'),
         'foo',
       ); // the result is trimmed
-      delete process.env.IDENTITY_DESK_TEST_VARIABLE;
+      delete process.env.CHARACTER_TEST_VARIABLE;
     });
 
     it('should return `undefined` for a non-existing environment variable', () => {
       assert.strictEqual(
-        config._safeGetEnvString('$IDENTITY_DESK_TEST_VARIABLE_2'),
+        config._safeGetEnvString('$CHARACTER_TEST_VARIABLE_2'),
         undefined,
       );
     });

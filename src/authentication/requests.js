@@ -13,11 +13,11 @@ export default {
  * @return {Promise}
  */
 function extend(req, res, next) {
-  req.isAuthenticated = () => (req.identityDesk.get('user') ? true : false);
+  req.isAuthenticated = () => (req.character.get('user') ? true : false);
 
   req.isUnauthenticated = () => !req.isAuthenticated();
 
-  req.login = user => req.identityDesk.set({ user });
+  req.login = user => req.character.set({ user });
   req.logIn = req.login;
 
   req.logout = () => {

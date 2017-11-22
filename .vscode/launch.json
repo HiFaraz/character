@@ -22,7 +22,7 @@
       "stopOnEntry": false,
       "args": ["lib/**/*.spec.js", "lib/test"],
       "env": {
-        "DEBUG": "identity-desk*"
+        "DEBUG": "character*"
       },
       "sourceMaps": true,
       "outFiles": ["${workspaceRoot}\\lib\\**\\*.js"],

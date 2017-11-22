@@ -1,10 +1,10 @@
-# Identity Desk
+# Character
 
 Authentication, SSO, user management, and overall identity solution for Node.js
 
 [![Build Status][travis-image]][travis-url]
 
-Identity Desk is a turnkey solution that makes it faster, easier, and cheaper to add a **complete user system** for your applications:
+Character is a turnkey solution that makes it faster, easier, and cheaper to add a **complete user system** for your applications:
 
   - authentication
   - SSO
@@ -12,37 +12,37 @@ Identity Desk is a turnkey solution that makes it faster, easier, and cheaper to
   - user management
   - [and more ...](#features--roadmap)
 
-You don't have to use all the features. Identity Desk is **modular**, so you can use only the features you need.
+You don't have to use all the features. Character is **modular**, so you can use only the features you need.
 
 ## Getting started
 
 ### Installing
 
-Install Identity Desk from `npm`:
+Install Character from `npm`:
 
 ```bash
-$ npm install identity-desk
+$ npm install character
 ```
 
 You also need to install the [peer dependencies](docs/guides/Getting-Started.md#installation).
 
 ### Usage
 
-Identity Desk exports an Express Router which can be mounted onto any Express 4.x app with `app.use`. This is a clean mount which does not interfere with existing routes, because almost all middleware is mounted under `/auth` (configurable).
+Character exports an Express Router which can be mounted onto any Express 4.x app with `app.use`. This is a clean mount which does not interfere with existing routes, because almost all middleware is mounted under `/auth` (configurable).
 
-It reads its configuration from `identity-desk.yml` by default (configurable).
+It reads its configuration from `character.yml` by default (configurable).
 
 Here is example usage from the [Local authenticator example](examples/local):
 
 ```javascript
-// Load Identity Desk core and plugins
-const authentication = require('identity-desk/authentication')
-const identityDesk = require('identity-desk')({
+// Load Character core and plugins
+const authentication = require('character/authentication')
+const character = require('character')({
   plugins: [authentication]
 })
 
 // Attach as Express middleware
-app.use(identityDesk.app)
+app.use(character.app)
 
 // Protect any route with `req.isAuthenticated`
 app.get('/restricted', (req, res) => {
@@ -54,7 +54,7 @@ app.get('/restricted', (req, res) => {
 })
 ```
 
-Note how `authentication` was added as a plugin. The modular nature of Identity Desk makes it easy to build a custom identity solution.
+Note how `authentication` was added as a plugin. The modular nature of Character makes it easy to build a custom identity solution.
 
 ## Documentation
 
@@ -62,16 +62,16 @@ Note how `authentication` was added as a plugin. The modular nature of Identity 
   - [Examples](examples)
     - [Local authentication](examples/local) (username + password)
 
-## Why Identity Desk?
+## Why Character?
 
 Presently there are two main options for building Node.js applications:
 
   - build and support a custom solution with a low-level library, e.g. Passport
   - use a commercial service, e.g. Auth0
 
-Identity Desk combines the key benefits of both options. Install it on your own server and keep control of your own data!
+Character combines the key benefits of both options. Install it on your own server and keep control of your own data!
 
-| Benefit                                                            | Custom solution | Identity Desk | Commercial service |
+| Benefit                                                            | Custom solution | Character | Commercial service |
 | ------------------------------------------------------------------ | --------------- | ------------- | ------------------ |
 | Save R&D time and money with a pre-built solution                  |                 | ✅             | ✅                  |
 | Secure your applications with best-practices and security updates  |                 | ✅             | ✅                  |
@@ -85,7 +85,7 @@ Identity Desk combines the key benefits of both options. Install it on your own 
 
 ## Features / Roadmap
 
-### Target for [initial release](https://github.com/HiFaraz/identity-desk/milestone/1)
+### Target for [initial release](https://github.com/HiFaraz/character/milestone/1)
 
   - [ ] Authentication
     - [x] Local: username / password
@@ -135,15 +135,15 @@ For a good pull request, we ask you provide the following:
 
 ## Bug reports and security disclosures
 
-Create a [GitHub issue](https://github.com/HiFaraz/identity-desk/issues/new) to report a bug. Please provide sufficient details to reproduce the bug, such as version numbers, error logs, and example code if possible.
+Create a [GitHub issue](https://github.com/HiFaraz/character/issues/new) to report a bug. Please provide sufficient details to reproduce the bug, such as version numbers, error logs, and example code if possible.
 
-If you have discovered a security related bug, please do NOT use the GitHub issue tracker. Send an email to [security@identitydesk.io](mailto:security@identitydesk.io).
+If you have discovered a security related bug, please do NOT use the GitHub issue tracker. Send an email to [security@character.io](mailto:security@character.io).
 
 ## People
 
 The lead author is [Faraz Syed](https://github.com/HiFaraz).
 
-[List of all contributors](https://github.com/HiFaraz/identity-desk/graphs/contributors)
+[List of all contributors](https://github.com/HiFaraz/character/graphs/contributors)
 
 ## Support
 
@@ -154,13 +154,13 @@ Commercial support is also available:
   - Consulting (install, config, maintain, upgrade, migrate)
   - Sponsored feature development
   - Training
-  - Future: Hosted Identity Desk / SaaS
+  - Future: Hosted Character / SaaS
 
-Commercial support contact: [support@identitydesk.io](mailto:support@identitydesk.io)
+Commercial support contact: [support@character.io](mailto:support@character.io)
 
 ## License
 
 [MIT](LICENSE)
 
-[travis-image]: https://travis-ci.org/HiFaraz/identity-desk.svg?branch=master
-[travis-url]: https://travis-ci.org/HiFaraz/identity-desk
+[travis-image]: https://travis-ci.org/HiFaraz/character.svg?branch=master
+[travis-url]: https://travis-ci.org/HiFaraz/character

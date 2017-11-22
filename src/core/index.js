@@ -1,5 +1,5 @@
 /**
- * Identity Desk
+ * Character
  * Copyright(c) 2017 Faraz Syed
  * MIT licensed
  */
@@ -21,11 +21,11 @@ import config from './config';
 import database from './database';
 import models from './models';
 
-const debug = require('debug')('identity-desk:core');
+const debug = require('debug')('character:core');
 
-class IdentityDesk {
+class Character {
   /**
-   * Create Identity Desk middleware
+   * Create Character middleware
    *
    * @param {Object} options
    * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
@@ -54,7 +54,7 @@ class IdentityDesk {
   /**
    * Example usage:
    *
-   * - Express: app.use(identityDesk.app);
+   * - Express: app.use(character.app);
    *
    * @return {Object}
    */
@@ -98,7 +98,7 @@ class IdentityDesk {
 
   /**
    * Instantiate plugins
-   * 
+   *
    * Plugins are passed their specific config (i.e. the contents of
    * `plugins.<name>`)
    */
@@ -158,8 +158,8 @@ class IdentityDesk {
   /**
    * Hydrate the framework and plugin modules, and default to empty
    * dependencies with the structure: `[module, dependencies = {}]`
-   * 
-   * Framework and plugins are passed to Identity Desk as functions which need
+   *
+   * Framework and plugins are passed to Character as functions which need
    * to be provided core classes to enable class extension
    */
   preparePlugins() {
@@ -182,7 +182,7 @@ class IdentityDesk {
 
   /**
    * Close open connections
-   * 
+   *
    * Call this when terminating the process
    */
   shutdown() {
@@ -192,13 +192,13 @@ class IdentityDesk {
 }
 
 /**
-   * Create Identity Desk middleware
-   *
-   * @param {Object} options
-   * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
-   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
-   * @return {Object}
-   */
+ * Create Character middleware
+ *
+ * @param {Object} options
+ * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
+ * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
+ * @return {Object}
+ */
 function main(options) {
-  return new IdentityDesk(options);
+  return new Character(options);
 }

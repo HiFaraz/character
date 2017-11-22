@@ -24,7 +24,7 @@ export default {
     define: User => {
       /**
        * Authenticate a username and password
-       * 
+       *
        * @param {string} username
        * @param {string} password
        * @return {Promise<Object>}
@@ -41,14 +41,14 @@ export default {
         } else {
           // either user does not exist, or password is incorrect
           /**
-             * Send a status of `UNAUTHORIZED` instead of `NOT_FOUND`, even if user
-             * does not exist
-             * 
-             * 
-             * This is **NOT** a fool-proof security measure because other parts of
-             * the application may reveal whether a username exists, such as a
-             * sign-up page or public profile page
-             */
+           * Send a status of `UNAUTHORIZED` instead of `NOT_FOUND`, even if user
+           * does not exist
+           *
+           *
+           * This is **NOT** a fool-proof security measure because other parts of
+           * the application may reveal whether a username exists, such as a
+           * sign-up page or public profile page
+           */
           const error = new Error('Unable to authenticate');
           error.httpStatusCode = UNAUTHORIZED;
           throw error;
@@ -57,7 +57,7 @@ export default {
 
       /**
        * Hash passwords when creating a new user
-       * 
+       *
        * @param {Object} user
        * @param {string} user.username
        * @param {string} user.password

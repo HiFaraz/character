@@ -9,7 +9,7 @@ export { and, check, mapValuesDeep };
 import { isObject, mapValues } from 'lodash';
 import assert from 'assert';
 
-const debug = require('debug')('identity-desk:utils');
+const debug = require('debug')('character:utils');
 
 /**
  * Perform a logical AND on parameters
@@ -39,7 +39,7 @@ function check(value, message) {
 
 /**
  * Deep transform all leaf nodes in an Object recursively
- * 
+ *
  * @param {*} source Object or leaf node to be transformed
  * @param {Function} transformer
  * @return {*} Transformed Object or leaf node

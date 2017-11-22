@@ -8,22 +8,22 @@ This guide assumes you are familiar with:
 
 ## Overview
 
-These are the high-level steps to using Identity Desk:
+These are the high-level steps to using Character:
 
-  - Install Identity Desk
+  - Install Character
   - Decide which authenticators to use
   - Define your configuration
-  - Attach Identity Desk to your server
+  - Attach Character to your server
 
 ## Installation
 
 ```bash
-$ npm install identity-desk
+$ npm install character
 ```
 
 ### Peer dependencies
 
-To use Identity Desk, you will need to install the following modules:
+To use Character, you will need to install the following modules:
 
   - `body-parser`
   - [`connect-session-sequelize`] if you plan to store sessions in the database rather than providing a separate session store
@@ -39,4 +39,4 @@ Plugin defaults and validators
 
 `config` option when declaring can either be the relative path to a file or a config object
 
-Default config file name is `identity-desk.yml`
+Default config file name is `character.yml`

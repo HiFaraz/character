@@ -1,5 +1,5 @@
 /**
- * Identity Desk
+ * Character
  * Copyright(c) 2017 Faraz Syed
  * MIT Licensed
  */

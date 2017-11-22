@@ -40,13 +40,13 @@ function applyDefaults(defaults = []) {
 /**
  * Assemble a configuration
  *
- * @param {string|Object} [source='identity-desk.yml'] Path to the configuration YAML/JSON file or configuration object
+ * @param {string|Object} [source='character.yml'] Path to the configuration YAML/JSON file or configuration object
  * @param {Object} [extras]
  * @param {Object[]} [extras.defaults] Framework and plugin defaults
  * @param {function[]} [extras.validators] Framework and plugin validators
  * @return {Object}
  */
-function load(source = 'identity-desk.yml', extras) {
+function load(source = 'character.yml', extras) {
   const _source = typeof source === 'string' ? read.sync(source) : source;
 
   return flow(
@@ -76,7 +76,7 @@ function populateEnvironmentVariables(config) {
 function safeGetEnvString(name) {
   if (typeof name === 'string' && name.startsWith('$')) {
     const variable = name.substring(1, name.length);
-    // using soft assert so that Identity Desk can continue in limited mode with an invalid config
+    // using soft assert so that Character can continue in limited mode with an invalid config
     if (
       check(
         process.env[variable],

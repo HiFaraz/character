@@ -11,12 +11,12 @@ module.exports = function({ CorePOSTAuthenticator }) {
   return class LocalAuthenticator extends CorePOSTAuthenticator {
     /**
      * Handles requests from the hub to the authenticator
-     * 
+     *
      * @param {Object} context
-     * @param {IncomingMessage} context.req 
-     * @param {ServerResponse} context.res 
+     * @param {IncomingMessage} context.req
+     * @param {ServerResponse} context.res
      * @return {Promise<Object>}
-    */
+     */
     async authenticate({ req, res }) {
       // errors are handled upstream by the Authentication plugin
       return {
@@ -82,8 +82,8 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
 /**
  * Login the user after registration if enabled
- * 
- * @param {Object} context 
+ *
+ * @param {Object} context
  * @return {Promise<Object>}
  */
 async function login(context) {
@@ -102,8 +102,8 @@ async function login(context) {
 
 /**
  * Onboard the authenticator account by creating a new core identity
- * 
- * @param {Object} context 
+ *
+ * @param {Object} context
  * @return {Promise<Object>}
  */
 async function onboard(context) {
@@ -116,8 +116,8 @@ async function onboard(context) {
 
 /**
  * Register username and password
- * 
- * @param {Object} context 
+ *
+ * @param {Object} context
  * @return {Promise<Object>}
  */
 async function register(context) {

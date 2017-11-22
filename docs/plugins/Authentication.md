@@ -1,6 +1,6 @@
 # Authentication
 
-Add authentication to Identity Desk
+Add authentication to Character
 
 ## Introduction
 
@@ -22,7 +22,7 @@ Add these properties under `plugins.authentication`:
 
 The parameter name used for internal routing. Implemented as either request body property or URL parameter.
 
-The default value is `'identity_desk_target'`.
+The default value is `'character_target'`.
 
 **authenticators**
 
@@ -52,11 +52,11 @@ The default value is `'/'`.
 
 ## API
 
-Attach to Identity Desk by adding it to the `plugins` property array:
+Attach to Character by adding it to the `plugins` property array:
 
 ```javascript
-const authentication = require('identity-desk/authentication')
-const identityDesk = require('identity-desk')({
+const authentication = require('character/authentication')
+const character = require('character')({
   plugins: [
     authentication,
     // ...
@@ -89,7 +89,7 @@ plugins:
   authentication:
     authenticators:
       local:
-        module: identity-desk-local
+        module: character-local
         source: npm
         version: ^0.1.0
         successRedirect: /restricted
@@ -99,7 +99,7 @@ plugins:
 
 Authentication uses [`express-sessions`](https://github.com/expressjs/session) for session handling.
 
-The session cookie is called `identityDesk.sid` and is created as an HTTP-only cookie.
+The session cookie is called `character.sid` and is created as an HTTP-only cookie.
 
 ### Configuring sessions
 
@@ -124,7 +124,7 @@ Authentication uses the `connect-session-sequelize` store by default to store se
 You can use any `express-sessions`-compatible store however. To attach your own store, pass the store as the `sessionStore` dependency to the Authentication plugin:
 
 ```javascript
-const identityDesk = require('identity-desk')({
+const character = require('character')({
   plugins: [
     [ authentication, { sessionStore: mySessionStore } ],
     // ...

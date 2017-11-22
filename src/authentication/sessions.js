@@ -36,7 +36,7 @@ function setup(config, db, store) {
     // session middleware
     session: session({
       cookie: _config.session.cookie,
-      name: 'identityDesk.sid',
+      name: 'character.sid',
       resave: false,
       saveUninitialized: false,
       secret: _config.session.keys.split(','),
@@ -44,22 +44,22 @@ function setup(config, db, store) {
     }),
     sessionMethods: function(req, res, next) {
       // attach session methods
-      req.identityDesk = {
+      req.character = {
         get(key) {
           if (
             req.session &&
-            req.session.identityDesk &&
-            req.session.identityDesk[key] !== undefined
+            req.session.character &&
+            req.session.character[key] !== undefined
           ) {
-            return req.session.identityDesk[key];
+            return req.session.character[key];
           } else {
             return undefined;
           }
         },
         set(values) {
-          req.session = req.session || { identityDesk: values };
-          req.session.identityDesk = req.session.identityDesk || values;
-          Object.assign(req.session.identityDesk, values);
+          req.session = req.session || { character: values };
+          req.session.character = req.session.character || values;
+          Object.assign(req.session.character, values);
         },
       };
 

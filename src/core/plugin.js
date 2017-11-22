@@ -10,7 +10,7 @@ import { clone } from 'lodash';
 module.exports = class CorePlugin {
   /**
    * Do not override the constructor
-   * 
+   *
    * @param {Object} config Plugin configuration
    * @param {Object} dependencies
    * @param {Object} events Top-level event emitter for communication across plugins
@@ -46,16 +46,16 @@ module.exports = class CorePlugin {
 
   /**
    * Override this to return plugin models
-   * 
+   *
    * @param {Object} config Plugin configuration
    * @return {Object}
    */
   static models(config) {
     /**
      * Each model must implement some or all of the standard interface below
-     * 
+     *
      * Example code:
-     * 
+     *
      * return {
      *   modelName: {
      *     associate: models => {},
@@ -89,7 +89,7 @@ module.exports = class CorePlugin {
 
   /**
    * Check if the plugin is properly defined
-   * 
+   *
    * @return {Boolean}
    */
   static validateSelf() {

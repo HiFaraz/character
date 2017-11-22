@@ -12,13 +12,13 @@ import Sequelize from 'sequelize';
 import capitalize from 'capitalize';
 import { forEach } from 'lodash';
 
-const debug = require('debug')('identity-desk:database');
+const debug = require('debug')('character:database');
 
 /**
  * Create a database object and load models
- * 
- * @param {Object|string} options 
- * @param {Object} models 
+ *
+ * @param {Object|string} options
+ * @param {Object} models
  * @return {Object}
  */
 function instantiate(options, models) {
@@ -62,11 +62,11 @@ class Database {
 
   /**
    * Define a Sequelize model
-   * 
-   * @param {string} name 
-   * @param {Object} model 
-   * @param {function} [model.attributes=()=>{}] 
-   * @param {Object} [model.options={}] 
+   *
+   * @param {string} name
+   * @param {Object} model
+   * @param {function} [model.attributes=()=>{}]
+   * @param {Object} [model.options={}]
    */
   _define(name, { attributes = () => {}, options = {} }) {
     const Model = this.connection.define(name, attributes(Sequelize), options);

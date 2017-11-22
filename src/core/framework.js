@@ -9,12 +9,12 @@ import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { clone } from 'lodash';
 
-const debug = require('debug')('identity-desk:core:framework');
+const debug = require('debug')('character:core:framework');
 
 module.exports = class CoreFramework {
   /**
    * Do not override the constructor
-   * 
+   *
    * @param {Object} config
    * @param {Object} database
    * @param {Object[]} [plugins=[]] Array of express or express.Router instances
@@ -43,7 +43,7 @@ module.exports = class CoreFramework {
   }
 
   /**
-   * Override this with an app property if needed, which is served by the core module as identityDesk.app
+   * Override this with an app property if needed, which is served by the core module as character.app
    *
    * @return {Object}
    */

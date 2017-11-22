@@ -16,7 +16,7 @@ export default {
  */
 import { assign, reduce } from 'lodash';
 
-const debug = require('debug')('identity-desk:authentication:modules');
+const debug = require('debug')('character:authentication:modules');
 
 /**
  * Create a hash table of authenticator modules
@@ -37,7 +37,9 @@ function load(authenticators) {
           [name]: require(`../authenticators/${module}/index.js`),
         }); // TODO disable. Temporary code until modules are actually installed on `package.json`
       } catch (error) {
-        const message = `module \`${module}\` not installed for authenticator \`${name}\``;
+        const message = `module \`${
+          module
+        }\` not installed for authenticator \`${name}\``;
         if (process.env.NODE_ENV === 'production') {
           throw new Error(message);
         } else {
