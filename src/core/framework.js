@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 
+import { and, check } from '../utils';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { clone } from 'lodash';
@@ -72,6 +73,14 @@ module.exports = class CoreFramework {
    * @return {Boolean}
    */
   static validateConfig(data) {
-    return true;
+    return and(
+      check(data, 'missing configuration'),
+      check(data.base, 'base path is missing'),
+      check(
+        data.base && !['', '/'].includes(data.base),
+        'base path cannot be empty string or root path',
+      ),
+      check(typeof data.proxy === 'boolean', 'proxy configuration is missing'),
+    );
   }
 };
