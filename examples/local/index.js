@@ -59,6 +59,12 @@ app.get('/register', function(req, res) {
 const server = app.listen();
 console.log(`Express started on port ${server.address().port}`);
 
+identityDesk.events.on('authentication:onboard', console.log.bind(console));
+identityDesk.events.on(
+  'authentication:authenticate',
+  console.log.bind(console),
+);
+
 if (module.parent) {
   module.exports = { identityDesk, port: server.address().port, server };
 } else {
