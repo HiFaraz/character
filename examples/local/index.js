@@ -9,6 +9,7 @@ const path = require('path');
 process.env.DEBUG = 'identity-desk*';
 
 const IdentityDesk = require('../../lib');
+const admin = require('../../lib/admin');
 const authentication = require('../../lib/authentication');
 
 const app = express();
@@ -23,7 +24,7 @@ process.env.SESSION_KEYS = ['secret key 1', 'secret key 2'];
 
 const identityDesk = IdentityDesk({
   config: CONFIG_PATH, // or you can just put identity-desk.yml/json in your application root folder
-  plugins: [authentication],
+  plugins: [admin, authentication],
 });
 
 app.use(identityDesk.app);
