@@ -7,6 +7,6 @@
 'use strict';
 
 import './entry'; // must import entry-point code first
-import identityDesk from './core';
+import core from './core';
 
-module.exports = identityDesk;
+module.exports = core;
