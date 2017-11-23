@@ -4,14 +4,14 @@
  * Module dependencies.
  */
 
-import { and, check } from '../utils';
+import { and, check } from './utils';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { clone } from 'lodash';
 
-const debug = require('debug')('character:core:framework');
+const debug = require('debug')('character:framework');
 
-module.exports = class CoreFramework {
+module.exports = class Framework {
   /**
    * Do not override the constructor
    *

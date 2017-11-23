@@ -7,7 +7,7 @@
 import { Router } from 'express';
 import { clone } from 'lodash';
 
-module.exports = class CorePlugin {
+module.exports = class Plugin {
   /**
    * Do not override the constructor
    *

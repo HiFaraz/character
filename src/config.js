@@ -23,7 +23,7 @@ export default {
  * Module dependencies.
  */
 
-import { and, check, mapValuesDeep } from '../utils';
+import { and, check, mapValuesDeep } from './utils';
 import { clone, flow, merge } from 'lodash';
 import read from 'read-data';
 

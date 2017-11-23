@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import { and, check } from '../utils';
+import { and, check } from '../../utils';
 import {
   assign,
   flow,

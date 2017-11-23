@@ -8,9 +8,9 @@ const path = require('path');
 
 process.env.DEBUG = 'character*';
 
-const Character = require('../../lib');
-const admin = require('../../lib/admin');
-const authentication = require('../../lib/authentication');
+const Character = require('../../');
+const admin = require('../../lib/plugins/admin');
+const authentication = require('../../lib/plugins/authentication');
 
 const app = express();
 module.exports = app;
