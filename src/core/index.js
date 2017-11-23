@@ -29,7 +29,7 @@ class Character {
    *
    * @param {Object} options
    * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
-   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
+   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, deps]`. Can also pass a plugin module directly in the array if there are no dependencies
    */
   constructor(options) {
     debug('initializing');
@@ -103,13 +103,13 @@ class Character {
    * `plugins.<name>`)
    */
   instantiatePlugins() {
-    const instantiate = ([Plugin, dependencies]) => {
+    const instantiate = ([Plugin, deps]) => {
       // TODO document that plugin dependencies will already contain a `database` property, which will overwrite whatever is provided
-      dependencies.database = this.database;
+      deps.database = this.database;
       const config = Object.assign(this.config.plugins[Plugin.name()], {
         isValid: this.config.isValid,
       });
-      return new Plugin(config, dependencies, this.events);
+      return new Plugin(config, deps, this.events);
     };
     this.plugins = this.options.plugins.map(instantiate);
   }
@@ -157,7 +157,7 @@ class Character {
 
   /**
    * Hydrate the framework and plugin modules, and default to empty
-   * dependencies with the structure: `[module, dependencies = {}]`
+   * dependencies with the structure: `[module, deps = {}]`
    *
    * Framework and plugins are passed to Character as functions which need
    * to be provided core classes to enable class extension
@@ -166,7 +166,7 @@ class Character {
     const prepareWith = component =>
       flow(
         value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
-        ([module, dependencies]) => [module(component), dependencies], // hydrate with `component`
+        ([module, deps]) => [module(component), deps], // hydrate with `component`
       );
     this.options.plugins = this.options.plugins
       .map(prepareWith(CorePlugin))
@@ -196,7 +196,7 @@ class Character {
  *
  * @param {Object} options
  * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
- * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, dependencies]`. Can also pass a plugin module directly in the array if there are no dependencies
+ * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, deps]`. Can also pass a plugin module directly in the array if there are no dependencies
  * @return {Object}
  */
 function main(options) {

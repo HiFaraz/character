@@ -13,14 +13,14 @@ module.exports = class CoreGenericAuthenticator {
    *
    * @param {string} name
    * @param {Object} config
-   * @param {Object} dependencies
+   * @param {Object} deps
    * @param {Object} events
    */
-  constructor(name, config, dependencies, events) {
+  constructor(name, config, deps, events) {
     this.debug = require('debug')(
       `character:authentication:authenticator:${name}`,
     );
-    this.dependencies = dependencies;
+    this.deps = deps;
     this.events = events;
     this.name = name;
     this.router = Router();
@@ -39,7 +39,7 @@ module.exports = class CoreGenericAuthenticator {
   attachModels() {
     const prefix = `Authentication$${capitalize(this.name)}$`;
     this.models = {};
-    forEach(this.dependencies.database.models, (model, name) => {
+    forEach(this.deps.database.models, (model, name) => {
       if (name.startsWith(prefix)) {
         this.models[name.slice(prefix.length)] = model;
       }
@@ -81,10 +81,7 @@ module.exports = class CoreGenericAuthenticator {
    */
   findIdentity(account) {
     // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
-    const {
-      Authentication$Account,
-      Core$Identity,
-    } = this.dependencies.database.models;
+    const { Authentication$Account, Core$Identity } = this.deps.database.models;
     return Core$Identity.findOne({
       attributes: ['id'],
       include: [
@@ -110,10 +107,7 @@ module.exports = class CoreGenericAuthenticator {
    */
   async onboard(account) {
     // TODO similar to authenticators, make it easier for plugins to access their own models. Create this in `CorePlugin`
-    const {
-      Authentication$Account,
-      Core$Identity,
-    } = this.dependencies.database.models;
+    const { Authentication$Account, Core$Identity } = this.deps.database.models;
     const identity = (await Core$Identity.create(
       {
         authentication$Accounts: [

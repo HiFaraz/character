@@ -59,8 +59,8 @@ module.exports = function(CorePlugin) {
       // add session-middleware
       const { session, sessionMethods } = sessions.setup(
         this.config,
-        this.dependencies.database.connection,
-        this.dependencies.sessionStore,
+        this.deps.database.connection,
+        this.deps.sessionStore,
       );
       this.preRouterMiddleware.push(sessionMethods); // adds `req.character.get/set` for safe access of Character session data
       this.postRouterMiddleware.push(session); // session purposely mounted on `/` for downstream routes, else internal requests to self will generate extra sessions
@@ -69,7 +69,7 @@ module.exports = function(CorePlugin) {
       this.preRouterMiddleware.push(requests.extend);
 
       // attach authenticators
-      this.dependencies.session = session;
+      this.deps.session = session;
       forEach(modules.load(authenticators), (module, name) => {
         flow(
           module => module({ CoreGETAuthenticator, CorePOSTAuthenticator }), // hydrate the module,
@@ -78,12 +78,7 @@ module.exports = function(CorePlugin) {
             modules.forEach(Module => {
               // TODO test ability to return multiple modules from an authenticator
               const config = merge({}, Module.defaults(), authenticators[name]); // apply the authenticator defaults
-              const module = new Module(
-                name,
-                config,
-                this.dependencies,
-                this.events,
-              );
+              const module = new Module(name, config, this.deps, this.events);
               // TODO do authenticator modules have root middleware as well? (pre- and post-router middleware)
               this.router.use(`/${name}`, module.router);
             }),

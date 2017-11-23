@@ -75,7 +75,7 @@ module.exports = class CorePOSTAuthenticator extends CoreGenericAuthenticator {
   define() {
     // binding functions have been known to be slow in older JavaScript runtimes
     // this may be an optimization target
-    this.router.post('/', this.dependencies.session, this.receiver.bind(this));
+    this.router.post('/', this.deps.session, this.receiver.bind(this));
   }
 
   /**

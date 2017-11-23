@@ -39,7 +39,7 @@ module.exports = function({ CorePOSTAuthenticator }) {
 
         // session middleware needed if login after registration enabled
         if (this.config.loginAfterRegistration) {
-          this.router.post(registrationPath, this.dependencies.session);
+          this.router.post(registrationPath, this.deps.session);
         }
 
         // add registration middleware

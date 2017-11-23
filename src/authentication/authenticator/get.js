@@ -17,12 +17,12 @@ module.exports = class CoreGETAuthenticator {
    *
    * @param {string} name
    * @param {Object} settings
-   * @param {Object} dependencies
+   * @param {Object} deps
    */
-  constructor(name, settings, dependencies) {
+  constructor(name, settings, deps) {
     this.router = Router();
     this.settings = clone(settings);
-    this.dependencies = dependencies;
+    this.deps = deps;
   }
 
   /**
