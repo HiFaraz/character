@@ -14,9 +14,7 @@
     "clean-build": "rimraf lib",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
-    "test": "npm run unit-tests && npm run integration-tests",
-    "integration-tests": "mocha lib/test",
-    "unit-tests": "mocha lib/**/*.spec.js"
+    "test": "mocha lib/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -41,40 +39,26 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
-    "connect-session-sequelize": "^5.0.0",
     "depcheck": "^0.6.8",
     "eslint": "^4.10.0",
     "eslint-config-prettier": "^2.7.0",
     "eslint-plugin-prettier": "^2.3.1",
-    "express": "^4.16.2",
-    "express-session": "^1.15.6",
-    "identity-desk-local": "^0.1.0",
     "mocha": "^4.0.1",
     "nsp": "^2.8.1",
     "prettier": "^1.7.4",
-    "rimraf": "^2.6.2",
-    "sqlite3": "^3.1.13",
-    "supertest": "^3.0.0"
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "arrify": "^1.0.1",
-    "asyncpipe": "^1.0.0",
     "babel-polyfill": "^6.26.0",
-    "bcryptjs": "^2.4.3",
     "capitalize": "^1.0.0",
     "debug": "^3.0.0",
-    "http-codes": "^1.0.0",
     "lodash": "^4.0.0",
     "read-data": "^1.1.0",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2",
-    "sequelize": "^4.0.0",
     "source-map-support": "^0.5.0"
   },
   "peerDependencies": {
     "body-parser": "^1.18.2",
-    "connect-session-sequelize": "^5.0.0",
-    "express": "^4.16.2",
-    "express-session": "^1.15.6"
+    "express": "^4.0.0",
+    "sequelize": "^4.0.0"
   }
 }

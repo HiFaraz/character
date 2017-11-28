@@ -6,22 +6,24 @@
 
 'use strict';
 
-export default main;
+import './entry'; // must import entry-point code first
+
+module.exports = main;
 
 /**
  * Module dependencies.
  */
 
 import { clone, flow, mapKeys } from 'lodash';
-import CoreFramework from './framework';
-import CorePlugin from './plugin';
 import EventEmitter from 'events';
+import Framework from './framework';
+import Plugin from './plugin';
 import capitalize from 'capitalize';
 import config from './config';
 import database from './database';
 import models from './models';
 
-const debug = require('debug')('character:core');
+const debug = require('debug')('character');
 
 class Character {
   /**
@@ -33,22 +35,29 @@ class Character {
    */
   constructor(options) {
     debug('initializing');
-    this.options = clone(options);
-
     this.events = new EventEmitter();
 
-    this.preparePlugins();
-    this.loadConfig();
+    this.options = clone(options);
+
+    this._preparePlugins();
+
+    // Load configuration with defaults and validate it
+    this.config = config.load(this.options.config, {
+      defaults: this.defaults,
+      validators: this.validators,
+    });
 
     if (this.config.isValid) {
-      this.loadModels();
-      this.instantiateDatabase();
+      this._loadModels();
+
+      // Instantiate the database
+      this.database = database.instantiate(this.config.database, this.models);
     }
 
-    debug(require('util').inspect(this.config, false, null));
+    this._instantiatePlugins();
 
-    this.instantiatePlugins();
-    this.instantiateFramework();
+    // Instantiate the framework
+    this._framework = new Framework(this.config, this._plugins);
   }
 
   /**
@@ -59,12 +68,12 @@ class Character {
    * @return {Object}
    */
   get app() {
-    return this.framework.app;
+    return this._framework.app;
   }
 
   get defaults() {
     return [
-      CoreFramework.defaults(),
+      Framework.defaults(),
       ...this.options.plugins.map(([Plugin]) => ({
         plugins: { [Plugin.name()]: Plugin.defaults() },
       })),
@@ -73,27 +82,9 @@ class Character {
 
   get validators() {
     return [
-      CoreFramework.validateConfig,
+      Framework.validateConfig,
       ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
     ].filter(Boolean);
-  }
-
-  /**
-   * Instantiate the database
-   */
-  instantiateDatabase() {
-    this.database = database.instantiate(this.config.database, this.models);
-  }
-
-  /**
-   * Instantiate the framework
-   */
-  instantiateFramework() {
-    this.framework = new CoreFramework(
-      this.config,
-      this.database,
-      this.plugins,
-    );
   }
 
   /**
@@ -102,32 +93,20 @@ class Character {
    * Plugins are passed their specific config (i.e. the contents of
    * `plugins.<name>`)
    */
-  instantiatePlugins() {
+  _instantiatePlugins() {
     const instantiate = ([Plugin, deps]) => {
-      // TODO document that plugin dependencies will already contain a `database` property, which will overwrite whatever is provided
-      deps.database = this.database;
       const config = Object.assign(this.config.plugins[Plugin.name()], {
         isValid: this.config.isValid,
       });
-      return new Plugin(config, deps, this.events);
+      return new Plugin(config, this.database, deps, this.events);
     };
-    this.plugins = this.options.plugins.map(instantiate);
-  }
-
-  /**
-   * Load configuration with defaults and validate it
-   */
-  loadConfig() {
-    this.config = config.load(this.options.config, {
-      defaults: this.defaults,
-      validators: this.validators,
-    });
+    this._plugins = this.options.plugins.map(instantiate);
   }
 
   /**
    * Load core and plugin models and declare the database/ORM object
    */
-  loadModels() {
+  _loadModels() {
     const prefixModelKeys = (models, prefix) =>
       mapKeys(models, (model, name) => `${prefix}$${name}`);
 
@@ -162,41 +141,31 @@ class Character {
    * Framework and plugins are passed to Character as functions which need
    * to be provided core classes to enable class extension
    */
-  preparePlugins() {
+  _preparePlugins() {
     const prepareWith = component =>
       flow(
         value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
         ([module, deps]) => [module(component), deps], // hydrate with `component`
       );
     this.options.plugins = this.options.plugins
-      .map(prepareWith(CorePlugin))
+      .map(prepareWith(Plugin))
       .filter(([Plugin]) => {
         if (!Plugin.validateSelf()) {
-          debug(`could not load plugin ${Plugin.name()}`);
+          debug(
+            `could not load plugin ${Plugin.name()}, failed self validation`,
+          );
           return false;
         } else {
           return true;
         }
       });
   }
-
-  /**
-   * Close open connections
-   *
-   * Call this when terminating the process
-   */
-  shutdown() {
-    debug('shutting down');
-    this.database.close();
-  }
 }
 
 /**
- * Create Character middleware
+ * Create Character instance
  *
  * @param {Object} options
- * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
- * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, deps]`. Can also pass a plugin module directly in the array if there are no dependencies
  * @return {Object}
  */
 function main(options) {

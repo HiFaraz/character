@@ -16,17 +16,16 @@ module.exports = class Framework {
    * Do not override the constructor
    *
    * @param {Object} config
-   * @param {Object} database
-   * @param {Object[]} [plugins=[]] Array of express or express.Router instances
+   * @param {Object[]} [plugins=[]]
    */
-  constructor(config, database, plugins = []) {
+  constructor(config, plugins = []) {
     debug(`initializing with ${plugins.length} plugins`);
 
     this.config = clone(config);
 
-    this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
-    this.router = Router(); // is mounted to the base path
-    this.postRouterMiddleware = []; // not part of the router, is mounted directly to the root app
+    this.preRouterMiddleware = []; // to be mounted on root path
+    this.router = Router(); // to be mounted on base path
+    this.postRouterMiddleware = []; // to be mounted on root path
 
     this.router.use(bodyParser.json());
     this.router.use(bodyParser.urlencoded({ extended: true }));
@@ -44,6 +43,7 @@ module.exports = class Framework {
 
   /**
    * Override this with an app property if needed, which is served by the core module as character.app
+   * TODO fix this description, this is from the multi-framework concept
    *
    * @return {Object}
    */
@@ -61,7 +61,7 @@ module.exports = class Framework {
 
   static defaults() {
     return {
-      base: '/id',
+      base: '/id', // TODO what should this be?
       proxy: false,
     };
   }
