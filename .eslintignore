@@ -1,4 +1,2 @@
 # Ignore built files
 lib/*
-
-.ignore/*
