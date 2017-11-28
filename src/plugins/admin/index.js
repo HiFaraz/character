@@ -3,12 +3,11 @@
 /**
  * Module dependencies.
  */
-// import { and, check } from '../utils';
 
 // const debug = require('debug')('character:admin');
 
-module.exports = function(CorePlugin) {
-  return class Admin extends CorePlugin {
+module.exports = function(Plugin) {
+  return class Admin extends Plugin {
     define() {
       this.router.get('/', (req, res) => {
         res.send('You are in the admin area!');

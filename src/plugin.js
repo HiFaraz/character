@@ -11,12 +11,14 @@ module.exports = class Plugin {
   /**
    * Do not override the constructor
    *
-   * @param {Object} config Plugin configuration
+   * @param {Object} config Plugin configuration (not top-level configuration)
+   * @param {Object} database
    * @param {Object} deps
    * @param {Object} events Top-level event emitter for communication across plugins
    */
-  constructor(config, deps, events) {
+  constructor(config, database, deps, events) {
     this.config = clone(config);
+    this.database = database;
     this.deps = deps;
     this.events = events;
     this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
