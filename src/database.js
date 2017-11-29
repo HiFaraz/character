@@ -1,9 +1,5 @@
 'use strict';
 
-export default {
-  instantiate,
-};
-
 /**
  * Module dependencies.
  */
@@ -14,18 +10,7 @@ import { forEach } from 'lodash';
 
 const debug = require('debug')('character:database');
 
-/**
- * Create a database object and load models
- *
- * @param {Object|string} options
- * @param {Object} models
- * @return {Object}
- */
-function instantiate(options, models) {
-  return new Database(options, models);
-}
-
-class Database {
+export default class Database {
   /**
    * Create a database object and load models
    *

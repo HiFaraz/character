@@ -15,12 +15,12 @@ module.exports = main;
  */
 
 import { clone, flow, mapKeys } from 'lodash';
+import Database from './database';
 import EventEmitter from 'events';
 import Framework from './framework';
 import Plugin from './plugin';
 import capitalize from 'capitalize';
 import config from './config';
-import database from './database';
 import models from './models';
 
 const debug = require('debug')('character');
@@ -51,7 +51,7 @@ class Character {
       this._loadModels();
 
       // Instantiate the database
-      this.database = database.instantiate(this.config.database, this.models);
+      this.database = new Database(this.config.database, this.models);
     }
 
     this._instantiatePlugins();
