@@ -11,7 +11,7 @@ import { clone } from 'lodash';
 
 const debug = require('debug')('character:framework');
 
-module.exports = class Framework {
+export default class Framework {
   /**
    * Do not override the constructor
    *
@@ -83,4 +83,4 @@ module.exports = class Framework {
       check(typeof data.proxy === 'boolean', 'proxy configuration is missing'),
     );
   }
-};
+}
