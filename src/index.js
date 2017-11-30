@@ -18,7 +18,6 @@ import { clone, flow, mapKeys } from 'lodash';
 import Database from './database';
 import EventEmitter from 'events';
 import Framework from './framework';
-import Plugin from './plugin';
 import capitalize from 'capitalize';
 import config from './config';
 import models from './models';
@@ -116,7 +115,7 @@ class Character {
     const attachPluginModels = data => {
       const allPluginModels = [];
       this.options.plugins.forEach(([Plugin]) => {
-        const config = this.config.plugins[Plugin.name()]; // TODO validate that each plugin has a name and that it is a string
+        const config = this.config.plugins[Plugin.name()];
         const pluginModels = Plugin.models(config); // plugins are passed their config to let them dynamically generate models
         allPluginModels.push(prefixModelKeys(pluginModels, Plugin.name()));
       });
@@ -142,15 +141,10 @@ class Character {
    * to be provided core classes to enable class extension
    */
   _preparePlugins() {
-    const prepareWith = component =>
-      flow(
-        value => (Array.isArray(value) ? value : [value, {}]), // default to empty dependencies
-        ([module, deps]) => [module(component), deps], // hydrate with `component`
-      );
     this.options.plugins = this.options.plugins
-      .map(prepareWith(Plugin))
+      .map(value => (Array.isArray(value) ? value : [value, {}])) // default to empty dependencies
       .filter(([Plugin]) => {
-        if (!Plugin.validateSelf()) {
+        if (!this._validatePluginAPI(Plugin)) {
           debug(
             `could not load plugin ${Plugin.name()}, failed self validation`,
           );
@@ -159,6 +153,21 @@ class Character {
           return true;
         }
       });
+  }
+
+  /**
+   * Check if the plugin is properly defined
+   *
+   * @param {function} Plugin
+   * @return {Boolean}
+   */
+  _validatePluginAPI(Plugin) {
+    return (
+      Plugin.name &&
+      typeof Plugin.name === 'function' &&
+      typeof Plugin.name() === 'string' &&
+      Plugin.name().trim().length > 0
+    );
   }
 }
 

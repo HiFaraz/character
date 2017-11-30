@@ -9,7 +9,7 @@ import { clone } from 'lodash';
 
 module.exports = class Plugin {
   /**
-   * Do not override the constructor
+   * Do not override the constructor, use #define instead
    *
    * @param {Object} config Plugin configuration (not top-level configuration)
    * @param {Object} database
@@ -33,6 +33,7 @@ module.exports = class Plugin {
    */
   define() {
     // Example: this.router.use(...)
+    throw new Error('Plugin#define must be overridden');
   }
 
   /**
@@ -87,14 +88,5 @@ module.exports = class Plugin {
    */
   static validateConfig(data) {
     return true;
-  }
-
-  /**
-   * Check if the plugin is properly defined
-   *
-   * @return {Boolean}
-   */
-  static validateSelf() {
-    return this.name().trim() !== '';
   }
 };
