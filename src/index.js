@@ -8,7 +8,7 @@
 
 import './entry'; // must import entry-point code first
 
-module.exports = main;
+module.exports = createCharacter;
 
 /**
  * Module dependencies.
@@ -177,6 +177,6 @@ class Character {
  * @param {Object} options
  * @return {Object}
  */
-function main(options) {
+function createCharacter(options) {
   return new Character(options);
 }
