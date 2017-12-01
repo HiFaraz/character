@@ -6,18 +6,11 @@ import assert from 'assert';
 import request from 'supertest';
 
 describe('Framework class', () => {
-  it('provides config defaults', () => {
-    assert(Framework.defaults);
-    assert(typeof Framework.defaults === 'function');
+  it('defaults returns an object', () => {
     assert(typeof Framework.defaults() === 'object');
   });
 
-  it('provides a config validator', () => {
-    assert(Framework.validateConfig);
-    assert(typeof Framework.validateConfig === 'function');
-  });
-
-  it('provides valid config defaults', () => {
+  it('validateConfig returns true on defaults', () => {
     assert(Framework.validateConfig(Framework.defaults()) === true);
   });
 
