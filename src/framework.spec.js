@@ -46,7 +46,7 @@ describe('Framework class', () => {
       res.sendStatus(200);
     }
     const router = Router();
-    router.get('/', testMiddleware);
+    router.get('/endpoint', testMiddleware);
     const plugin = {
       config: {
         base: '/plugin',
@@ -70,7 +70,7 @@ describe('Framework class', () => {
       plugin.postRouterMiddleware,
     );
     return request(app)
-      .get(`${Framework.defaults().base}${plugin.config.base}`)
+      .get(`${Framework.defaults().base}${plugin.config.base}/endpoint`)
       .expect(200);
   });
 });
