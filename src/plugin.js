@@ -33,7 +33,7 @@ module.exports = class Plugin {
    */
   define() {
     // Example: this.router.use(...)
-    throw new Error('Plugin#define must be overridden');
+    throw new Error('Plugin#define must be overridden by subclass');
   }
 
   /**
