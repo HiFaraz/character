@@ -30,8 +30,16 @@ const debug = require('debug')('character');
 class Character extends EventEmitter {
   constructor() {
     super();
+
     this.config = config.load();
     this.stack = [];
+
+    try {
+      this.database = new Database(this.config.database);
+    } catch (error) {
+      debug('could not connect to database', error);
+      this.database = { error };
+    }
   }
 
   /**
@@ -40,12 +48,8 @@ class Character extends EventEmitter {
    * @return {Object}
    */
   create() {
-    try {
-      this.database = new Database(this.config.database);
+    if (!this.database.error) {
       this.database.load(this._loadModels());
-    } catch (error) {
-      debug('could not connect to database', error);
-      this.database = { error };
     }
 
     return createApp(this.config, this._instantiatePlugins());
