@@ -17,7 +17,10 @@ describe('Plugin class', () => {
   });
 
   it('validateConfig should return true', () => {
-    assert(Plugin.validateConfig() === true);
+    class MyPlugin extends Plugin {
+      define() {} // override define() to avoid error
+    }
+    assert(new MyPlugin().validateConfig() === true);
   });
 
   it('#define should throw error (called by constructor)', () => {

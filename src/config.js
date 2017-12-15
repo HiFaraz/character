@@ -16,44 +16,23 @@ export default {
   _safeGetEnvString: safeGetEnvString,
   load,
   populateEnvironmentVariables,
-  validate,
 };
 
 /**
  * Module dependencies.
  */
 
-import { and, check, mapValuesDeep } from './utils';
-import { clone, flow, merge } from 'lodash';
+import { check, mapValuesDeep } from './utils';
+import { flow } from 'lodash';
 import read from 'read-data';
-
-/**
- * Applies default configuration values
- *
- * @param {Object[]} [defaults=[]]
- * @return {Object}
- */
-function applyDefaults(defaults = []) {
-  return data => merge({}, ...defaults, data); // TODO: test that defaults should not overwrite provided config
-}
 
 /**
  * Assemble a configuration
  *
- * @param {string|Object} [source='character.yml'] Path to the configuration YAML/JSON file or configuration object
- * @param {Object} [extras]
- * @param {Object[]} [extras.defaults] Framework and plugin defaults
- * @param {function[]} [extras.validators] Framework and plugin validators
  * @return {Object}
  */
-function load(source = 'character.yml', extras) {
-  const _source = typeof source === 'string' ? read.sync(source) : source;
-
-  return flow(
-    applyDefaults(extras.defaults),
-    validate(extras.validators),
-    populateEnvironmentVariables,
-  )(_source);
+function load() {
+  return flow(read.sync, populateEnvironmentVariables)('character.yml');
 }
 
 /**
@@ -63,8 +42,7 @@ function load(source = 'character.yml', extras) {
  * @return {Object} Configuration populated with values from environment variables
  */
 function populateEnvironmentVariables(config) {
-  const data = clone(config);
-  return mapValuesDeep(data, safeGetEnvString);
+  return mapValuesDeep(config, safeGetEnvString);
 }
 
 /**
@@ -90,27 +68,4 @@ function safeGetEnvString(name) {
   } else {
     return name;
   }
-}
-
-/**
- * Validate required configuration parameters
- *
- * Adds an `isValid` property to the returned configuration
- *
- * @param {Object} [validators]
- * @return {Object}
- */
-function validate(validators = []) {
-  return data =>
-    Object.assign(clone(data), {
-      isValid: and(
-        check(data.database, 'missing database configuration'),
-        check(
-          typeof data.database === 'string' ||
-            typeof data.database === 'object',
-          'database configuration must be either URL string or Sequelize options object',
-        ),
-        ...validators.map(validator => validator(data)),
-      ),
-    });
 }

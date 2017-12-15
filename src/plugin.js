@@ -5,25 +5,25 @@
  */
 
 import { Router } from 'express';
-import { clone } from 'lodash';
+import { merge } from 'lodash';
 
 module.exports = class Plugin {
   /**
    * Do not override the constructor, use #define instead
    *
    * @param {Object} config Plugin configuration (not top-level configuration)
-   * @param {Object} database
    * @param {Object} deps
-   * @param {Object} events Top-level event emitter for communication across plugins
+   * @param {Object} character Reference to parent Character instance
    */
-  constructor(config, database, deps, events) {
-    this.config = clone(config);
-    this.database = database;
+  constructor(config, deps, character) {
+    this.config = merge({}, this.constructor.defaults(), config);
+    this.character = character;
     this.deps = deps;
-    this.events = events;
     this.preRouterMiddleware = []; // not part of the router, is mounted directly to the root app
     this.router = Router(); // is mounted to the base path
     this.postRouterMiddleware = []; // not part of the router, is mounted directly to the root app
+
+    this.config.isValid = this.validateConfig(this.config);
 
     this.define();
   }
@@ -34,6 +34,16 @@ module.exports = class Plugin {
   define() {
     // Example: this.router.use(...)
     throw new Error('Plugin#define must be overridden by subclass');
+  }
+
+  /**
+   * Override this with validator function
+   *
+   * @param {Object} data
+   * @return {Boolean}
+   */
+  validateConfig(data) {
+    return true;
   }
 
   /**
@@ -78,15 +88,5 @@ module.exports = class Plugin {
    */
   static name() {
     return '';
-  }
-
-  /**
-   * Override this with validator function
-   *
-   * @param {Object} data
-   * @return {Boolean}
-   */
-  static validateConfig(data) {
-    return true;
   }
 };

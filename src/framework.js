@@ -1,5 +1,7 @@
 'use strict';
 
+export { createApp };
+
 /**
  * Module dependencies.
  */
@@ -7,80 +9,57 @@
 import { and, check } from './utils';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
-import { clone } from 'lodash';
 
 const debug = require('debug')('character:framework');
 
-export default class Framework {
-  /**
-   * Do not override the constructor
-   *
-   * @param {Object} config
-   * @param {Object[]} [plugins=[]]
-   */
-  constructor(config, plugins = []) {
-    debug(`initializing with ${plugins.length} plugins`);
+/**
+ * Export an Express router loaded with plugin routes
+ *
+ * @param {Object} [config={}]
+ * @param {Object[]} [plugins=[]]
+ * @return {Object}
+ */
+function createApp(config = {}, plugins = []) {
+  debug(`initializing with ${plugins.length} plugins`);
 
-    this.config = clone(config);
+  config.base = config.base || '/id'; // TODO what should this be?
 
-    this.preRouterMiddleware = []; // to be mounted on root path
-    this.router = Router(); // to be mounted on base path
-    this.postRouterMiddleware = []; // to be mounted on root path
+  const preRouterMiddleware = []; // to be mounted on root path
+  const router = Router(); // to be mounted on base path
+  const postRouterMiddleware = []; // to be mounted on root path
 
-    this.router.use(bodyParser.json());
-    this.router.use(bodyParser.urlencoded({ extended: true }));
+  router.use(bodyParser.json());
+  router.use(bodyParser.urlencoded({ extended: true }));
 
+  if (validateConfig(config)) {
     // load plugins
     plugins.forEach(plugin => {
-      this.preRouterMiddleware.push(...plugin.preRouterMiddleware);
-      this.router.use(
-        `${this.config.base}${plugin.config.base}`,
-        plugin.router,
-      );
-      this.postRouterMiddleware.push(...plugin.postRouterMiddleware);
+      preRouterMiddleware.push(...plugin.preRouterMiddleware);
+      router.use(`${config.base}${plugin.config.base}`, plugin.router);
+      postRouterMiddleware.push(...plugin.postRouterMiddleware);
     });
+
+    const app = Router();
+    app.use(...preRouterMiddleware, router, ...postRouterMiddleware);
+    return app;
+  } else {
+    throw new Error('cannot load Character, invalid framework config');
   }
+}
 
-  /**
-   * Override this with an app property if needed, which is served by the core module as character.app
-   * TODO fix this description, this is from the multi-framework concept
-   *
-   * @return {Object}
-   */
-  get app() {
-    const router = Router();
-
-    router.use(
-      ...this.preRouterMiddleware,
-      this.router,
-      ...this.postRouterMiddleware,
-    );
-
-    return router;
-  }
-
-  static defaults() {
-    return {
-      base: '/id', // TODO what should this be?
-      proxy: false,
-    };
-  }
-
-  /**
-   * Override this with a validator function that returns either `true` or `false`
-   *
-   * @param {Object} data
-   * @return {Boolean}
-   */
-  static validateConfig(data) {
-    return and(
-      check(data, 'missing configuration'),
-      check(data.base, 'base path is missing'),
-      check(
-        data.base && !['', '/'].includes(data.base),
-        'base path cannot be empty string or root path',
-      ),
-      check(typeof data.proxy === 'boolean', 'proxy configuration is missing'),
-    );
-  }
+/**
+ * Validate framework config
+ *
+ * @param {Object} data
+ * @return {boolean}
+ */
+function validateConfig(data) {
+  return and(
+    check(data, 'missing configuration'),
+    check(data.base, 'base path is missing'),
+    check(
+      data.base && !['', '/'].includes(data.base),
+      'base path cannot be empty string or root path',
+    ),
+  );
 }

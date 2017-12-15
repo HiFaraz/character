@@ -10,114 +10,90 @@ import './entry'; // must import entry-point code first
 
 module.exports = createCharacter;
 
+// for better ES module (TypeScript) compatibility
+module.exports.default = createCharacter;
+
 /**
  * Module dependencies.
  */
 
-import { clone, flow, mapKeys } from 'lodash';
+import { flow, mapKeys } from 'lodash';
 import Database from './database';
 import EventEmitter from 'events';
-import Framework from './framework';
 import capitalize from 'capitalize';
 import config from './config';
+import { createApp } from './framework';
 import models from './models';
 
 const debug = require('debug')('character');
 
-class Character {
-  /**
-   * Create Character middleware
-   *
-   * @param {Object} options
-   * @param {string|Object} options.config Path to the configuration YAML/JSON file or configuration object
-   * @param {Array[]|Object[]} [options.plugins] Array with structure `...[plugin, deps]`. Can also pass a plugin module directly in the array if there are no dependencies
-   */
-  constructor(options) {
-    debug('initializing');
-    this.events = new EventEmitter();
-
-    this.options = clone(options);
-
-    this._preparePlugins();
-
-    // Load configuration with defaults and validate it
-    this.config = config.load(this.options.config, {
-      defaults: this.defaults,
-      validators: this.validators,
-    });
-
-    if (this.config.isValid) {
-      this._loadModels();
-
-      // Instantiate the database
-      this.database = new Database(this.config.database, this.models);
-    }
-
-    this._instantiatePlugins();
-
-    // Instantiate the framework
-    this._framework = new Framework(this.config, this._plugins);
+class Character extends EventEmitter {
+  constructor() {
+    super();
+    this.config = config.load();
+    this.stack = [];
   }
 
   /**
-   * Example usage:
-   *
-   * - Express: app.use(character.app);
+   * Create a Character subapplication
    *
    * @return {Object}
    */
-  get app() {
-    return this._framework.app;
+  create() {
+    try {
+      this.database = new Database(this.config.database);
+      this.database.load(this._loadModels());
+    } catch (error) {
+      debug('could not connect to database', error);
+      this.database = { error };
+    }
+
+    return createApp(this.config, this._instantiatePlugins());
   }
 
-  get defaults() {
-    return [
-      Framework.defaults(),
-      ...this.options.plugins.map(([Plugin]) => ({
-        plugins: { [Plugin.name()]: Plugin.defaults() },
-      })),
-    ].filter(Boolean);
-  }
-
-  get validators() {
-    return [
-      Framework.validateConfig,
-      ...this.options.plugins.map(([Plugin]) => Plugin.validateConfig),
-    ].filter(Boolean);
+  /**
+   * Register a plugin
+   *
+   * @param {class} Plugin
+   * @param {Object} [deps={}]
+   */
+  use(Plugin, deps = {}) {
+    this.stack.push([Plugin, deps]);
   }
 
   /**
    * Instantiate plugins
    *
    * Plugins are passed their specific config (i.e. the contents of
-   * `plugins.<name>`)
+   * `plugins.<name>`) and a reference to this Character instance
+   *
+   * @return {Object[]}
    */
   _instantiatePlugins() {
-    const instantiate = ([Plugin, deps]) => {
-      const config = Object.assign(this.config.plugins[Plugin.name()], {
-        isValid: this.config.isValid,
-      });
-      return new Plugin(config, this.database, deps, this.events);
-    };
-    this._plugins = this.options.plugins.map(instantiate);
+    return this.stack.map(([Plugin, deps]) => {
+      const config = this.config.plugins[Plugin.name()];
+      return new Plugin(config, deps, this);
+    });
   }
 
   /**
    * Load core and plugin models and declare the database/ORM object
+   *
+   * @return {Object}
    */
   _loadModels() {
-    const prefixModelKeys = (models, prefix) =>
+    const prefixKeys = (models, prefix) =>
       mapKeys(models, (model, name) => `${prefix}$${name}`);
 
     const attachCoreModels = data =>
-      Object.assign(data, prefixModelKeys(models, 'core'));
+      Object.assign(data, prefixKeys(models, 'core'));
 
     const attachPluginModels = data => {
       const allPluginModels = [];
-      this.options.plugins.forEach(([Plugin]) => {
+      this.stack.forEach(([Plugin]) => {
         const config = this.config.plugins[Plugin.name()];
         const pluginModels = Plugin.models(config); // plugins are passed their config to let them dynamically generate models
-        allPluginModels.push(prefixModelKeys(pluginModels, Plugin.name()));
+        allPluginModels.push(prefixKeys(pluginModels, Plugin.name()));
       });
       return Object.assign(data, ...allPluginModels);
     };
@@ -130,44 +106,7 @@ class Character {
       )(key);
     const convertNames = data => mapKeys(data, toCamel$Case);
 
-    this.models = flow(attachCoreModels, attachPluginModels, convertNames)({});
-  }
-
-  /**
-   * Hydrate the framework and plugin modules, and default to empty
-   * dependencies with the structure: `[module, deps = {}]`
-   *
-   * Framework and plugins are passed to Character as functions which need
-   * to be provided core classes to enable class extension
-   */
-  _preparePlugins() {
-    this.options.plugins = this.options.plugins
-      .map(value => (Array.isArray(value) ? value : [value, {}])) // default to empty dependencies
-      .filter(([Plugin]) => {
-        if (!this._validatePluginAPI(Plugin)) {
-          debug(
-            `could not load plugin ${Plugin.name()}, failed self validation`,
-          );
-          return false;
-        } else {
-          return true;
-        }
-      });
-  }
-
-  /**
-   * Check if the plugin is properly defined
-   *
-   * @param {function} Plugin
-   * @return {Boolean}
-   */
-  _validatePluginAPI(Plugin) {
-    return (
-      Plugin.name &&
-      typeof Plugin.name === 'function' &&
-      typeof Plugin.name() === 'string' &&
-      Plugin.name().trim().length > 0
-    );
+    return flow(attachCoreModels, attachPluginModels, convertNames)({});
   }
 }
 

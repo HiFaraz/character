@@ -12,15 +12,22 @@ const debug = require('debug')('character:database');
 
 export default class Database {
   /**
-   * Create a database object and load models
+   * Create a database object
    *
    * @param {Object|string} options Sequelize database options
-   * @param {Object} models
    */
-  constructor(options, models) {
-    this._models = models; // hang on to the definitions
+  constructor(options) {
     this.connection = new Sequelize(options);
     this.models = {};
+  }
+
+  /**
+   * Load models
+   *
+   * @param {Object} models
+   */
+  load(models) {
+    this._models = models; // hang on to the definitions
 
     forEach(this._models, (model, name) => this._define(name, model));
     this._afterDefine();

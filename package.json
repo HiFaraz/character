@@ -14,7 +14,7 @@
     "clean-build": "rimraf lib",
     "lint": "npm run lint-ci -- --fix",
     "lint-ci": "eslint --format=table .",
-    "test": "mocha lib/**/*.spec.js"
+    "test": "cross-env DEBUG=character* mocha -r lib/entry lib/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
+    "cross-env": "^5.1.1",
     "depcheck": "^0.6.8",
     "eslint": "^4.10.0",
     "eslint-config-prettier": "^2.7.0",
