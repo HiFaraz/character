@@ -1,6 +1,7 @@
-# Do not publish dev config
+src
 .vscode
 .babelrc
 .eslintignore
 .eslintrc.yml
+.gitignore
 .travis.yml
