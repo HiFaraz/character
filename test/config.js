@@ -5,7 +5,7 @@
  */
 
 const assert = require('assert');
-const config = require('./config');
+const config = require('../lib/config');
 
 describe('config', () => {
   describe('safeGetEnvString', () => {

@@ -7,7 +7,7 @@
     "build": "depcheck && nsp check && npm run lint && npm test && echo Build successful",
     "lint": "eslint --format=table .",
     "prepublish": "npm run build",
-    "test": "mocha lib/**/*.spec.js"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",

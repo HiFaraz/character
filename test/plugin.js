@@ -1,6 +1,6 @@
 'use strict';
 
-const Plugin = require('./plugin');
+const Plugin = require('../lib/plugin');
 const assert = require('assert');
 
 describe('Plugin class', () => {

@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { createApp } = require('./framework');
+const { createApp } = require('../lib/framework');
 const request = require('supertest');
 
 describe('Framework', () => {
