@@ -1,6 +1,6 @@
 'use strict';
 
-const { and } = require('./utils');
+const { and } = require('../lib/utils');
 const assert = require('assert');
 
 describe('The utility module', () => {
