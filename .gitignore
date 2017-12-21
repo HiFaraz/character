@@ -57,9 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
-# Build files
-lib
-
 # Shrinkwrap files
 shrinkwrap\.yaml
 package-lock\.json

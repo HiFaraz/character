@@ -1,6 +1,4 @@
-src
 .vscode
-.babelrc
 .eslintignore
 .eslintrc.yml
 .gitignore

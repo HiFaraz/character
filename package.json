@@ -4,12 +4,10 @@
   "description": "Authentication, SSO, user management, and overall identity solution for Node.js",
   "main": "lib",
   "scripts": {
-    "prebuild": "nsp check && npm run lint && rimraf lib",
-    "build": "babel src --out-dir lib --copy-files --source-maps inline",
-    "build-watch": "npm run build -- --watch",
+    "build": "depcheck && nsp check && npm run lint && npm test && echo Build successful",
     "lint": "eslint --format=table .",
-    "prepublish": "npm run build && npm test",
-    "test": "cross-env DEBUG=character* mocha -r lib/entry lib/**/*.spec.js"
+    "prepublish": "npm run build",
+    "test": "mocha lib/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -31,10 +29,7 @@
   },
   "homepage": "http://characterjs.com/",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
-    "cross-env": "^5.1.1",
     "depcheck": "^0.6.8",
     "eslint": "^4.10.0",
     "eslint-config-prettier": "^2.7.0",
@@ -43,16 +38,13 @@
     "mocha": "^4.0.1",
     "nsp": "^2.8.1",
     "prettier": "^1.7.4",
-    "rimraf": "^2.6.2",
     "supertest": "^3.0.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "capitalize": "^1.0.0",
     "debug": "^3.0.0",
     "lodash": "^4.0.0",
-    "read-data": "^1.1.0",
-    "source-map-support": "^0.5.0"
+    "read-data": "^1.1.0"
   },
   "peerDependencies": {
     "body-parser": "^1.18.2",
