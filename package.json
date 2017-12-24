@@ -37,6 +37,7 @@
     "mocha": "^4.0.1",
     "nsp": "^2.8.1",
     "prettier": "^1.7.4",
+    "proxyquire": "^1.8.0",
     "supertest": "^3.0.0"
   },
   "dependencies": {
