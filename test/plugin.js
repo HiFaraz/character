@@ -7,35 +7,38 @@ const character = {
   database: {},
 };
 
-describe('Plugin class', () => {
-  it('defaults should return an object', () => {
-    assert(typeof Plugin.defaults() === 'object');
+describe('Plugin', () => {
+  describe('defaults', () => {
+    it('should return an object', () => {
+      assert(typeof Plugin.defaults() === 'object');
+    });
   });
 
-  it('models should return an object', () => {
-    assert(typeof Plugin.models() === 'object');
+  describe('models', () => {
+    it('should return an object', () => {
+      assert(typeof Plugin.models() === 'object');
+    });
   });
 
-  it('name should return the class name', () => {
-    class MyPlugin extends Plugin {
-      define() {} // override define() to avoid error
-    }
-    assert(MyPlugin.name === 'MyPlugin');
+  describe('#define', () => {
+    it('should throw error (called by constructor)', () => {
+      try {
+        new Plugin({}, {}, character);
+        throw new Error();
+      } catch (error) {
+        assert(
+          error.message === 'Plugin#define must be overridden by subclass',
+        );
+      }
+    });
   });
 
-  it('validateConfig should return true', () => {
-    class MyPlugin extends Plugin {
-      define() {} // override define() to avoid error
-    }
-    assert(new MyPlugin({}, {}, character).validateConfig() === true);
-  });
-
-  it('#define should throw error (called by constructor)', () => {
-    try {
-      new Plugin({}, {}, character);
-      throw new Error();
-    } catch (error) {
-      assert(error.message === 'Plugin#define must be overridden by subclass');
-    }
+  describe('#validateConfig', () => {
+    it('should return true', () => {
+      class MyPlugin extends Plugin {
+        define() {} // override define() to avoid error
+      }
+      assert(new MyPlugin({}, {}, character).validateConfig() === true);
+    });
   });
 });
