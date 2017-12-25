@@ -36,13 +36,13 @@ Here is example usage from the [Local authenticator example](examples/local):
 
 ```javascript
 // Load Character core and plugins
+const character = require('character')()
 const authentication = require('character/authentication')
-const character = require('character')({
-  plugins: [authentication]
-})
+
+character.use(authentication);
 
 // Attach as Express middleware
-app.use(character.app)
+app.use(character.create())
 
 // Protect any route with `req.isAuthenticated`
 app.get('/restricted', (req, res) => {
