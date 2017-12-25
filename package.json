@@ -1,6 +1,6 @@
 {
   "name": "character",
-  "version": "0.0.0",
+  "version": "1.0.0-alpha-1",
   "description": "Authentication, SSO, user management, and overall identity solution for Node.js",
   "scripts": {
     "build": "depcheck && nsp check && npm run lint && npm test && echo Build successful",
