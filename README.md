@@ -72,16 +72,16 @@ Presently there are two main options for building Node.js applications:
 Character combines the key benefits of both options. Install it on your own server and keep control of your own data!
 
 | Benefit                                                            | Custom solution | Character | Commercial service |
-| ------------------------------------------------------------------ | --------------- | ------------- | ------------------ |
-| Save R&D time and money with a pre-built solution                  |                 | ✅             | ✅                  |
-| Secure your applications with best-practices and security updates  |                 | ✅             | ✅                  |
-| Protect against known vulnerabilities                              |                 | ✅             | ✅                  |
-| Use a security-audited and penetration-tested solution             |                 | (planned)     | ❔                  |
-| On-premise: comply with your enterprise security requirements      | ✅               | ✅             | ❔                  |
-| Open source: verify the code that handles your user data           | ✅               | ✅             |                    |
-| Keep your user data our of third-party hands                       | ✅               | ✅             |                    |
-| Avoid costly service fees (e.g. for registered but inactive users) | ✅               | ✅             |                    |
-| Avoid complicated licensing fee structures                         | ✅               | ✅             |                    |
+| ------------------------------------------------------------------ | --------------- | --------- | ------------------ |
+| Save R&D time and money with a pre-built solution                  |                 | ✅         | ✅                  |
+| Secure your applications with best-practices and security updates  |                 | ✅         | ✅                  |
+| Protect against known vulnerabilities                              |                 | ✅         | ✅                  |
+| Use a security-audited and penetration-tested solution             |                 | (planned) | ❔                  |
+| On-premise: comply with your enterprise security requirements      | ✅               | ✅         | ❔                  |
+| Open source: verify the code that handles your user data           | ✅               | ✅         |                    |
+| Keep your user data our of third-party hands                       | ✅               | ✅         |                    |
+| Avoid costly service fees (e.g. for registered but inactive users) | ✅               | ✅         |                    |
+| Avoid complicated licensing fee structures                         | ✅               | ✅         |                    |
 
 ## Features / Roadmap
 
@@ -137,7 +137,7 @@ For a good pull request, we ask you provide the following:
 
 Create a [GitHub issue](https://github.com/HiFaraz/character/issues/new) to report a bug. Please provide sufficient details to reproduce the bug, such as version numbers, error logs, and example code if possible.
 
-If you have discovered a security related bug, please do NOT use the GitHub issue tracker. Send an email to [security@character.io](mailto:security@character.io).
+If you have discovered a security related bug, please do NOT use the GitHub issue tracker. Send an email to [security@characterjs.com](mailto:security@characterjs.com).
 
 ## People
 
@@ -156,7 +156,7 @@ Commercial support is also available:
   - Training
   - Future: Hosted Character / SaaS
 
-Commercial support contact: [support@character.io](mailto:support@character.io)
+Commercial support contact: [support@characterjs.com](mailto:support@characterjs.com)
 
 ## License
 
