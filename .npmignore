@@ -1,5 +1,4 @@
 .vscode
-.eslintignore
 .eslintrc.yml
 .gitignore
 .travis.yml
